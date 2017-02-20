@@ -31,9 +31,7 @@ def reduce_df(df, variables, squash=False):
     for key, value in variables.items():
         if 'range' not in value:
             continue
-        print(key, df[key].count())
         df = df[(df[key] >= value['range'][0]) & (df[key] <= value['range'][1])]
-        print(key, df[key].count())
 
     return df
 

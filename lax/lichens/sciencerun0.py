@@ -13,7 +13,7 @@ class AllCutsSR0(ManyLichen):
                             InteractionPeaksBiggest(),
                             S2AreaFractionTop(),
                             DoubleScatterS2(),
-                            Width()]
+                            S2Width()]
 
 
 
@@ -82,7 +82,20 @@ class DoubleScatterS2(Lichen):
         df[self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
         return df
 
-class Width(ManyLichen):
+class S2Width(ManyLichen):
+    """S2 Width cut modeling the difussion.
+
+    The S2 width cut compares the S2 width to what we could expect based on its
+    depth in the detector.  The inputs to this are the drift velocity and the
+    diffusion constant.
+
+    This version of the cut is based on quantiles on the Rn220 data.  See the
+    note XXX for the study of the definition.  It should be applicable to data
+    regardless of if it is ER or NR.
+
+    Author: XXX yy@zz.nl
+
+    """
 
 
     def __init__(self):
@@ -90,15 +103,16 @@ class Width(ManyLichen):
                             self.WidthLow()]
 
     def s2_width_model(self, z):
-        v_drift = PAX_CONFIG['DEFAULT']['drift_velocity_liquid']
         diffusion_constant = PAX_CONFIG['WaveformSimulator']['diffusion_constant_liquid']
+        v_drift = PAX_CONFIG['DEFAULT']['drift_velocity_liquid']
+
         w0 = 304 * units.ns
         return np.sqrt(w0**2 - 3.6395 * diffusion_constant * z / v_drift**3)
 
 
     def subpre(self, df):
         # relative_s2_width
-        df['temp'] = df['s2_range_50p_area'] / Width.s2_width_model(self, df['z'])
+        df['temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(self, df['z'])
         return df
 
     def relative_s2_width_bounds(s2, kind='high'):
@@ -112,18 +126,18 @@ class Width(ManyLichen):
 
     class WidthHigh(Lichen):
         def pre(self, df):
-            return Width.subpre(self, df)
+            return S2Width.subpre(self, df)
 
         def _process(self, df):
-            df[self.__class__.__name__] = (df.temp <= Width.relative_s2_width_bounds(df.s2,
-                                                                                     kind='high'))
+            df[self.__class__.__name__] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2,
+                                                                                       kind='high'))
             return df
 
     class WidthLow(RangeLichen):
         def pre(self, df):
-            return Width.subpre(self, df)
+            return S2Width.subpre(self, df)
 
         def _process(self, df):
-            df[self.__class__.__name__] = (Width.relative_s2_width_bounds(df.s2,
-                                                                           kind='low') <= df.temp)
+            df[self.__class__.__name__] = (S2Width.relative_s2_width_bounds(df.s2,
+                                                                            kind='low') <= df.temp)
             return df

@@ -4,10 +4,12 @@ Extend the Minitree produced DataFrames with derivative values.
 """
 # -*- coding: utf-8 -*-
 
-from lax import plotting
+from lax.plotting import plot
+
 
 class Lichen(object):
-
+    def describe(self):
+        print(self.__doc__)
 
     def pre(self, df):
         return df
@@ -26,8 +28,6 @@ class Lichen(object):
         if 'temp' in df.columns:
             return df.drop('temp', 1)
         return df
-
-
 
 
 class RangeLichen(Lichen):
@@ -50,7 +50,7 @@ class RangeLichen(Lichen):
 
     def _process(self, df):
         df[self.__class__.__name__] = (df[self.variable] > self.allowed_range[0]) & (
-        df[self.variable] < self.allowed_range[1])
+            df[self.variable] < self.allowed_range[1])
         return df
 
 
@@ -63,23 +63,23 @@ class ManyLichen(Lichen):
         return [lichen.__class__.__name__ for lichen in self.lichen_list]
 
     def process(self, df):
-        all_cuts_bool = None
+        df[self.__class__.__name__] = True
+
         for lichen in self.lichen_list:
+            # Heavy lifting here
             df = lichen.process(df)
 
             cut_name = lichen.__class__.__name__
 
-            if all_cuts_bool is None:
-                all_cuts_bool = df[cut_name]
-            else:
-                all_cuts_bool = all_cuts_bool & df[cut_name]
-
-
-
             if self.plots:
-                self.plot(df[df[all_cuts_bool] == True], cut_name, self.verbose)
 
-        df[self.__class__.__name__] = all_cuts_bool
+                plot(df[df[self.__class__.__name__]],
+                     cut_name,
+                     self.verbose)
+
+
+            df[self.__class__.__name__] = df[self.__class__.__name__] & df[cut_name]
+
         return df
 
     def debug(self,
