@@ -52,14 +52,14 @@ lint: ## check style with flake8
 
 test: ## run tests quickly with the default Python
 	py.test
-	
+
 
 test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source lax -m pytest
-	
+
 		coverage report -m
 		coverage html
 		$(BROWSER) htmlcov/index.html
@@ -86,3 +86,25 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
+
+major: clean docs
+	emacs HISTORY.rst
+	git commit -m "Update HISTORY for the release" HISTORY.rst
+	bumpversion major
+	git push
+	git push --tags
+
+
+minor: clean docs
+	emacs HISTORY.rst
+	git commit -m "Update HISTORY for the release" HISTORY.rst
+	bumpversion minor
+	git push
+	git push --tags
+
+patch: clean docs
+	emacs HISTORY.rst
+	git commit -m "Update HISTORY for the release" HISTORY.rst
+	bumpversion patch --allow-dirty
+	git push
+	git push --tags

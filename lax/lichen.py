@@ -5,9 +5,11 @@ Extend the Minitree produced DataFrames with derivative values.
 # -*- coding: utf-8 -*-
 
 from lax.plotting import plot
-
+import numpy as np
 
 class Lichen(object):
+    version = np.NaN
+
     def describe(self):
         print(self.__doc__)
 
@@ -49,8 +51,7 @@ class RangeLichen(Lichen):
         return self.allowed_range[0]
 
     def _process(self, df):
-        df[self.__class__.__name__] = (df[self.variable] > self.allowed_range[0]) & (
-            df[self.variable] < self.allowed_range[1])
+        df[self.__class__.__name__] = (df[self.variable] > self.allowed_range[0]) & (df[self.variable] < self.allowed_range[1])
         return df
 
 
