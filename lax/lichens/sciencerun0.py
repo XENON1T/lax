@@ -4,9 +4,10 @@ from pax import units, configuration
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen
-
+from lax import __version__ as lax_version
 
 class AllCuts(ManyLichen):
+    version = lax_version
     def __init__(self):
         self.lichen_list = [
             InteractionExists(),
@@ -30,6 +31,7 @@ class InteractionExists(RangeLichen):
 
     Not studied at all.
     """
+    version = 0
     allowed_range = (0, np.inf)
     variable = 'cs1'
 
@@ -39,12 +41,13 @@ class S2Threshold(RangeLichen):
 
     See: xenon:xenon1t:aalbers:preliminary_trigger_settings
     """
-
+    version = 0
     allowed_range = (150, np.inf)
     variable = 's2'
 
 
 class S1LowEnergyRange(RangeLichen):
+    version = 0
     allowed_range = (0, 200)
     variable = 'cs1'
 
@@ -54,6 +57,7 @@ class FiducialCylinder1T(ManyLichen):
 
     See xenon:xenon1t:analysis:firstresults:fiducialvolume
     """
+    version = 0
 
     def __init__(self):
         self.lichen_list = [self.Z(),
@@ -78,12 +82,14 @@ class S2AreaFractionTop(RangeLichen):
 
     Don't use above XXXX PE due to saturation.
     """
+    version = 0
 
     allowed_range = (0.6, 0.72)
     variable = 's2_area_fraction_top'
 
 
 class InteractionPeaksBiggest(ManyLichen):
+    version = 0
     def __init__(self):
         self.lichen_list = [self.S1(),
                             self.S2()]
@@ -104,15 +110,17 @@ class SignalOverPreS2Junk(Lichen):
 
     This cut value is made up.... or at least found in a random notebook.
     """
+    version = 0
     allowed_range = (0.5, 10)
-    variable = 'temp'
+    variable = 'signal_over_pre_s2_junk'
 
     def pre(self, df):
-        df['temp'] = (df.s2 + df.s1) / (df.area_before_main_s2)
+        df['signal_over_pre_s2_junk'] = (df.s2 + df.s1) / (df.area_before_main_s2)
         return df
 
 
 class S2SingleScatter(Lichen):
+    version = 0
     allowed_range = (0, np.inf)
     variable = 'temp'
 
@@ -140,7 +148,7 @@ class S2Width(ManyLichen):
     Author: XXX yy@zz.nl
 
     """
-
+    version = 0
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
                             self.S2WidthLow()]

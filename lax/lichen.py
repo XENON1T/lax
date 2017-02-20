@@ -5,9 +5,11 @@ Extend the Minitree produced DataFrames with derivative values.
 # -*- coding: utf-8 -*-
 
 from lax.plotting import plot
-
+import numpy as np
 
 class Lichen(object):
+    version = np.NaN
+
     def describe(self):
         print(self.__doc__)
 
