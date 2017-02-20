@@ -32,6 +32,21 @@ class S1Threshold(RangeLichen):
     variable = 'cs1'
 
 class Fiducial(ManyLichen):
+    """Fiducial volume cut.
+
+    ! This is a 1T test FV - Updated 20/2/2017 !
+
+    The fidicual volume cut defines the region in depth and radius that we
+    trust and use for the exposure. This is the region where the background
+    distribution is flat. 
+
+    This version of the cut is based pax v6.2 bg run 0 data. See the
+    note first results fiducial volume note for the study of the definition.
+
+    Author: Sander breur sanderb@nikhef.nl
+
+    """
+
     def __init__(self):
         self.lichen_list = [self.Z(),
                             self.R()]
