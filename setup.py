@@ -28,6 +28,7 @@ setup(
     url='https://github.com/tunnell/lax',
     packages=[
         'lax',
+        'lax.lichens'
     ],
     package_dir={'lax':
                  'lax'},
