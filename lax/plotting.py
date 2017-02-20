@@ -5,6 +5,7 @@ from lax import variables
 
 def plot(df, cut_name,
          verbose=False, save=False):
+    sns.set(style="white")
     my_variables = variables.get_variables(verbose)
 
     df_reduced = variables.reduce_df(df, my_variables)
