@@ -22,9 +22,7 @@ class AllCuts(ManyLichen):
 class LowEnergyCuts(AllCuts):
     def __init__(self):
         AllCuts.__init__(self)
-        self.lichen_list += [S1LowEnergyRange(),
-                             S2Width()]
-
+        self.lichen_list = [S1LowEnergyRange()] + self.lichen_list + [S2Width()]
 
 class InteractionExists(RangeLichen):
     """Check that an interaction found
@@ -66,7 +64,7 @@ class Fiducial(ManyLichen):
 
     The fidicual volume cut defines the region in depth and radius that we
     trust and use for the exposure. This is the region where the background
-    distribution is flat. 
+    distribution is flat.
 
     This version of the cut is based pax v6.2 bg run 0 data. See the
     note first results fiducial volume note for the study of the definition.
