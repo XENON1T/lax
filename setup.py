@@ -12,10 +12,8 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'Click>=6.0',
     'numpy',
-    'seaborn',
+    'seaborn>=0.7.1',
     'matplotlib',
-
-    # TODO: put package requirements here
 ]
 
 test_requirements = [
