@@ -57,7 +57,7 @@ class FiducialCylinder1T(ManyLichen):
 
     See xenon:xenon1t:analysis:firstresults:fiducialvolume
     """
-    version = 0
+    version = 1
 
     def __init__(self):
         self.lichen_list = [self.Z(),
@@ -68,7 +68,7 @@ class FiducialCylinder1T(ManyLichen):
         variable = 'z'
 
     class R(RangeLichen):
-        variable = 'temp'
+        variable = 'r'
 
         def pre(self, df):
             df[self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
