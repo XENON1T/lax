@@ -11,8 +11,8 @@ class AllCuts(ManyLichen):
     def __init__(self):
         self.lichen_list = [
             InteractionExists(),
-            S2Threshold(),
             FiducialCylinder1T(),
+            S2Threshold(),
             InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
@@ -22,7 +22,8 @@ class AllCuts(ManyLichen):
 class LowEnergyCuts(AllCuts):
     def __init__(self):
         AllCuts.__init__(self)
-        self.lichen_list = [S1LowEnergyRange()] + self.lichen_list + [S2Width()]
+        self.lichen_list[0] = S1LowEnergyRange()
+        self.lichen_list.append(S2Width())
 
 class InteractionExists(RangeLichen):
     """Check that an interaction found
