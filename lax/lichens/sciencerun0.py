@@ -37,7 +37,7 @@ class Fiducial(ManyLichen):
                             self.R()]
 
     class Z(RangeLichen):
-        allowed_range = (-92, -10)
+        allowed_range = (-83.45,-13.45)
         variable = 'z'
 
     class R(RangeLichen):
@@ -47,7 +47,7 @@ class Fiducial(ManyLichen):
             df[self.variable] = np.sqrt(df['x']*df['x'] + df['y']*df['y'])
             return df
 
-        allowed_range = (0, 30)
+        allowed_range = (0, 39.85)
 
 
 class S2AreaFractionTop(RangeLichen):
