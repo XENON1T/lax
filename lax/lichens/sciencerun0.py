@@ -6,24 +6,28 @@ PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen
 from lax import __version__ as lax_version
 
+
 class AllCuts(ManyLichen):
     version = lax_version
+
     def __init__(self):
         self.lichen_list = [
-            InteractionExists(),
             FiducialCylinder1T(),
+            InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
+            SignalOverPreS2Junk(),
         ]
 
 
 class LowEnergyCuts(AllCuts):
     def __init__(self):
         AllCuts.__init__(self)
-        self.lichen_list[0] = S1LowEnergyRange()
+        self.lichen_list[1] = S1LowEnergyRange()
         self.lichen_list.append(S2Width())
+
 
 class InteractionExists(RangeLichen):
     """Check that an interaction found
@@ -50,6 +54,7 @@ class S1LowEnergyRange(RangeLichen):
     allowed_range = (0, 200)
     variable = 'cs1'
 
+
 class FiducialCylinder1T(ManyLichen):
     """Fiducial volume cut.
 
@@ -66,6 +71,7 @@ class FiducialCylinder1T(ManyLichen):
 
     """
     version = 2
+
     def __init__(self):
         self.lichen_list = [self.Z(),
                             self.R()]
@@ -97,6 +103,7 @@ class S2AreaFractionTop(RangeLichen):
 
 class InteractionPeaksBiggest(ManyLichen):
     version = 0
+
     def __init__(self):
         self.lichen_list = [self.S1(),
                             self.S2()]
@@ -156,6 +163,7 @@ class S2Width(ManyLichen):
 
     """
     version = 0
+
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
                             self.S2WidthLow()]
