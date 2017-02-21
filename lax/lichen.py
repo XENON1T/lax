@@ -52,8 +52,7 @@ class RangeLichen(Lichen):
         return self.allowed_range[0]
 
     def _process(self, df):
-        df.loc[:, self.__class__.__name__] = (df[self.variable] > self.allowed_range[0]) & (
-        df[self.variable] < self.allowed_range[1])
+        df.loc[:, self.__class__.__name__] = (df[self.variable] > self.allowed_range[0]) & (df[self.variable] < self.allowed_range[1])
         return df
 
 
@@ -79,7 +78,7 @@ class ManyLichen(Lichen):
                      cut_name,
                      self.verbose)
 
-                df.loc[:, self.__class__.__name__] = df[self.__class__.__name__] & df[cut_name]
+            df.loc[:, self.__class__.__name__] = df[self.__class__.__name__] & df[cut_name]
 
         return df
 
