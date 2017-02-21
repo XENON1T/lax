@@ -18,7 +18,7 @@ class AllCuts(ManyLichen):
             InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
-            SignalOverPreS2Junk(),
+            #SignalOverPreS2Junk(),
         ]
 
 
