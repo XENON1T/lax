@@ -2,7 +2,12 @@
 History
 =======
 
-0.1.6 (2017-02-21)
+0.2.1 (2017-02-21)
+------------------
+
+* Remove signal noise cut since doesn't work
+
+0.2.0 (2017-02-21)
 ------------------
 
 * Bug where all cuts not applied properly
