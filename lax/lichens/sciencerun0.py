@@ -129,7 +129,7 @@ class SignalOverPreS2Junk(RangeLichen):
     variable = 'signal_over_pre_s2_junk'
 
     def pre(self, df):
-        df.loc[:, 'signal_over_pre_s2_junk'] = (df.s2 + df.s1) / (df.area_before_main_s2)
+        df.loc[:, self.variable] = (df.s2 + df.s1) / (df.area_before_main_s2)
         return df
 
 
