@@ -84,7 +84,7 @@ class FiducialCylinder1T(ManyLichen):
         variable = 'r'
 
         def pre(self, df):
-            df[self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
+            df.loc[:, self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
             return df
 
         allowed_range = (0, 39.85)
@@ -110,12 +110,12 @@ class InteractionPeaksBiggest(ManyLichen):
 
     class S1(Lichen):
         def _process(self, df):
-            df[self.__class__.__name__] = df.s1 > df.largest_other_s1
+            df.loc[:, self.__class__.__name__] = df.s1 > df.largest_other_s1
             return df
 
     class S2(Lichen):
         def _process(self, df):
-            df[self.__class__.__name__] = df.s2 > df.largest_other_s2
+            df.loc[:, self.__class__.__name__] = df.s2 > df.largest_other_s2
             return df
 
 
@@ -129,7 +129,7 @@ class SignalOverPreS2Junk(Lichen):
     variable = 'signal_over_pre_s2_junk'
 
     def pre(self, df):
-        df['signal_over_pre_s2_junk'] = (df.s2 + df.s1) / (df.area_before_main_s2)
+        df.loc[:, 'signal_over_pre_s2_junk'] = (df.s2 + df.s1) / (df.area_before_main_s2)
         return df
 
 
@@ -142,7 +142,7 @@ class S2SingleScatter(Lichen):
         return np.clip((2 * s2) ** 0.5, 70, float('inf'))
 
     def _process(self, df):
-        df[self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
+        df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
         return df
 
 
@@ -177,7 +177,7 @@ class S2Width(ManyLichen):
 
     def subpre(self, df):
         # relative_s2_width
-        df['temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(self, df['z'])
+        df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(self, df['z'])
         return df
 
     def relative_s2_width_bounds(s2, kind='high'):
@@ -193,7 +193,7 @@ class S2Width(ManyLichen):
             return S2Width.subpre(self, df)
 
         def _process(self, df):
-            df[self.__class__.__name__] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2,
+            df.loc[:, self.__class__.__name__] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2,
                                                                                        kind='high'))
             return df
 
@@ -202,6 +202,6 @@ class S2Width(ManyLichen):
             return S2Width.subpre(self, df)
 
         def _process(self, df):
-            df[self.__class__.__name__] = (S2Width.relative_s2_width_bounds(df.s2,
+            df.loc[:, self.__class__.__name__] = (S2Width.relative_s2_width_bounds(df.s2,
                                                                             kind='low') <= df.temp)
             return df
