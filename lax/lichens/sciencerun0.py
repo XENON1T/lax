@@ -119,7 +119,7 @@ class InteractionPeaksBiggest(ManyLichen):
             return df
 
 
-class SignalOverPreS2Junk(Lichen):
+class SignalOverPreS2Junk(RangeLichen):
     """Compare S1 and S2 area to the area of other peaks before interaction S2
 
     This cut value is made up.... or at least found in a random notebook.
