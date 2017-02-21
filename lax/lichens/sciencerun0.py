@@ -50,15 +50,7 @@ class S1LowEnergyRange(RangeLichen):
     allowed_range = (0, 200)
     variable = 'cs1'
 
-
 class FiducialCylinder1T(ManyLichen):
-    """Cylindrical 1T fiducial volume
-
-    See xenon:xenon1t:analysis:firstresults:fiducialvolume
-    """
-    version = 1
-
-class Fiducial(ManyLichen):
     """Fiducial volume cut.
 
     ! This is a 1T test FV - Updated 20/2/2017 !
@@ -73,6 +65,7 @@ class Fiducial(ManyLichen):
     Author: Sander breur sanderb@nikhef.nl
 
     """
+    version = 2
     def __init__(self):
         self.lichen_list = [self.Z(),
                             self.R()]
