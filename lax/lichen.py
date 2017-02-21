@@ -64,7 +64,7 @@ class ManyLichen(Lichen):
         return [lichen.__class__.__name__ for lichen in self.lichen_list]
 
     def process(self, df):
-        df[self.__class__.__name__] = True
+        df.loc[:(self.__class__.__name__)] = True
 
         for lichen in self.lichen_list:
             # Heavy lifting here
