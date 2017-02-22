@@ -97,7 +97,7 @@ class S2AreaFractionTop(RangeLichen):
     """
     version = 0
 
-    allowed_range = (0.6, 0.72)
+    allowed_range = (0.61, 0.72)
     variable = 's2_area_fraction_top'
 
 
