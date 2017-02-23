@@ -7,6 +7,7 @@ History
 
 * Update s2_area_fraction_top cut (#5)
 * Improve docs (#4)
+* Plotting arbitrary axes
 
 0.2.2 (2017-02-21)
 ------------------
