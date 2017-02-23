@@ -18,6 +18,7 @@ class AllCuts(ManyLichen):
             InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
+            DAQVetoCut(),
         ]
 
 
@@ -124,7 +125,30 @@ class InteractionPeaksBiggest(ManyLichen):
             df.loc[:, self.__class__.__name__] = df.s2 > df.largest_other_s2
             return df
 
+class DAQVetoCut(ManyLichen):
+    """
+    Make sure no DAQ vetos happen during your event. This
+    automatically checks both busy and high-energy vetos. 
+    Requires Proximity minitrees!
+    """
+    version = 0
 
+    def __init__(self):
+        self.lichen_list = [self.BusyCheck(),
+                            self.HEVCheck()]
+
+    class BusyCheck(Lichen):
+        def _process(self, df):
+            df.loc[:, self.__class__.__name__] =df[(abs(df['nearest_busy'])>
+                                                    df['event_duration']/2)]
+            return df
+
+    class HEVCheck(Lichen):
+        def _process(self, df):
+            df.loc[:, self.__class__.__name__ = df[(abs(df['nearest_hev'])>
+                                                    df['event_duration']/2)]
+            return df
+                   
 class SignalOverPreS2Junk(RangeLichen):
     """Cut events with lot of peak area before main S2
     
