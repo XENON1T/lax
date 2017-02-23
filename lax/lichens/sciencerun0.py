@@ -30,9 +30,8 @@ class LowEnergyCuts(AllCuts):
 
 
 class InteractionExists(RangeLichen):
-    """Check that an interaction found
-
-    Not studied at all.
+    """Checks that there was a pairing of S1 and S2.
+        
     """
     version = 0
     allowed_range = (0, np.inf)
@@ -50,6 +49,9 @@ class S2Threshold(RangeLichen):
 
 
 class S1LowEnergyRange(RangeLichen):
+    """ For isolating the band.
+    
+    """
     version = 0
     allowed_range = (0, 200)
     variable = 'cs1'
@@ -81,7 +83,7 @@ class FiducialCylinder1T(ManyLichen):
         variable = 'z'
 
     class R(RangeLichen):
-        variable = 'r'
+        variable = 'r'  #  Should add to minitrees
 
         def pre(self, df):
             df.loc[:, self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
@@ -91,7 +93,7 @@ class FiducialCylinder1T(ManyLichen):
 
 
 class S2AreaFractionTop(RangeLichen):
-    """Blah
+    """ Mainly for removing gas events
 
     Don't use above XXXX PE due to saturation.
     """
@@ -102,6 +104,10 @@ class S2AreaFractionTop(RangeLichen):
 
 
 class InteractionPeaksBiggest(ManyLichen):
+    """ Ensuring main peak is larger than the other peak
+    (Should not be a big requirement for pax_v6.5.0)
+
+    """
     version = 0
 
     def __init__(self):
@@ -120,7 +126,8 @@ class InteractionPeaksBiggest(ManyLichen):
 
 
 class SignalOverPreS2Junk(RangeLichen):
-    """Compare S1 and S2 area to the area of other peaks before interaction S2
+    """ (Currently not used)
+    Compare S1 and S2 area to the area of other peaks before interaction S2
 
     This cut value is made up.... or at least found in a random notebook.
     """
@@ -134,6 +141,10 @@ class SignalOverPreS2Junk(RangeLichen):
 
 
 class S2SingleScatter(Lichen):
+    """ Check that largest other S2 is smaller than some bound...
+    (Tianyu to add description and cut)
+    """
+    
     version = 0
     allowed_range = (0, np.inf)
     variable = 'temp'
@@ -147,7 +158,7 @@ class S2SingleScatter(Lichen):
 
 
 class S2Width(ManyLichen):
-    """S2 Width cut modeling the difussion.
+    """S2 Width cut modeling the diffusion.
 
     The S2 width cut compares the S2 width to what we could expect based on its
     depth in the detector.  The inputs to this are the drift velocity and the
