@@ -18,7 +18,6 @@ class AllCuts(ManyLichen):
             InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
-            #SignalOverPreS2Junk(),
         ]
 
 
@@ -49,7 +48,7 @@ class S2Threshold(RangeLichen):
 
 
 class S1LowEnergyRange(RangeLichen):
-    """ For isolating the band.
+    """For isolating the low-energy band.
     
     """
     version = 0
@@ -59,8 +58,6 @@ class S1LowEnergyRange(RangeLichen):
 
 class FiducialCylinder1T(ManyLichen):
     """Fiducial volume cut.
-
-    ! This is a 1T test FV - Updated 20/2/2017 !
 
     The fidicual volume cut defines the region in depth and radius that we
     trust and use for the exposure. This is the region where the background
@@ -93,7 +90,7 @@ class FiducialCylinder1T(ManyLichen):
 
 
 class S2AreaFractionTop(RangeLichen):
-    """ Mainly for removing gas events
+    """Mainly for removing gas events
 
     Don't use above XXXX PE due to saturation.
     """
@@ -104,9 +101,9 @@ class S2AreaFractionTop(RangeLichen):
 
 
 class InteractionPeaksBiggest(ManyLichen):
-    """ Ensuring main peak is larger than the other peak
+    """Ensuring main peak is larger than the other peak
+    
     (Should not be a big requirement for pax_v6.5.0)
-
     """
     version = 0
 
@@ -126,7 +123,9 @@ class InteractionPeaksBiggest(ManyLichen):
 
 
 class SignalOverPreS2Junk(RangeLichen):
-    """ (Currently not used)
+    """Cut events with lot of peak area before main S2
+    
+    (Currently not used)
     Compare S1 and S2 area to the area of other peaks before interaction S2
 
     This cut value is made up.... or at least found in a random notebook.
@@ -141,7 +140,8 @@ class SignalOverPreS2Junk(RangeLichen):
 
 
 class S2SingleScatter(Lichen):
-    """ Check that largest other S2 is smaller than some bound...
+    """Check that largest other S2 is smaller than some bound...
+
     (Tianyu to add description and cut)
     """
     
