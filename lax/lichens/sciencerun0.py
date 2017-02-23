@@ -18,7 +18,6 @@ class AllCuts(ManyLichen):
             InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
-            #SignalOverPreS2Junk(),
         ]
 
 
@@ -30,9 +29,8 @@ class LowEnergyCuts(AllCuts):
 
 
 class InteractionExists(RangeLichen):
-    """Check that an interaction found
-
-    Not studied at all.
+    """Checks that there was a pairing of S1 and S2.
+        
     """
     version = 0
     allowed_range = (0, np.inf)
@@ -50,6 +48,9 @@ class S2Threshold(RangeLichen):
 
 
 class S1LowEnergyRange(RangeLichen):
+    """For isolating the low-energy band.
+    
+    """
     version = 0
     allowed_range = (0, 200)
     variable = 'cs1'
@@ -57,8 +58,6 @@ class S1LowEnergyRange(RangeLichen):
 
 class FiducialCylinder1T(ManyLichen):
     """Fiducial volume cut.
-
-    ! This is a 1T test FV - Updated 20/2/2017 !
 
     The fidicual volume cut defines the region in depth and radius that we
     trust and use for the exposure. This is the region where the background
@@ -81,7 +80,7 @@ class FiducialCylinder1T(ManyLichen):
         variable = 'z'
 
     class R(RangeLichen):
-        variable = 'r'
+        variable = 'r'  #  Should add to minitrees
 
         def pre(self, df):
             df.loc[:, self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
@@ -93,21 +92,22 @@ class FiducialCylinder1T(ManyLichen):
 class S2AreaFractionTop(RangeLichen):
     """Cuts events with an unusual fraction of S2 on top array.
 
-    ! This is a temporary 'by-eye' cut !
-
     Primarily cuts gas events with a particularly large S2 AFT, also targets some
     strange / junk / other events with a low AFT.
 
     Author: Adam Brown abrown@physik.uzh.ch
-
     """
-    version = 1
+    version = 2
 
     allowed_range = (0.5, 0.72)
     variable = 's2_area_fraction_top'
 
 
 class InteractionPeaksBiggest(ManyLichen):
+    """Ensuring main peak is larger than the other peak
+    
+    (Should not be a big requirement for pax_v6.5.0)
+    """
     version = 0
 
     def __init__(self):
@@ -126,7 +126,10 @@ class InteractionPeaksBiggest(ManyLichen):
 
 
 class SignalOverPreS2Junk(RangeLichen):
-    """Compare S1 and S2 area to the area of other peaks before interaction S2
+    """Cut events with lot of peak area before main S2
+    
+    (Currently not used)
+    Compare S1 and S2 area to the area of other peaks before interaction S2
 
     This cut value is made up.... or at least found in a random notebook.
     """
@@ -140,6 +143,11 @@ class SignalOverPreS2Junk(RangeLichen):
 
 
 class S2SingleScatter(Lichen):
+    """Check that largest other S2 is smaller than some bound...
+
+    (Tianyu to add description and cut)
+    """
+    
     version = 0
     allowed_range = (0, np.inf)
     variable = 'temp'
@@ -153,7 +161,7 @@ class S2SingleScatter(Lichen):
 
 
 class S2Width(ManyLichen):
-    """S2 Width cut modeling the difussion.
+    """S2 Width cut modeling the diffusion.
 
     The S2 width cut compares the S2 width to what we could expect based on its
     depth in the detector.  The inputs to this are the drift velocity and the
