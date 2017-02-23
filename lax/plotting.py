@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 from lax import variables
 
 def plot(df, cut_name,
-         verbose=False, save=False):
-    #sns.set(style="white")
-    my_variables = variables.get_variables(verbose)
+         my_variables=False, save=False):
 
-    df_reduced = variables.reduce_df(df, my_variables)
+    if my_variables is None:
+        my_variables = variables.get_variables()
+
+    df_reduced = variables.reduce_df(df,
+                                     my_variables)
     print('%s: %d of %d events not shown out of plotting window' % (cut_name,
                                                                      df['x'].count() - df_reduced['x'].count(),
                                                                      df['x'].count()))
@@ -46,8 +48,11 @@ def plot(df, cut_name,
         ax.set_ylim(my_variables[keys[int(i / len(my_variables))]]['range'])
 
     if save:
-        plt.savefig('plots/%s_%d.pdf' % (name, len(my_variables)), bbox_inches='tight')
-        plt.savefig('plots/%s_%d.png' % (name, len(my_variables)), bbox_inches='tight')
+        for extension in ['pdf', 'png', 'eps']:
+            plt.savefig('plots/%s_%d.%s' % (cut_name,
+                                             len(my_variables),
+                                            extension),
+                        bbox_inches='tight')
     else:
         plt.show()
 

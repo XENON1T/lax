@@ -5,7 +5,12 @@ Extend the Minitree produced DataFrames with derivative values.
 # -*- coding: utf-8 -*-
 
 from lax.plotting import plot
+from lax.variables import check_variable_list
+import pandas as pd
 import numpy as np
+from collections import OrderedDict
+
+pd.set_option('display.expand_frame_repr', False)
 
 
 class Lichen(object):
@@ -52,14 +57,15 @@ class RangeLichen(Lichen):
         return self.allowed_range[0]
 
     def _process(self, df):
-        df.loc[:, self.__class__.__name__] = (df[self.variable] > self.allowed_range[0]) & (df[self.variable] < self.allowed_range[1])
+        df.loc[:, self.__class__.__name__] = (df[self.variable] > self.allowed_range[0]) & (
+        df[self.variable] < self.allowed_range[1])
         return df
 
 
 class ManyLichen(Lichen):
     lichen_list = []
     plots = False
-    verbose = False
+    variables = None
 
     def get_cut_names(self):
         return [lichen.__class__.__name__ for lichen in self.lichen_list]
@@ -75,8 +81,7 @@ class ManyLichen(Lichen):
 
             if self.plots:
                 plot(df[df[self.__class__.__name__]],
-                     cut_name,
-                     self.verbose)
+                     cut_name, self.variables)
 
             df.loc[:, self.__class__.__name__] = df[self.__class__.__name__] & df[cut_name]
 
@@ -84,15 +89,19 @@ class ManyLichen(Lichen):
 
     def debug(self,
               plots=True,
-              verbose=None):
+              variables=None):
+        """Turn on debugging output (e.g. plots)
+
+        :param plots: True or False on whether to make plots
+        :param variables: List variables to plot in the format.  To specify ranges, see example in lax/variables.py.
+        :return: None
+        """
         if isinstance(plots, bool):
             self.plots = plots
         else:
             raise TypeError()
 
-        if isinstance(verbose, bool):
-            self.verbose = verbose
-        elif verbose is None:  # Don't override if not specified
+        if variables is None:  # Don't override if not specified
             pass
         else:
-            raise TypeError()
+            self.variables = OrderedDict(check_variable_list(variables))
