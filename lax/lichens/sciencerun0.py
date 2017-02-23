@@ -142,22 +142,44 @@ class SignalOverPreS2Junk(RangeLichen):
         return df
 
 
-class S2SingleScatter(Lichen):
+class S2SingleScatter(ManyLichen):
     """Check that largest other S2 is smaller than some bound...
-
-    (Tianyu to add description and cut)
+    The single scatter is to cut an event if its largest_other_s2 is too large. 
+    As the largest_other_s2 takes a greater value when they originated from some real scatters
+    in comparison, those from photo-ionization in single scatter cases would be smaller.
+    
+    The simple S2SingleScatter only works up to s2<200000 after this the cut acceptance drops
+    For all s2 range use S2SingleScatterFullRange
     """
     
     version = 0
     allowed_range = (0, np.inf)
     variable = 'temp'
-
+    
+    def __init__(self):
+        self.lichen_list = [self.S2SingleScatter(),
+                            self.S2SingleScatterFullRange()]
+        
     def other_s2_bound(self, s2):
-        return np.clip((2 * s2) ** 0.5, 70, float('inf'))
-
-    def _process(self, df):
-        df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
-        return df
+        return (s2-300.)/100. + 70
+    
+    def other_s2_bound_fullrange(self, s2):
+        y0, y1, y2 = s2*0.00832+72.3, s2*0.03-109, s2*0.00356+10400
+        t0, t1 = [4*100*np.sqrt(1+k**2)*np.sqrt(1+0.00356**2) for k in [0.00832,0.03]]
+        f0 = 0.5*(y0+y2-np.sqrt((y0-y2)**2+t0))
+        f1 = 0.5*(y1+y2-np.sqrt((y1-y2)**2+t1))
+        d0, d1 = 1/(np.exp((s2-23300)*5.91e-4)+1), 1/(np.exp((23300-s2)*5.91e-4)+1)
+        return f0*d0+f1*d1
+    
+    class S2SingleScatter(Lichen):
+        def _process(self, df):
+            df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
+            return df
+        
+    class S2SingleScatterFullRange(Lichen):
+        def _process(self, df):
+            df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound_fullrange(df.s2)
+            return df
 
 
 class S2Width(ManyLichen):
