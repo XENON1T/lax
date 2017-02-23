@@ -90,13 +90,16 @@ class FiducialCylinder1T(ManyLichen):
 
 
 class S2AreaFractionTop(RangeLichen):
-    """Mainly for removing gas events
+    """Cuts events with an unusual fraction of S2 on top array.
 
-    Don't use above XXXX PE due to saturation.
+    Primarily cuts gas events with a particularly large S2 AFT, also targets some
+    strange / junk / other events with a low AFT.
+
+    Author: Adam Brown abrown@physik.uzh.ch
     """
-    version = 0
+    version = 2
 
-    allowed_range = (0.6, 0.72)
+    allowed_range = (0.5, 0.72)
     variable = 's2_area_fraction_top'
 
 
