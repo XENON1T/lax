@@ -161,20 +161,22 @@ class S2SingleScatter(Lichen):
 
 
 class S2Width(ManyLichen):
-    """S2 Width cut modeling the diffusion.
+    """S2 Width cut based on diffusion model.
 
     The S2 width cut compares the S2 width to what we could expect based on its
-    depth in the detector.  The inputs to this are the drift velocity and the
-    diffusion constant.
+    depth in the detector. The inputs to this are the drift velocity and the
+    diffusion constant. The allowed variation in S2 width is greater at low energy
+    (since it is fluctuating statistically).
 
-    This version of the cut is based on quantiles on the Rn220 data.  See the
-    note XXX for the study of the definition.  It should be applicable to data
-    regardless of if it is ER or NR.
+    The cut is roughly based on the observed distribution in AmBe and Rn data (paxv6.2.0)
+    It is not described in any note, but you can see what it is doing in Sander's note here:
+       https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=
+       xenon:xenon1t:analysis:subgroup:backgrounds:meetings:170112_pb214_concentration_spectrum.html
+    
+    It should be applicable to data regardless of if it ER or NR; 
+    above cS2 = 1e5 pe ERs the acceptance will go down due to track length effects.
 
-    Only use below XXX PE to avoid track length effects.
-
-    Author: XXX yy@zz.nl
-
+    Author: Jelle, translation to lax by Chris.
     """
     version = 0
 
