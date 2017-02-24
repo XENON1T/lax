@@ -139,14 +139,14 @@ class DAQVetoCut(ManyLichen):
 
     class BusyCheck(Lichen):
         def _process(self, df):
-            df.loc[:, self.__class__.__name__] =df[(abs(df['nearest_busy'])>
-                                                    df['event_duration']/2)]
+            df.loc[:, self.__class__.__name__] = abs(df['nearest_busy'])>
+                                                    df['event_duration']/2
             return df
 
     class HEVCheck(Lichen):
         def _process(self, df):
-            df.loc[:, self.__class__.__name__ = df[(abs(df['nearest_hev'])>
-                                                    df['event_duration']/2)]
+            df.loc[:, self.__class__.__name__] = abs(df['nearest_hev'])>
+                                                    df['event_duration']/2
             return df
                    
 class SignalOverPreS2Junk(RangeLichen):
