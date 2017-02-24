@@ -2,6 +2,11 @@
 History
 =======
 
+0.4.0 (2017-02-24)
+------------------
+
+* Add DAQ busy and HE veto requirement that requires Proximity tree (#7)
+
 0.3.0 (2017-02-21)
 ------------------
 
