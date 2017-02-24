@@ -30,7 +30,7 @@ class LowEnergyCuts(AllCuts):
 
 class InteractionExists(RangeLichen):
     """Checks that there was a pairing of S1 and S2.
-        
+
     """
     version = 0
     allowed_range = (0, np.inf)
@@ -49,7 +49,7 @@ class S2Threshold(RangeLichen):
 
 class S1LowEnergyRange(RangeLichen):
     """For isolating the low-energy band.
-    
+
     """
     version = 0
     allowed_range = (0, 200)
@@ -80,7 +80,7 @@ class FiducialCylinder1T(ManyLichen):
         variable = 'z'
 
     class R(RangeLichen):
-        variable = 'r'  #  Should add to minitrees
+        variable = 'r'  # Should add to minitrees
 
         def pre(self, df):
             df.loc[:, self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
@@ -105,7 +105,7 @@ class S2AreaFractionTop(RangeLichen):
 
 class InteractionPeaksBiggest(ManyLichen):
     """Ensuring main peak is larger than the other peak
-    
+
     (Should not be a big requirement for pax_v6.5.0)
     """
     version = 0
@@ -127,7 +127,7 @@ class InteractionPeaksBiggest(ManyLichen):
 
 class SignalOverPreS2Junk(RangeLichen):
     """Cut events with lot of peak area before main S2
-    
+
     (Currently not used)
     Compare S1 and S2 area to the area of other peaks before interaction S2
 
@@ -143,39 +143,51 @@ class SignalOverPreS2Junk(RangeLichen):
 
 
 class S2SingleScatter(ManyLichen):
-    """Check that largest other S2 is smaller than some bound...
-    The single scatter is to cut an event if its largest_other_s2 is too large. 
+    """Check that largest other S2 area is smaller than some bound.
+
+    The single scatter is to cut an event if its largest_other_s2 is too large.
     As the largest_other_s2 takes a greater value when they originated from some real scatters
     in comparison, those from photo-ionization in single scatter cases would be smaller.
-    
+
     The simple S2SingleScatter only works up to s2<200000 after this the cut acceptance drops
     For all s2 range use S2SingleScatterFullRange
     """
-    
-    version = 0
+
+    version = 1
     allowed_range = (0, np.inf)
     variable = 'temp'
-    
+
     def __init__(self):
         self.lichen_list = [self.S2SingleScatter(),
                             self.S2SingleScatterFullRange()]
-        
+
     def other_s2_bound(self, s2):
-        return (s2-300.)/100. + 70
-    
+        return (s2 - 300.) / 100. + 70
+
+    def weird_function(self, k):
+        return 4 * 100 * np.sqrt(1 + k ** 2) * np.sqrt(1 + 0.00356 ** 2)
+
     def other_s2_bound_fullrange(self, s2):
-        y0, y1, y2 = s2*0.00832+72.3, s2*0.03-109, s2*0.00356+10400
-        t0, t1 = [4*100*np.sqrt(1+k**2)*np.sqrt(1+0.00356**2) for k in [0.00832,0.03]]
-        f0 = 0.5*(y0+y2-np.sqrt((y0-y2)**2+t0))
-        f1 = 0.5*(y1+y2-np.sqrt((y1-y2)**2+t1))
-        d0, d1 = 1/(np.exp((s2-23300)*5.91e-4)+1), 1/(np.exp((23300-s2)*5.91e-4)+1)
-        return f0*d0+f1*d1
-    
+        y0 = s2 * 0.00832 + 72.3
+        y1 = s2 * 0.03 - 109
+        y2 = s2 * 0.00356 + 10400
+
+        t0 = self.weird_function(0.00832)
+        t1 = self.weird_function(0.03)
+
+        f0 = 0.5 * (y0 + y2 - np.sqrt((y0 - y2) ** 2 + t0))
+        f1 = 0.5 * (y1 + y2 - np.sqrt((y1 - y2) ** 2 + t1))
+
+        d0 = 1 / (np.exp((s2 - 23300) * 5.91e-4) + 1)
+        d1 = 1 / (np.exp((23300 - s2) * 5.91e-4) + 1)
+
+        return f0 * d0 + f1 * d1
+
     class S2SingleScatter(Lichen):
         def _process(self, df):
             df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
             return df
-        
+
     class S2SingleScatterFullRange(Lichen):
         def _process(self, df):
             df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound_fullrange(df.s2)
@@ -230,7 +242,7 @@ class S2Width(ManyLichen):
 
         def _process(self, df):
             df.loc[:, self.__class__.__name__] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2,
-                                                                                       kind='high'))
+                                                                                              kind='high'))
             return df
 
     class S2WidthLow(RangeLichen):
@@ -239,5 +251,5 @@ class S2Width(ManyLichen):
 
         def _process(self, df):
             df.loc[:, self.__class__.__name__] = (S2Width.relative_s2_width_bounds(df.s2,
-                                                                            kind='low') <= df.temp)
+                                                                                   kind='low') <= df.temp)
             return df
