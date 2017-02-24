@@ -126,10 +126,16 @@ class InteractionPeaksBiggest(ManyLichen):
             return df
 
 class DAQVetoCut(ManyLichen):
-    """
+    """Check if DAQ busy or HE veto
+    
     Make sure no DAQ vetos happen during your event. This
     automatically checks both busy and high-energy vetos. 
-    Requires Proximity minitrees!
+    
+    Requires Proximity minitrees.
+    
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:daqandnoise
+    
+    Author: Daniel Coderre <daniel.coderre@lhep.unibe.ch>
     """
     version = 0
 
@@ -139,14 +145,12 @@ class DAQVetoCut(ManyLichen):
 
     class BusyCheck(Lichen):
         def _process(self, df):
-            df.loc[:, self.__class__.__name__] = abs(df['nearest_busy'])>
-                                                    df['event_duration']/2
+            df.loc[:, self.__class__.__name__] = abs(df['nearest_busy'])> df['event_duration']/2
             return df
 
     class HEVCheck(Lichen):
         def _process(self, df):
-            df.loc[:, self.__class__.__name__] = abs(df['nearest_hev'])>
-                                                    df['event_duration']/2
+            df.loc[:, self.__class__.__name__] = abs(df['nearest_hev']) > df['event_duration']/2
             return df
                    
 class SignalOverPreS2Junk(RangeLichen):
