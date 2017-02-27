@@ -101,7 +101,7 @@ class S2AreaFractionTop(Lichen):
 
     def _process_v2(self, df):
         print('2', self.__class__.__name__)
-        allowed_range = (0.5, 0.9)
+        allowed_range = (0.5, 0.72)
         aft_variable = 's2_area_fraction_top'
         df.loc[:, self.__class__.__name__] = ((df[aft_variable] < allowed_range[1]) &
                                                (df[aft_variable] > allowed_range[0]))
