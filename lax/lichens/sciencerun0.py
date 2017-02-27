@@ -151,7 +151,7 @@ class S2SingleScatter(Lichen):
 
     """
 
-    version = 1
+    version = 2
     allowed_range = (0, np.inf)
     variable = 'temp'
 
@@ -167,8 +167,27 @@ class S2SingleScatter(Lichen):
     def _process(self, df):
         df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
         return df
+    
+    
+class S2SingleScatterSimple(Lichen):
+    """Check that largest other S2 area is smaller than some bound.
 
+    It's the low energy limit of the S2SingleScatter Cut 
+    applies to S2 < 20000
 
+    """
+    version = 0
+    allowed_range = (0, np.inf)
+    variable = 'temp'
+
+    def other_s2_bound(self, s2):
+        return s2 * 0.00832 + 72.3 
+    
+    def _process(self, df):
+        df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
+        return df
+    
+    
 class S2Width(ManyLichen):
     """S2 Width cut modeling the diffusion.
 
