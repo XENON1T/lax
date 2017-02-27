@@ -14,6 +14,7 @@ requirements = [
     'numpy',
     'seaborn>=0.7.1',
     'matplotlib',
+    'scipy'
 ]
 
 test_requirements = [
