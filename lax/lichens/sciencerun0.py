@@ -90,7 +90,7 @@ class FiducialCylinder1T(ManyLichen):
         allowed_range = (0, 39.85)
 
 
-class S2AreaFractionTop(RangeLichen):
+class S2AreaFractionTop(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
 
     Primarily cuts gas events with a particularly large S2 AFT, also targets some
@@ -98,10 +98,44 @@ class S2AreaFractionTop(RangeLichen):
 
     Author: Adam Brown abrown@physik.uzh.ch
     """
-    version = 2
 
-    allowed_range = (0.5, 0.72)
-    variable = 's2_area_fraction_top'
+    def _process_v2(self, df):
+        print('2', self.__class__.__name__)
+        allowed_range = (0.5, 0.9)
+        aft_variable = 's2_area_fraction_top'
+        df.loc[:, self.__class__.__name__] = ((df[aft_variable] < allowed_range[1]) &
+                                               (df[aft_variable] > allowed_range[0]))
+        return df
+
+    def _process_v3(self, df):
+        print('3')
+        def upper_limit_s2_aft(s2):
+            return 0.6177399420527526 + 3.713166211522462e-08 * s2 + 0.5460484265254656 / np.log(s2)
+
+        def lower_limit_s2_aft(s2):
+            return 0.6648160611018054 - 2.590402853814859e-07 * s2 - 0.8531029789184852 / np.log(s2)
+
+        aft_variable = 's2_area_fraction_top'
+        s2_variable = 's2'
+        df.loc[:, self.__class__.__name__] = ((df[aft_variable]
+                                               < upper_limit_s2_aft(df[s2_variable])) &
+                                              (df[aft_variable]
+                                               > lower_limit_s2_aft(df[s2_variable])))
+
+        return df
+
+    def __init__(self, version=2):
+        self.version = version
+        if not version in [2, 3]:
+            raise ValueError('Only versions 2 and 3 are implemented')
+
+    def _process(self, df):
+        if self.version == 2:
+            return self._process_v2(df)
+        elif self.version == 3:
+            return self._process_v3(df)
+        else:
+            raise ValueError('Only versions 2 and 3 are implemented')
 
 
 class InteractionPeaksBiggest(ManyLichen):
