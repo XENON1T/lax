@@ -41,7 +41,7 @@ class InteractionExists(RangeLichen):
 class S2Threshold(RangeLichen):
     """The S2 energy at which the trigger is perfectly efficient.
 
-    See: xenon:xenon1t:aalbers:preliminary_trigger_settings
+    See: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:daqtriggerpaxefficiency
     """
     version = 0
     allowed_range = (150, np.inf)
