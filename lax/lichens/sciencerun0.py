@@ -206,7 +206,7 @@ class S2Width(ManyLichen):
 
     Author: Jelle, translation to lax by Chris.
     """
-    version = 0
+    version = 1
 
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
@@ -216,8 +216,8 @@ class S2Width(ManyLichen):
         diffusion_constant = PAX_CONFIG['WaveformSimulator']['diffusion_constant_liquid']
         v_drift = PAX_CONFIG['DEFAULT']['drift_velocity_liquid']
 
-        w0 = 304 * units.ns
-        return np.sqrt(w0 ** 2 - 3.6395 * diffusion_constant * z / v_drift ** 3)
+        w0 = 350 * units.ns
+        return np.sqrt(w0 ** 2 - 3.9656 * diffusion_constant * z / v_drift ** 3)
 
     def subpre(self, df):
         # relative_s2_width
