@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from scipy.stats import binom_test
 from pax import units, configuration
+from pax.InterpolatingMap import InterpolatingMap
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen
@@ -249,3 +251,35 @@ class S2Width(ManyLichen):
             df.loc[:, self.__class__.__name__] = (S2Width.relative_s2_width_bounds(df.s2,
                                                                             kind='low') <= df.temp)
             return df
+
+class S1AreaFractionTop(RangeLichen):
+    '''S1 area fraction top cut
+    
+    Uses scipy.stats.binom_test to compute a p-value based on the
+    observed number of s1 photons in the top array, given the expected
+    probability that a photon at the event's (x,y,z) makes it to the top array.
+    
+    Uses a 3D map generated with Kr83m 32 keV line
+    
+    note: xenon:xenon1t:darryl:xe1t_s1_aft_map
+    
+    Author: Darryl Masson, dmasson@purdue.edu
+    '''
+    
+    version = 0
+    variable = 'pvalue_s1_area_fraction_top'
+    allowed_range = (1e-4, 1 + 1e-7) # must accept p-value = 1.0 with a < comparison
+    
+    def __init__(self):
+        aftmap_filename = 's1_aft_xyz_24Feb2017.json'
+        self.aft_map = InterpolatingMap(aftmap_filename)
+
+    def pre(self, df):
+        df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top']*row['s1']),
+                                                                   np.round(row['s1']),
+                                                                   self.aft_map.get_value(row['x'],
+                                                                                          row['y'],
+                                                                                          row['z'])),
+                                            axis=1)
+        return df
+
