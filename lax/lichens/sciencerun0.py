@@ -56,7 +56,21 @@ class S1LowEnergyRange(RangeLichen):
     allowed_range = (0, 200)
     variable = 'cs1'
 
+class S1MaxPMT(Lichen):
+    """ S1Max PMT Cut.
+    
+    Cuts events which are mostly seen by one PMT.
+    These events could be for example afterpulses or light emission. 
+    This is the first version of a "loose" cut based on pax 6.4.2 AmBe and Rn220 
+    Author: Julien Wulf jwulf@physik.uzh.ch
+    """
+    def pre(self, df):
+        df.loc[:,'temp'] = 0.050 * df['s1'] + 6
 
+    def _process(self, df):
+        df.loc[:, self.__class__.__name__] = df['largest_hit_channel'] > df.temp
+        return df
+    
 class FiducialCylinder1T(ManyLichen):
     """Fiducial volume cut.
 
