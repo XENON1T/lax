@@ -92,15 +92,23 @@ class FiducialCylinder1T(ManyLichen):
 
 class S2AreaFractionTop(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
-
+    
     Primarily cuts gas events with a particularly large S2 AFT, also targets some
     strange / junk / other events with a low AFT.
-
+    
+    Version 2 is a simple range cut which was chosen by eye.
+    Version 3 is a more complex and much tighter cut from fitting the distribution
+    in slices in S2 space and choosing the 0.5% and 99.5% quantile for each fit to
+    give a theoretical acceptance of 99%.
+    
+    This cut has been checked on S2 ranges between 0 and 50 000 pe.
+    
+    Described in the note at: xenon:xenon1t:analysis:firstresults:s2_aft_cut_summary
+    
     Author: Adam Brown abrown@physik.uzh.ch
     """
 
     def _process_v2(self, df):
-        print('2', self.__class__.__name__)
         allowed_range = (0.5, 0.72)
         aft_variable = 's2_area_fraction_top'
         df.loc[:, self.__class__.__name__] = ((df[aft_variable] < allowed_range[1]) &
@@ -108,7 +116,6 @@ class S2AreaFractionTop(Lichen):
         return df
 
     def _process_v3(self, df):
-        print('3')
         def upper_limit_s2_aft(s2):
             return 0.6177399420527526 + 3.713166211522462e-08 * s2 + 0.5460484265254656 / np.log(s2)
 
