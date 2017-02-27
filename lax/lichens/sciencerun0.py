@@ -205,6 +205,13 @@ class S2Width(ManyLichen):
     above cS2 = 1e5 pe ERs the acceptance will go down due to track length effects.
 
     Author: Jelle, translation to lax by Chris.
+    -------------------------------------------
+    Tune the diffusion model parameters according to note:
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
+    1) w0: 304 -> 350
+    2) 3.6395 -> 3.9656
+    1) and 2) changing according to Fig7 and Fig8 in the note.
+    Auther: Yuehuan, 2017-02-27
     """
     version = 1
 
