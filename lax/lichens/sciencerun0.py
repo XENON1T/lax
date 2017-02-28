@@ -26,7 +26,13 @@ class LowEnergyCuts(AllCuts):
     def __init__(self):
         AllCuts.__init__(self)
         self.lichen_list[1] = S1LowEnergyRange()
-        self.lichen_list.append(S2Width())
+        
+        
+        self.lichen_list += [
+            S1PatternLikelihood(),
+            S2Width()
+        ]
+        
 
 
 class InteractionExists(RangeLichen):
@@ -185,6 +191,27 @@ class S2SingleScatter(Lichen):
 
     def _process(self, df):
         df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
+        return df
+
+    
+class S1PatternLikelihood(Lichen):
+    """Reject accidendal coicident events from lone s1 and lone s2.
+
+       Details of the likelihood can be seen in the following note. Here, 97 quantile acceptance line estimated with Rn220 data (pax_v6.4.2) is used.
+       https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
+     
+       Requires Extended minitrees.
+
+       Author: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+
+    def pre(self, df):
+        df.loc[:,'temp'] = -2.39535 + 25.5857*pow(df['s1'], 0.5) + 1.30652*df['s1'] - 0.0638579*pow(df['s1'], 1.5)
+
+    def _process(self, df):
+        df.loc[:, self.__class__.__name__] = df['s1_pattern_fit'] < df.temp
         return df
 
 
