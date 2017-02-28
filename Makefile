@@ -87,7 +87,7 @@ dist: clean ## builds source and wheel package
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
-major: clean docs
+major: clean #docs
 	emacs HISTORY.rst
 	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion major
@@ -100,7 +100,7 @@ major: clean docs
 	git checkout master
 
 
-minor: clean docs
+minor: clean #docs
 	emacs HISTORY.rst
 	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion minor
@@ -112,7 +112,7 @@ minor: clean docs
 	git push origin stable
 	git checkout master
 
-patch: clean docs
+patch: clean #docs
 	emacs HISTORY.rst
 	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion patch --allow-dirty

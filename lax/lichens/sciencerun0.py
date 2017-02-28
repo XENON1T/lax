@@ -29,6 +29,7 @@ class LowEnergy(AllEnergy):
         # Replaces Interaction exists
         self.lichen_list[1] = S1LowEnergyRange()
 
+        # Use a simpler single scatter cut
         self.lichen_list[5] = S2SingleScatterSimple()
 
         self.lichen_list += [
