@@ -16,7 +16,7 @@ class AllCuts(ManyLichen):
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
-            S2AreaFractionTop(),
+            S2AreaFractionTopCut(),
             S2SingleScatter(),
             DAQVetoCut(),
         ]
