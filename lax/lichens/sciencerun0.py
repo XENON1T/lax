@@ -218,19 +218,20 @@ class DAQVetoCut(ManyLichen):
             return df
                    
 class SignalOverPreS2Junk(RangeLichen):
-    """Cut events with lot of peak area before main S2
+    """Cut events with lot of peak area before main S2 (currently working for small s2s)
 
-    (Currently not used)
     Compare S1 and S2 area to the area of other peaks before interaction S2
 
-    This cut value is made up.... or at least found in a random notebook.
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_signal_noise
+
+    Author: Julien Wulf jwulf@physik.uzh.ch
     """
     version = 0
-    allowed_range = (0.5, 10)
+    allowed_range = (0 , 1)
     variable = 'signal_over_pre_s2_junk'
 
     def pre(self, df):
-        df.loc[:, self.variable] = (df.s2 + df.s1) / (df.area_before_main_s2)
+        df.loc[:, self.variable] = (df.area_before_main_s2 - df.s1)/(df.s2 + df.s1)
         return df
 
 
@@ -307,24 +308,23 @@ class S1PatternLikelihood(Lichen):
 
 
 class S2Width(ManyLichen):
-    """S2 Width cut based on diffusion model.
+    """S2 Width cut based on diffusion model
 
-    The S2 width cut compares the S2 width to what we could expect based on its
-    depth in the detector. The inputs to this are the drift velocity and the
-    diffusion constant. The allowed variation in S2 width is greater at low energy
-    (since it is fluctuating statistically).
-
-    The cut is roughly based on the observed distribution in AmBe and Rn data (paxv6.2.0)
-    It is not described in any note, but you can see what it is doing in Sander's note here:
-       https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=
-       xenon:xenon1t:analysis:subgroup:backgrounds:meetings:170112_pb214_concentration_spectrum.html
+    The S2 width cut compares the S2 width to what we could expect based on its depth in the detector. The inputs to
+    this are the drift velocity and the diffusion constant. The allowed variation in S2 width is greater at low 
+    energy (since it is fluctuating statistically) Ref: (arXiv:1102.2865)
     
     It should be applicable to data regardless of if it ER or NR; 
     above cS2 = 1e5 pe ERs the acceptance will go down due to track length effects.
 
     Author: Jelle, translation to lax by Chris.
+    
+    Tune the diffusion model parameters based on pax v6.4.2 AmBe data according to note:
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
+    Auther: Yuehuan, 2017-02-27
+    
     """
-    version = 0
+    version = 1
 
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
@@ -334,8 +334,8 @@ class S2Width(ManyLichen):
         diffusion_constant = PAX_CONFIG['WaveformSimulator']['diffusion_constant_liquid']
         v_drift = PAX_CONFIG['DEFAULT']['drift_velocity_liquid']
 
-        w0 = 304 * units.ns
-        return np.sqrt(w0 ** 2 - 3.6395 * diffusion_constant * z / v_drift ** 3)
+        w0 = 348.6 * units.ns
+        return np.sqrt(w0 ** 2 - 4.0325 * diffusion_constant * z / v_drift ** 3)
 
     def subpre(self, df):
         # relative_s2_width
