@@ -191,7 +191,7 @@ class S2SingleScatter(Lichen):
 class S1PatternLikelihood(Lichen):
     """Reject accidendal coicident events from lone s1 and lone s2.
 
-       Details of the likelihood can be seen in the following note. Here, 97 quantile acceptance line estimated with Rn220 data (pax_v6.4.2) is used. 
+       Details of the likelihood can be seen in the following note. Here, 97 quantile acceptance line estimated with Rn220 data (pax_v6.4.2) is used.
        https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
      
        Requires Extended minitrees.
