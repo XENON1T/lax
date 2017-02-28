@@ -261,7 +261,7 @@ class S1AreaFractionTop(RangeLichen):
     
     Uses a 3D map generated with Kr83m 32 keV line
     
-    note: xenon:xenon1t:darryl:xe1t_s1_aft_map
+    note: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
     
     Author: Darryl Masson, dmasson@purdue.edu
     '''
