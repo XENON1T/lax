@@ -185,8 +185,8 @@ class S1PatternLikelihood(Lichen):
     version = 0
 
     def pre(self, df):
-        df.loc[:, 'temp'] = -2.39535 + 25.5857 * pow(df['s1'], 0.5) + 1.30652 * df['s1'] - 0.0638579 * np.power(df['s1'],
-        return df                                                                                                         1.5)
+        df.loc[:, 'temp'] = -2.39535 + 25.5857 * pow(df['s1'], 0.5) + 1.30652 * df['s1'] - 0.0638579 * np.power(df['s1'], 1.5)
+        return df
 
     def _process(self, df):
         df.loc[:, self.name()] = df['s1_pattern_fit'] < df.temp
