@@ -218,19 +218,20 @@ class DAQVetoCut(ManyLichen):
             return df
                    
 class SignalOverPreS2Junk(RangeLichen):
-    """Cut events with lot of peak area before main S2
-    
-    (Currently not used)
+    """Cut events with lot of peak area before main S2 (currently working for small s2s)
+
     Compare S1 and S2 area to the area of other peaks before interaction S2
 
-    This cut value is made up.... or at least found in a random notebook.
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_signal_noise
+
+    Author: Julien Wulf jwulf@physik.uzh.ch
     """
     version = 0
-    allowed_range = (0.5, 10)
+    allowed_range = (0 , 1)
     variable = 'signal_over_pre_s2_junk'
 
     def pre(self, df):
-        df.loc[:, self.variable] = (df.s2 + df.s1) / (df.area_before_main_s2)
+        df.loc[:, self.variable] = (df.area_before_main_s2 - df.s1)/(df.s2 + df.s1)
         return df
 
 
