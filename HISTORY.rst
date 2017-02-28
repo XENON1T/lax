@@ -2,6 +2,12 @@
 History
 =======
 
+0.5.2 (2017-02-28)
+------------------
+
+* S1 Pattern and max PMT had error in pre() not returning df
+* ManyLichen print list of cuts works
+
 0.5.1 (2017-02-28)
 ------------------
 
