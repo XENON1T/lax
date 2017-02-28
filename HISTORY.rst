@@ -14,6 +14,8 @@ History
 * Tune S2 width (#18)
 * S1 Single Scatter (#22)
 
+List of current cuts:
+
 CutAllEnergy
 	CutFiducialCylinder1T version 2
 	CutInteractionExists version 0
