@@ -17,6 +17,9 @@ Lichens for Analyzing XENON1T
      :target: https://pyup.io/repos/github/tunnell/lax/
      :alt: Updates
 
+.. image:: https://api.codacy.com/project/badge/Grade/724ba633bd6b4079b977e0aa623b327d
+     :target: https://www.codacy.com/app/tunnell/lax?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=XENON1T/lax&amp;utm_campaign=Badge_Grade
+     :alt: Style
 
 Package for standardizing event selections on hax minitrees.
 
