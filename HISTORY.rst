@@ -5,9 +5,37 @@ History
 0.5.0 (2017-02-28)
 ------------------
 
+* Doc improvements
 * S1 Pattern likelihood in LowEnergyCuts (#21)
 * Max PMT in S1 (v0) LowEnergyCuts (#15)
 * S2AreaFractionTopCut now can have v3 (v2 still default) with tighter AFT selection (#14)
+* SignalOverPreS2Junk v0, not used (#20)
+* S2SingleScatter in all cuts, S2SingleScatterSimple in LowEnergy (#9)
+* Tune S2 width (#18)
+* S1 Single Scatter (#22)
+
+CutAllEnergy
+	CutFiducialCylinder1T version 2
+	CutInteractionExists version 0
+	CutS2Threshold version 0
+	CutInteractionPeaksBiggest version 0
+	CutS2AreaFractionTop version 2
+	CutS2SingleScatter version 2
+	CutDAQVeto version 0
+	CutS1SingleScatter version 0
+CutLowEnergy
+	CutFiducialCylinder1T version 2
+	CutS1LowEnergyRange version 0
+	CutS2Threshold version 0
+	CutInteractionPeaksBiggest version 0
+	CutS2AreaFractionTop version 2
+	CutS2SingleScatterSimple version 0
+	CutDAQVeto version 0
+	CutS1SingleScatter version 0
+	CutS1PatternLikelihood version 0
+	CutS2Width version 1
+	CutS1MaxPMT version 0
+
 
 0.4.0 (2017-02-24)
 ------------------

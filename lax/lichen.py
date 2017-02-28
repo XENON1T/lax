@@ -37,6 +37,9 @@ class Lichen(object):
             return df.drop('temp', 1)
         return df
 
+    def name(self):
+        return 'Cut%s' % self.__class__.__name__
+
 
 class RangeLichen(Lichen):
     allowed_range = None  # tuple of min then max
@@ -57,7 +60,7 @@ class RangeLichen(Lichen):
         return self.allowed_range[0]
 
     def _process(self, df):
-        df.loc[:, self.__class__.__name__] = (df[self.variable] > self.allowed_range[0]) & (
+        df.loc[:, self.name()] = (df[self.variable] > self.allowed_range[0]) & (
         df[self.variable] < self.allowed_range[1])
         return df
 
@@ -68,22 +71,22 @@ class ManyLichen(Lichen):
     variables = None
 
     def get_cut_names(self):
-        return [lichen.__class__.__name__ for lichen in self.lichen_list]
+        return [self.name() for lichen in self.lichen_list]
 
     def process(self, df):
-        df.loc[:, (self.__class__.__name__)] = True
+        df.loc[:, (self.name())] = True
 
         for lichen in self.lichen_list:
             # Heavy lifting here
             df = lichen.process(df)
 
-            cut_name = lichen.__class__.__name__
+            cut_name = lichen.name()
 
             if self.plots:
-                plot(df[df[self.__class__.__name__]],
+                plot(df[df[self.name()]],
                      cut_name, self.variables)
 
-            df.loc[:, self.__class__.__name__] = df[self.__class__.__name__] & df[cut_name]
+            df.loc[:, self.name()] = df[self.name()] & df[cut_name]
 
         return df
 
