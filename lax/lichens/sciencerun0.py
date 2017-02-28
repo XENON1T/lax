@@ -61,14 +61,14 @@ class S1MaxPMT(Lichen):
     
     Cuts events which are mostly seen by one PMT.
     These events could be for example afterpulses or light emission. 
-    This is the first version of a "loose" cut based on pax 6.4.2 AmBe and Rn220 
+    This is the 99% Quantil fit using pax 6.4.2 on Rn220 
     
     https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_s1_pmtmax
     
     Author: Julien Wulf jwulf@physik.uzh.ch
     """
     def pre(self, df):
-        df.loc[:,'temp'] = 0.040 * df['s1'] + 5.48
+        df.loc[:,'temp'] = 0.052 * df['s1'] + 4.15
 
     def _process(self, df):
         df.loc[:, self.__class__.__name__] = df['largest_hit_channel'] < df.temp
