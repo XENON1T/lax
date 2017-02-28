@@ -57,11 +57,14 @@ class S1LowEnergyRange(RangeLichen):
     variable = 'cs1'
 
 class S1MaxPMT(Lichen):
-    """ S1Max PMT Cut.
+    """ Cut events which have a high fraction of the area in a single PMT
     
     Cuts events which are mostly seen by one PMT.
     These events could be for example afterpulses or light emission. 
     This is the first version of a "loose" cut based on pax 6.4.2 AmBe and Rn220 
+    
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_s1_pmtmax
+    
     Author: Julien Wulf jwulf@physik.uzh.ch
     """
     def pre(self, df):
