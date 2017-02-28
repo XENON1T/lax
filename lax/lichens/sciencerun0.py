@@ -19,6 +19,7 @@ class AllCuts(ManyLichen):
             S2AreaFractionTopCut(),
             S2SingleScatter(),
             DAQVetoCut(),
+            S1SingleScatter(),
         ]
 
 
@@ -330,7 +331,8 @@ class S2Width(ManyLichen):
         self.lichen_list = [self.S2WidthHigh(),
                             self.S2WidthLow()]
 
-    def s2_width_model(self, z):
+    @staticmethod
+    def s2_width_model(z):
         diffusion_constant = PAX_CONFIG['WaveformSimulator']['diffusion_constant_liquid']
         v_drift = PAX_CONFIG['DEFAULT']['drift_velocity_liquid']
 
@@ -339,9 +341,10 @@ class S2Width(ManyLichen):
 
     def subpre(self, df):
         # relative_s2_width
-        df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(self, df['z'])
+        df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(df['z'])
         return df
 
+    @staticmethod
     def relative_s2_width_bounds(s2, kind='high'):
         x = 0.3 * np.log10(np.clip(s2, 150, 7000))
         if kind == 'high':
@@ -367,3 +370,42 @@ class S2Width(ManyLichen):
             df.loc[:, self.__class__.__name__] = (S2Width.relative_s2_width_bounds(df.s2,
                                                                                    kind='low') <= df.temp)
             return df
+
+
+
+class S1SingleScatter(Lichen):
+    """
+    Requires only one valid interaction between the largest S2, and any S1 recorded before it.
+
+    The S1 cut checks that any possible secondary S1s recorded in a waveform, could not have also
+    produced a valid interaction with the primary S2. To check whether an interaction between the 
+    second largest S1 and the largest S2 is valid, we use the S2Width cut. If the event would pass
+    the S2Width cut, a valid second interaction exists, and we may have mis-identified which S1 to
+    pair with the primary S2. Therefore we cut this event. If it fails the S2Width cut the event is
+    not removed.
+
+    Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
+	https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
+
+    It should be applicable to data regardless of if it is ER or NR.
+
+    Author: Jacques (jpienaa@purdue.edu).
+    """
+
+    version=0
+
+    def _process(self, df):
+
+        s2width=S2Width
+		
+        alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s2_interaction_z'])
+        alt_interaction_passes = alt_rel_width < s2width.relative_s2_width_bounds(df.s2.values, kind='high')
+        alt_interaction_passes &= alt_rel_width > s2width.relative_s2_width_bounds(df.s2.values, kind='low')
+
+        df.loc[:, (self.__class__.__name__)] = True ^ alt_interaction_passes
+        return df
+
+
+
+
+
