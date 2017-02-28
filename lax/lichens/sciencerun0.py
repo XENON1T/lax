@@ -240,7 +240,10 @@ class S2SingleScatter(Lichen):
     The single scatter is to cut an event if its largest_other_s2 is too large.
     As the largest_other_s2 takes a greater value when they originated from some real scatters
     in comparison, those from photo-ionization in single scatter cases would be smaller.
-
+    
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:cut:s2single
+    
+    Author: Tianyu Zhu <tz2263@columbia.edu>
     """
 
     version = 2
@@ -267,6 +270,9 @@ class S2SingleScatterSimple(Lichen):
     It's the low energy limit of the S2SingleScatter Cut 
     applies to S2 < 20000
 
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:cut:s2single
+    
+    Author: Tianyu Zhu <tz2263@columbia.edu>
     """
     version = 0
     allowed_range = (0, np.inf)
