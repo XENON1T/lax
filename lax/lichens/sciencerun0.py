@@ -25,15 +25,14 @@ class AllCuts(ManyLichen):
 class LowEnergyCuts(AllCuts):
     def __init__(self):
         AllCuts.__init__(self)
-        self.lichen_list[1] = S1LowEnergyRange()
-        
+        self.lichen_list[1] = S1LowEnergyRange()        
         
         self.lichen_list += [
             S1PatternLikelihood(),
-            S2Width()
+            S2Width(),
+            S1MaxPMT(),
         ]
-        
-
+    
 
 class InteractionExists(RangeLichen):
     """Checks that there was a pairing of S1 and S2.
@@ -62,7 +61,24 @@ class S1LowEnergyRange(RangeLichen):
     allowed_range = (0, 200)
     variable = 'cs1'
 
+class S1MaxPMT(Lichen):
+    """Cut events which have a high fraction of the area in a single PMT
+    
+    Cuts events which are mostly seen by one PMT.
+    These events could be for example afterpulses or light emission. 
+    This is the 99% quantile fit using pax 6.4.2 on Rn220 
+    
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_s1_pmtmax
+    
+    Author: Julien Wulf <jwulf@physik.uzh.ch>
+    """
+    def pre(self, df):
+        df.loc[:,'temp'] = 0.052 * df['s1'] + 4.15
 
+    def _process(self, df):
+        df.loc[:, self.__class__.__name__] = df['largest_hit_channel'] < df.temp
+        return df
+    
 class FiducialCylinder1T(ManyLichen):
     """Fiducial volume cut.
 
