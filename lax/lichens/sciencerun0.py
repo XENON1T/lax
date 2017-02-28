@@ -90,7 +90,7 @@ class FiducialCylinder1T(ManyLichen):
         allowed_range = (0, 39.85)
 
 
-class S2AreaFractionTop(Lichen):
+class S2AreaFractionTopCut(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
     
     Primarily cuts gas events with a particularly large S2 AFT, also targets some
