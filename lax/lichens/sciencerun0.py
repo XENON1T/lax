@@ -36,7 +36,7 @@ class LowEnergyCuts(AllCuts):
 
 class InteractionExists(RangeLichen):
     """Checks that there was a pairing of S1 and S2.
-        
+
     """
     version = 0
     allowed_range = (0, np.inf)
@@ -55,7 +55,7 @@ class S2Threshold(RangeLichen):
 
 class S1LowEnergyRange(RangeLichen):
     """For isolating the low-energy band.
-    
+
     """
     version = 0
     allowed_range = (0, 200)
@@ -103,7 +103,7 @@ class FiducialCylinder1T(ManyLichen):
         variable = 'z'
 
     class R(RangeLichen):
-        variable = 'r'  #  Should add to minitrees
+        variable = 'r'  # Should add to minitrees
 
         def pre(self, df):
             df.loc[:, self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
@@ -170,7 +170,7 @@ class S2AreaFractionTopCut(Lichen):
 
 class InteractionPeaksBiggest(ManyLichen):
     """Ensuring main peak is larger than the other peak
-    
+
     (Should not be a big requirement for pax_v6.5.0)
     """
     version = 0
@@ -236,22 +236,55 @@ class SignalOverPreS2Junk(RangeLichen):
 
 
 class S2SingleScatter(Lichen):
-    """Check that largest other S2 is smaller than some bound...
+    """Check that largest other S2 area is smaller than some bound.
 
-    (Tianyu to add description and cut)
-    """
+    The single scatter is to cut an event if its largest_other_s2 is too large.
+    As the largest_other_s2 takes a greater value when they originated from some real scatters
+    in comparison, those from photo-ionization in single scatter cases would be smaller.
     
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:cut:s2single
+    
+    Author: Tianyu Zhu <tz2263@columbia.edu>
+    """
+
+    version = 2
+    allowed_range = (0, np.inf)
+    variable = 'temp'
+
+    def other_s2_bound(self, s2):
+        y0 = s2 * 0.00832 + 72.3
+        y1 = s2 * 0.03 - 109
+
+        d0 = 1 / (np.exp((s2 - 23300) * 5.91e-4) + 1)
+        d1 = 1 / (np.exp((23300 - s2) * 5.91e-4) + 1)
+
+        return y0 * d0 + y1 * d1
+    
+    def _process(self, df):
+        df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
+        return df
+    
+    
+class S2SingleScatterSimple(Lichen):
+    """Check that largest other S2 area is smaller than some bound.
+
+    It's the low energy limit of the S2SingleScatter Cut 
+    applies to S2 < 20000
+
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:cut:s2single
+    
+    Author: Tianyu Zhu <tz2263@columbia.edu>
+    """
     version = 0
     allowed_range = (0, np.inf)
     variable = 'temp'
 
     def other_s2_bound(self, s2):
-        return np.clip((2 * s2) ** 0.5, 70, float('inf'))
-
+        return s2 * 0.00832 + 72.3 
+    
     def _process(self, df):
         df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
         return df
-
     
 class S1PatternLikelihood(Lichen):
     """Reject accidendal coicident events from lone s1 and lone s2.
@@ -323,7 +356,7 @@ class S2Width(ManyLichen):
 
         def _process(self, df):
             df.loc[:, self.__class__.__name__] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2,
-                                                                                       kind='high'))
+                                                                                              kind='high'))
             return df
 
     class S2WidthLow(RangeLichen):
@@ -332,5 +365,5 @@ class S2Width(ManyLichen):
 
         def _process(self, df):
             df.loc[:, self.__class__.__name__] = (S2Width.relative_s2_width_bounds(df.s2,
-                                                                            kind='low') <= df.temp)
+                                                                                   kind='low') <= df.temp)
             return df
