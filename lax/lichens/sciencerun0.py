@@ -57,15 +57,15 @@ class S1LowEnergyRange(RangeLichen):
     variable = 'cs1'
 
 class S1MaxPMT(Lichen):
-    """ Cut events which have a high fraction of the area in a single PMT
+    """Cut events which have a high fraction of the area in a single PMT
     
     Cuts events which are mostly seen by one PMT.
     These events could be for example afterpulses or light emission. 
-    This is the 99% Quantil fit using pax 6.4.2 on Rn220 
+    This is the 99% quantile fit using pax 6.4.2 on Rn220 
     
     https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_s1_pmtmax
     
-    Author: Julien Wulf jwulf@physik.uzh.ch
+    Author: Julien Wulf <jwulf@physik.uzh.ch>
     """
     def pre(self, df):
         df.loc[:,'temp'] = 0.052 * df['s1'] + 4.15
