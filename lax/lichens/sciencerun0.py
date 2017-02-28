@@ -27,6 +27,7 @@ class LowEnergyCuts(AllCuts):
         AllCuts.__init__(self)
         self.lichen_list[1] = S1LowEnergyRange()
         self.lichen_list.append(S2Width())
+        self.lichen_list.append(S1MaxPMT())
 
 
 class InteractionExists(RangeLichen):
