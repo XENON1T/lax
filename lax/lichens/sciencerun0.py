@@ -26,7 +26,13 @@ class LowEnergyCuts(AllCuts):
     def __init__(self):
         AllCuts.__init__(self)
         self.lichen_list[1] = S1LowEnergyRange()
-        self.lichen_list.append(S2Width())
+        
+        
+        self.lichen_list += [
+            S1PatternLikelihood(),
+            S2Width()
+        ]
+        
 
 
 class InteractionExists(RangeLichen):
