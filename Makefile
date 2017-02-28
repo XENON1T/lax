@@ -93,6 +93,8 @@ major: clean docs
 	bumpversion major
 	git push
 	git push --tags
+	git push origin stable --tags
+	git push origin stable
 
 
 minor: clean docs
@@ -101,6 +103,8 @@ minor: clean docs
 	bumpversion minor
 	git push
 	git push --tags
+	git push origin stable --tags
+	git push origin stable
 
 patch: clean docs
 	emacs HISTORY.rst
@@ -108,3 +112,5 @@ patch: clean docs
 	bumpversion patch --allow-dirty
 	git push
 	git push --tags
+	git push origin stable --tags
+	git push origin stable
