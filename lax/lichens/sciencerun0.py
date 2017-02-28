@@ -16,17 +16,23 @@ class AllCuts(ManyLichen):
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
-            S2AreaFractionTop(),
+            S2AreaFractionTopCut(),
             S2SingleScatter(),
+            DAQVetoCut(),
         ]
 
 
 class LowEnergyCuts(AllCuts):
     def __init__(self):
         AllCuts.__init__(self)
-        self.lichen_list[1] = S1LowEnergyRange()
-        self.lichen_list.append(S2Width())
-
+        self.lichen_list[1] = S1LowEnergyRange()        
+        
+        self.lichen_list += [
+            S1PatternLikelihood(),
+            S2Width(),
+            S1MaxPMT(),
+        ]
+    
 
 class InteractionExists(RangeLichen):
     """Checks that there was a pairing of S1 and S2.
@@ -40,7 +46,7 @@ class InteractionExists(RangeLichen):
 class S2Threshold(RangeLichen):
     """The S2 energy at which the trigger is perfectly efficient.
 
-    See: xenon:xenon1t:aalbers:preliminary_trigger_settings
+    See: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:daqtriggerpaxefficiency
     """
     version = 0
     allowed_range = (150, np.inf)
@@ -55,7 +61,24 @@ class S1LowEnergyRange(RangeLichen):
     allowed_range = (0, 200)
     variable = 'cs1'
 
+class S1MaxPMT(Lichen):
+    """Cut events which have a high fraction of the area in a single PMT
+    
+    Cuts events which are mostly seen by one PMT.
+    These events could be for example afterpulses or light emission. 
+    This is the 99% quantile fit using pax 6.4.2 on Rn220 
+    
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_s1_pmtmax
+    
+    Author: Julien Wulf <jwulf@physik.uzh.ch>
+    """
+    def pre(self, df):
+        df.loc[:,'temp'] = 0.052 * df['s1'] + 4.15
 
+    def _process(self, df):
+        df.loc[:, self.__class__.__name__] = df['largest_hit_channel'] < df.temp
+        return df
+    
 class FiducialCylinder1T(ManyLichen):
     """Fiducial volume cut.
 
@@ -89,18 +112,60 @@ class FiducialCylinder1T(ManyLichen):
         allowed_range = (0, 39.85)
 
 
-class S2AreaFractionTop(RangeLichen):
+class S2AreaFractionTopCut(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
-
+    
     Primarily cuts gas events with a particularly large S2 AFT, also targets some
     strange / junk / other events with a low AFT.
-
+    
+    This cut has been checked on S2 ranges between 0 and 50 000 pe.
+    
+    Described in the note at: xenon:xenon1t:analysis:firstresults:s2_aft_cut_summary
+    
     Author: Adam Brown abrown@physik.uzh.ch
     """
-    version = 2
 
-    allowed_range = (0.5, 0.72)
-    variable = 's2_area_fraction_top'
+    def _process_v2(self, df):
+        """This is a simple range cut which was chosen by eye.
+        """
+        allowed_range = (0.5, 0.72)
+        aft_variable = 's2_area_fraction_top'
+        df.loc[:, self.__class__.__name__] = ((df[aft_variable] < allowed_range[1]) &
+                                               (df[aft_variable] > allowed_range[0]))
+        return df
+
+    def _process_v3(self, df):
+        """This is a more complex and much tighter cut than version 2 from fitting
+        the distribution in slices in S2 space and choosing the 0.5% and 99.5% quantile
+        for each fit to give a theoretical acceptance of 99%.
+        """
+        def upper_limit_s2_aft(s2):
+            return 0.6177399420527526 + 3.713166211522462e-08 * s2 + 0.5460484265254656 / np.log(s2)
+
+        def lower_limit_s2_aft(s2):
+            return 0.6648160611018054 - 2.590402853814859e-07 * s2 - 0.8531029789184852 / np.log(s2)
+
+        aft_variable = 's2_area_fraction_top'
+        s2_variable = 's2'
+        df.loc[:, self.__class__.__name__] = ((df[aft_variable]
+                                               < upper_limit_s2_aft(df[s2_variable])) &
+                                              (df[aft_variable]
+                                               > lower_limit_s2_aft(df[s2_variable])))
+
+        return df
+
+    def __init__(self, version=2):
+        self.version = version
+        if not version in [2, 3]:
+            raise ValueError('Only versions 2 and 3 are implemented')
+
+    def _process(self, df):
+        if self.version == 2:
+            return self._process_v2(df)
+        elif self.version == 3:
+            return self._process_v3(df)
+        else:
+            raise ValueError('Only versions 2 and 3 are implemented')
 
 
 class InteractionPeaksBiggest(ManyLichen):
@@ -124,7 +189,34 @@ class InteractionPeaksBiggest(ManyLichen):
             df.loc[:, self.__class__.__name__] = df.s2 > df.largest_other_s2
             return df
 
+class DAQVetoCut(ManyLichen):
+    """Check if DAQ busy or HE veto
+    
+    Make sure no DAQ vetos happen during your event. This
+    automatically checks both busy and high-energy vetos. 
+    
+    Requires Proximity minitrees.
+    
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:daqandnoise
+    
+    Author: Daniel Coderre <daniel.coderre@lhep.unibe.ch>
+    """
+    version = 0
 
+    def __init__(self):
+        self.lichen_list = [self.BusyCheck(),
+                            self.HEVCheck()]
+
+    class BusyCheck(Lichen):
+        def _process(self, df):
+            df.loc[:, self.__class__.__name__] = abs(df['nearest_busy'])> df['event_duration']/2
+            return df
+
+    class HEVCheck(Lichen):
+        def _process(self, df):
+            df.loc[:, self.__class__.__name__] = abs(df['nearest_hev']) > df['event_duration']/2
+            return df
+                   
 class SignalOverPreS2Junk(RangeLichen):
     """Cut events with lot of peak area before main S2
 
@@ -187,22 +279,44 @@ class S2SingleScatterSimple(Lichen):
         df.loc[:, self.__class__.__name__] = df.largest_other_s2 < self.other_s2_bound(df.s2)
         return df
     
-    
+class S1PatternLikelihood(Lichen):
+    """Reject accidendal coicident events from lone s1 and lone s2.
+
+       Details of the likelihood can be seen in the following note. Here, 97 quantile acceptance line estimated with Rn220 data (pax_v6.4.2) is used.
+       https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
+     
+       Requires Extended minitrees.
+
+       Author: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+
+    def pre(self, df):
+        df.loc[:,'temp'] = -2.39535 + 25.5857*pow(df['s1'], 0.5) + 1.30652*df['s1'] - 0.0638579*pow(df['s1'], 1.5)
+
+    def _process(self, df):
+        df.loc[:, self.__class__.__name__] = df['s1_pattern_fit'] < df.temp
+        return df
+
+
 class S2Width(ManyLichen):
-    """S2 Width cut modeling the diffusion.
+    """S2 Width cut based on diffusion model.
 
     The S2 width cut compares the S2 width to what we could expect based on its
-    depth in the detector.  The inputs to this are the drift velocity and the
-    diffusion constant.
+    depth in the detector. The inputs to this are the drift velocity and the
+    diffusion constant. The allowed variation in S2 width is greater at low energy
+    (since it is fluctuating statistically).
 
-    This version of the cut is based on quantiles on the Rn220 data.  See the
-    note XXX for the study of the definition.  It should be applicable to data
-    regardless of if it is ER or NR.
+    The cut is roughly based on the observed distribution in AmBe and Rn data (paxv6.2.0)
+    It is not described in any note, but you can see what it is doing in Sander's note here:
+       https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=
+       xenon:xenon1t:analysis:subgroup:backgrounds:meetings:170112_pb214_concentration_spectrum.html
+    
+    It should be applicable to data regardless of if it ER or NR; 
+    above cS2 = 1e5 pe ERs the acceptance will go down due to track length effects.
 
-    Only use below XXX PE to avoid track length effects.
-
-    Author: XXX yy@zz.nl
-
+    Author: Jelle, translation to lax by Chris.
     """
     version = 0
 

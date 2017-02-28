@@ -2,6 +2,18 @@
 History
 =======
 
+0.5.0 (2017-02-28)
+------------------
+
+* S1 Pattern likelihood in LowEnergyCuts (#21)
+* Max PMT in S1 (v0) LowEnergyCuts (#15)
+* S2AreaFractionTopCut now can have v3 (v2 still default) with tighter AFT selection (#14)
+
+0.4.0 (2017-02-24)
+------------------
+
+* Add DAQ busy and HE veto requirement that requires Proximity tree (#7)
+
 0.3.0 (2017-02-21)
 ------------------
 
