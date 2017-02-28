@@ -104,22 +104,22 @@ minor: clean docs
 	emacs HISTORY.rst
 	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion minor
-        git push
-        git push --tags
-        git checkout stable
-        git pull origin master
-        git push origin stable --tags
-        git push origin stable
-        git checkout master
+	git push
+	git push --tags
+	git checkout stable
+	git pull origin master
+	git push origin stable --tags
+	git push origin stable
+	git checkout master
 
 patch: clean docs
 	emacs HISTORY.rst
 	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion patch --allow-dirty
-        git push
-        git push --tags
-        git checkout stable
-        git pull origin master
-        git push origin stable --tags
-        git push origin stable
-        git checkout master
+	git push
+	git push --tags
+	git checkout stable
+	git pull origin master
+	git push origin stable --tags
+	git push origin stable
+	git checkout master
