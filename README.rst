@@ -2,6 +2,10 @@
 Lichens for Analyzing XENON1T
 ===============================
 
+.. image:: https://api.codacy.com/project/badge/Grade/724ba633bd6b4079b977e0aa623b327d
+   :alt: Codacy Badge
+   :target: https://www.codacy.com/app/tunnell/lax?utm_source=github.com&utm_medium=referral&utm_content=XENON1T/lax&utm_campaign=badger
+
 
 .. image:: https://img.shields.io/pypi/v/lax.svg
         :target: https://pypi.python.org/pypi/lax
