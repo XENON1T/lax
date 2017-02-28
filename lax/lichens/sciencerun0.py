@@ -213,7 +213,8 @@ class S2Width(ManyLichen):
         self.lichen_list = [self.S2WidthHigh(),
                             self.S2WidthLow()]
 
-    def s2_width_model(self, z):
+    @staticmethod
+    def s2_width_model(z):
         diffusion_constant = PAX_CONFIG['WaveformSimulator']['diffusion_constant_liquid']
         v_drift = PAX_CONFIG['DEFAULT']['drift_velocity_liquid']
 
@@ -222,7 +223,7 @@ class S2Width(ManyLichen):
 
     def subpre(self, df):
         # relative_s2_width
-        df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(self, df['z'])
+        df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(df['z'])
         return df
 
     @staticmethod
@@ -275,9 +276,9 @@ class S1SingleScatter(Lichen):
 
     version=0
 
-    def process(self, df):
+    def _process(self, df):
 
-        s2width=S2Width()
+        s2width=S2Width
 		
         alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s2_interaction_z'])
         alt_interaction_passes = alt_rel_width < s2width.relative_s2_width_bounds(df.s2.values, kind='high')
