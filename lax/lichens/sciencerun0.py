@@ -68,7 +68,7 @@ class S1MaxPMT(Lichen):
     Author: Julien Wulf jwulf@physik.uzh.ch
     """
     def pre(self, df):
-        df.loc[:,'temp'] = 0.050 * df['s1'] + 6
+        df.loc[:,'temp'] = 0.040 * df['s1'] + 5.48
 
     def _process(self, df):
         df.loc[:, self.__class__.__name__] = df['largest_hit_channel'] < df.temp
