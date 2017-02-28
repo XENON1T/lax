@@ -71,7 +71,7 @@ class ManyLichen(Lichen):
     variables = None
 
     def get_cut_names(self):
-        return [self.name() for lichen in self.lichen_list]
+        return [lichen.name() for lichen in self.lichen_list]
 
     def process(self, df):
         df.loc[:, (self.name())] = True
