@@ -162,7 +162,7 @@ class SignalOverPreS2Junk(RangeLichen):
 
     Author: Julien Wulf jwulf@physik.uzh.ch
     """
-    version = 0.0.1
+    version = 0
     allowed_range = (0 , 1)
     variable = 'signal_over_pre_s2_junk'
 
