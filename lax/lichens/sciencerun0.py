@@ -164,7 +164,7 @@ class S1MaxPMT(Lichen):
         df.loc[:, 'temp'] = 0.052 * df['s1'] + 4.15
 
     def _process(self, df):
-        df.loc[:, self.name()] = df['largest_hit_channel'] < df.temp
+        df.loc[:, self.name()] = df['s1_largest_hit_area'] < df.temp
         return df
 
 
