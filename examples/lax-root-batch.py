@@ -1,26 +1,26 @@
-run_number = 3956
-pax_version = '6.4.2'
-
+"""Make ROOT file of all lax output
+"""
 import hax
+from lax.lichens import sciencerun0
+
+RUN_NUMBER = 3956
+PAX_VERSION = '6.4.2'
 
 hax.init(experiment='XENON1T',
-         pax_version_policy = pax_version)
+         pax_version_policy = PAX_VERSION)
 
-df = hax.minitrees.load(run_number,
+DF = hax.minitrees.load(RUN_NUMBER,
                         [ 'Fundamentals', 'Basics', 'TotalProperties'])
 
-from lax.lichens import sciencerun0
-all_cuts = sciencerun0.AllEnergy()
-low_energy_cuts = sciencerun0.LowEnergy()
 
-old_columns = df.columns
+old_columns = DF.columns
 
-import root_pandas
-for cuts in [all_cuts, low_energy_cuts]:
-    df_temp = cuts.process(df.copy())
+for cuts in [sciencerun0.AllEnergy(),
+             sciencerun0.LowEnergy()]:
+    df_temp = cuts.process(DF.copy())
     new_columns = [column for column in df_temp.columns if column not in old_columns]
 
-    cuts_name = all_cuts.__class__.__name__
+    cuts_name = cuts.name()
 
     df_temp.loc[:,new_columns].to_root('lax_%s_%d.root' % (cuts_name,
-                                        run_number))
+                                                           RUN_NUMBER))
