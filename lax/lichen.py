@@ -47,16 +47,16 @@ class RangeLichen(Lichen):
 
     def get_allowed_range(self):
         if self.allowed_range is None:
-            raise NotImplemented()
+            raise ValueError()
 
     def get_min(self):
         if self.variable is None:
-            raise NotImplemented()
+            raise ValueError()
         return self.allowed_range[0]
 
     def get_max(self):
         if self.variable is None:
-            raise NotImplemented()
+            raise ValueError()
         return self.allowed_range[0]
 
     def _process(self, df):
