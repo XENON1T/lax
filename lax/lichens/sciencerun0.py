@@ -300,14 +300,15 @@ class S2SingleScatter(Lichen):
     allowed_range = (0, np.inf)
     variable = 'temp'
 
-    def other_s2_bound(self, s2):
-        y0 = s2 * 0.00832 + 72.3
-        y1 = s2 * 0.03 - 109
+    @classmethod
+    def other_s2_bound(cls, s2_area):
+        rescaled_s2_0 = s2_area * 0.00832 + 72.3
+        rescaled_s2_1 = s2_area * 0.03 - 109
 
-        d0 = 1 / (np.exp((s2 - 23300) * 5.91e-4) + 1)
-        d1 = 1 / (np.exp((23300 - s2) * 5.91e-4) + 1)
+        another_term_0 = 1 / (np.exp((s2_area - 23300) * 5.91e-4) + 1)
+        another_term_1 = 1 / (np.exp((23300 - s2_area) * 5.91e-4) + 1)
 
-        return y0 * d0 + y1 * d1
+        return rescaled_s2_0 * another_term_0 + rescaled_s2_1 * another_term_1
 
     def _process(self, df):
         df.loc[:, self.name()] = df.largest_other_s2 < self.other_s2_bound(df.s2)
