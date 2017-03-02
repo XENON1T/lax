@@ -2,6 +2,14 @@
 History
 =======
 
+0.6.0 (2017-03-02)
+------------------
+
+* Fix problem in S1 single scatter definition (#26)
+* S1 Area fraction top included (#16)
+
+
+
 0.5.3 (2017-02-28)
 ------------------
 
