@@ -12,7 +12,7 @@ from pax import units, configuration
 from pax.InterpolatingMap import InterpolatingMap
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
-from lax.lichen import Lichen, RangeLichen, ManyLichen
+from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax import __version__ as lax_version
 
 
@@ -94,7 +94,7 @@ class DAQVeto(ManyLichen):
             return df
 
 
-class FiducialCylinder1T(ManyLichen):
+class FiducialCylinder1T(StringLichen):
     """Fiducial volume cut.
 
     The fidicual volume cut defines the region in depth and radius that we
@@ -108,36 +108,42 @@ class FiducialCylinder1T(ManyLichen):
 
     """
     version = 2
+    string = "(-83.45 < z) & (z < -13.45) & (r < 39.85)"
 
-    def __init__(self):
-        self.lichen_list = [self.Z(),
-                            self.R()]
+    def pre(self, df):
+        df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
+        return df
 
-    class Z(RangeLichen):
-        allowed_range = (-83.45, -13.45)
-        variable = 'z'
+class FiducialAmBe(StringLichen):
+    """AmBe Fiducial volume cut.
 
-    class R(RangeLichen):
-        variable = 'r'  # Should add to minitrees
+    Checks distance to source.
 
-        def pre(self, df):
-            df.loc[:, self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
-            return df
+    Contact: Erik Hogenbirk <hogenbirk@nikhef.nl>
 
-        allowed_range = (0, 39.85)
+    """
+    version = 1
+    string = "distance_to_source < 80"
+
+    def pre(self, df):
+        source_position = (55.965311731903, 43.724893639103577, -50)
+
+        df.loc[:, 'distance_to_source'] = ((source_position[0] - df['x']) ** 2 +
+                                            (source_position[1] - df['y']) ** 2 +
+                                             (source_position[2] - df['z']) ** 2) ** 0.5
+        return df
 
 
-class InteractionExists(RangeLichen):
+class InteractionExists(StringLichen):
     """Checks that there was a pairing of S1 and S2.
 
     Contact: Christopher Tunnell <tunnell@uchicago.edu>
     """
     version = 0
-    allowed_range = (0, np.inf)
-    variable = 'cs1'
+    string = "0 < cs1"
 
 
-class InteractionPeaksBiggest(ManyLichen):
+class InteractionPeaksBiggest(StringLichen):
     """Ensuring main peak is larger than the other peak
 
     (Should not be a big requirement for pax_v6.5.0)
@@ -145,27 +151,13 @@ class InteractionPeaksBiggest(ManyLichen):
     Contact: Christopher Tunnell <tunnell@uchicago.edu>
     """
     version = 0
+    string = "(s1 > largest_other_s1) & (s2 > largest_other_s2)"
 
-    def __init__(self):
-        self.lichen_list = [self.S1(),
-                            self.S2()]
-
-    class S1(Lichen):
-        def _process(self, df):
-            df.loc[:, self.name()] = df.s1 > df.largest_other_s1
-            return df
-
-    class S2(Lichen):
-        def _process(self, df):
-            df.loc[:, self.name()] = df.s2 > df.largest_other_s2
-            return df
 
 
 class S1LowEnergyRange(RangeLichen):
     """For isolating the low-energy band.
-
     Just an energy selection.
-
     Contact: Christopher Tunnell <tunnell@uchicago.edu>
     """
     version = 0
@@ -173,7 +165,7 @@ class S1LowEnergyRange(RangeLichen):
     variable = 'cs1'
 
 
-class S1MaxPMT(Lichen):
+class S1MaxPMT(StringLichen):
     """Cut events which have a high fraction of the area in a single PMT
 
     Cuts events which are mostly seen by one PMT. These events could be for
@@ -185,14 +177,8 @@ class S1MaxPMT(Lichen):
     Contact: Julien Wulf <jwulf@physik.uzh.ch>
     """
     version = 0
+    string = "s1_largest_hit_area < 0.052 * s1 + 4.15"
 
-    def pre(self, df):
-        df.loc[:, 'temp'] = 0.052 * df['s1'] + 4.15
-        return df
-
-    def _process(self, df):
-        df.loc[:, self.name()] = df['s1_largest_hit_area'] < df.temp
-        return df
 
 
 class S1PatternLikelihood(Lichen):
@@ -341,7 +327,7 @@ class S2SingleScatter(Lichen):
         return df
 
 
-class S2SingleScatterSimple(Lichen):
+class S2SingleScatterSimple(StringLichen):
     """Check that largest other S2 area is smaller than some bound.
 
     It's the low energy limit of the S2SingleScatter Cut
@@ -352,18 +338,11 @@ class S2SingleScatterSimple(Lichen):
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
     version = 0
-    allowed_range = (0, np.inf)
-    variable = 'temp'
-
-    def other_s2_bound(self, s2):
-        return s2 * 0.00832 + 72.3
-
-    def _process(self, df):
-        df.loc[:, self.name()] = df.largest_other_s2 < self.other_s2_bound(df.s2)
-        return df
+    string = 'largest_other_s2 < s2 * 0.00832 + 72.3'
 
 
-class S2Threshold(RangeLichen):
+
+class S2Threshold(StringLichen):
     """The S2 energy at which the trigger is perfectly efficient.
 
     See: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:daqtriggerpaxefficiency
@@ -371,8 +350,7 @@ class S2Threshold(RangeLichen):
     Contact: Jelle Aalbers <aalbers@nikhef.nl>
     """
     version = 0
-    allowed_range = (150, np.inf)
-    variable = 's2'
+    string = "150 < s2"
 
 
 class S2Width(ManyLichen):
@@ -487,3 +465,7 @@ class SignalOverPreS2Junk(RangeLichen):
     def pre(self, df):
         df.loc[:, self.variable] = (df.area_before_main_s2 - df.s1) / (df.s2 + df.s1)
         return df
+
+
+
+

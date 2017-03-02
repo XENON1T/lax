@@ -40,6 +40,20 @@ class Lichen(object):
     def name(self):
         return 'Cut%s' % self.__class__.__name__
 
+class StringLichen(Lichen):
+    """Allow user to specify cut string
+    """
+    string = ""
+
+    def _process(self, df):
+        df.loc[:, self.name()] = df.eval(self.string)
+        return df
+
+    def describe(self):
+        print(self.name())
+        print(self.string)
+        print(self.__doc__)
+
 
 class RangeLichen(Lichen):
     allowed_range = None  # tuple of min then max
