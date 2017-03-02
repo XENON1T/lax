@@ -1,4 +1,11 @@
+"""The cuts for science run 0
+
+This includes all current definitions of the cuts for the first science run
+"""
+
 # -*- coding: utf-8 -*-
+import os
+import inspect
 import numpy as np
 from scipy.stats import binom_test
 from pax import units, configuration
@@ -7,6 +14,12 @@ from pax.InterpolatingMap import InterpolatingMap
 PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen
 from lax import __version__ as lax_version
+
+
+# Store the directory of our data files
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))),
+                        '..',
+                        'data')
 
 
 class AllEnergy(ManyLichen):
@@ -444,7 +457,8 @@ class S1AreaFractionTop(RangeLichen):
     allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
 
     def __init__(self):
-        aftmap_filename = 's1_aft_xyz_24Feb2017.json'
+        aftmap_filename = os.path.join(DATA_DIR,
+                                       's1_aft_xyz_24Feb2017.json')
         self.aft_map = InterpolatingMap(aftmap_filename)
 
     def pre(self, df):

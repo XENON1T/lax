@@ -40,6 +40,7 @@ setup(
             'lax=lax.cli:main'
         ]
     },
+    package_data={'lax': ['data/*.*']},
     include_package_data=True,
     install_requires=requirements,
     license="GNU General Public License v3",
