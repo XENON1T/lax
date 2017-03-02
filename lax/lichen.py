@@ -47,16 +47,16 @@ class RangeLichen(Lichen):
 
     def get_allowed_range(self):
         if self.allowed_range is None:
-            raise NotImplemented()
+            raise ValueError()
 
     def get_min(self):
         if self.variable is None:
-            raise NotImplemented()
+            raise ValueError()
         return self.allowed_range[0]
 
     def get_max(self):
         if self.variable is None:
-            raise NotImplemented()
+            raise ValueError()
         return self.allowed_range[0]
 
     def _process(self, df):
@@ -73,7 +73,7 @@ class ManyLichen(Lichen):
     def get_cut_names(self):
         return [lichen.name() for lichen in self.lichen_list]
 
-    def process(self, df):
+    def _process(self, df):
         df.loc[:, (self.name())] = True
 
         for lichen in self.lichen_list:
