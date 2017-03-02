@@ -16,7 +16,6 @@ class AllEnergy(ManyLichen):
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
-            S2AreaFractionTop(),
             S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
@@ -36,6 +35,7 @@ class LowEnergy(AllEnergy):
             S1PatternLikelihood(),
             S2Width(),
             S1MaxPMT(),
+            S2AreaFractionTop(),
         ]
 
 
