@@ -1,1 +1,5 @@
-__version__ = '0.4.0'
+"""Module defining key components to lax"""
+
+__version__ = '0.5.3'
+
+from . import lichens
