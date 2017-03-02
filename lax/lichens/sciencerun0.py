@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from scipy.stats import binom_test
 from pax import units, configuration
+from pax.InterpolatingMap import InterpolatingMap
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen
@@ -8,6 +10,10 @@ from lax import __version__ as lax_version
 
 
 class AllEnergy(ManyLichen):
+  """Cuts applicable for low and high energy (gammas)
+  
+  This is a subset mostly of the low energy cuts.
+  """
     version = lax_version
 
     def __init__(self):
@@ -20,10 +26,16 @@ class AllEnergy(ManyLichen):
             S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
+            S1AreaFractionTop(),
         ]
 
 
 class LowEnergy(AllEnergy):
+  """Select events with cs1<200
+  
+  This is the list that we'll use for the actual DM search, therefore
+  those energies.
+  """
     def __init__(self):
         AllEnergy.__init__(self)
         # Replaces Interaction exists
@@ -207,19 +219,19 @@ class S1SingleScatter(Lichen):
     not removed.
 
     Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
-	https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
 
     It should be applicable to data regardless of if it is ER or NR.
 
     Contact: Jacques <jpienaa@purdue.edu>
     """
 
-    version = 0
+    version = 1
 
     def _process(self, df):
         s2width = S2Width
 
-        alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s2_interaction_z'])
+        alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s1_interaction_z'])
         alt_interaction_passes = alt_rel_width < s2width.relative_s2_width_bounds(df.s2.values, kind='high')
         alt_interaction_passes &= alt_rel_width > s2width.relative_s2_width_bounds(df.s2.values, kind='low')
 
@@ -411,6 +423,37 @@ class S2Width(ManyLichen):
                                                                        kind='low') <= df.temp)
             return df
 
+class S1AreaFractionTop(RangeLichen):
+    '''S1 area fraction top cut
+    
+    Uses scipy.stats.binom_test to compute a p-value based on the
+    observed number of s1 photons in the top array, given the expected
+    probability that a photon at the event's (x,y,z) makes it to the top array.
+    
+    Uses a 3D map generated with Kr83m 32 keV line
+    
+    note: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
+    
+    Author: Darryl Masson, dmasson@purdue.edu
+    '''
+    
+    version = 0
+    variable = 'pvalue_s1_area_fraction_top'
+    allowed_range = (1e-4, 1 + 1e-7) # must accept p-value = 1.0 with a < comparison
+    
+    def __init__(self):
+        aftmap_filename = 's1_aft_xyz_24Feb2017.json'
+        self.aft_map = InterpolatingMap(aftmap_filename)
+
+    def pre(self, df):
+        df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top']*row['s1']),
+                                                                   np.round(row['s1']),
+                                                                   self.aft_map.get_value(row['x'],
+                                                                                          row['y'],
+                                                                                          row['z'])),
+                                            axis=1)
+        return df
+
 
 class SignalOverPreS2Junk(RangeLichen):
     """Cut events with lot of peak area before main S2 (currently working for small s2s)
@@ -428,3 +471,4 @@ class SignalOverPreS2Junk(RangeLichen):
     def pre(self, df):
         df.loc[:, self.variable] = (df.area_before_main_s2 - df.s1) / (df.s2 + df.s1)
         return df
+

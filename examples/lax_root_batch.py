@@ -10,7 +10,8 @@ hax.init(experiment='XENON1T',
          pax_version_policy=PAX_VERSION)
 
 DF = hax.minitrees.load(RUN_NUMBER,
-                        ['Fundamentals', 'Basics', 'TotalProperties'])
+                        ['Fundamentals', 'Basics', 'TotalProperties',
+                         'Extended', 'Proximity'])
 
 OLD_COLUMNS = DF.columns
 
