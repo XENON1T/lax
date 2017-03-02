@@ -211,12 +211,12 @@ class S1SingleScatter(Lichen):
     Contact: Jacques <jpienaa@purdue.edu>
     """
 
-    version = 0
+    version = 0.1
 
     def _process(self, df):
         s2width = S2Width
 
-        alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s2_interaction_z'])
+        alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s1_interaction_z'])
         alt_interaction_passes = alt_rel_width < s2width.relative_s2_width_bounds(df.s2.values, kind='high')
         alt_interaction_passes &= alt_rel_width > s2width.relative_s2_width_bounds(df.s2.values, kind='low')
 
