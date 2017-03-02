@@ -2,13 +2,40 @@
 History
 =======
 
+0.6.1 (2017-03-02)
+------------------
+
+* Fix bug in how data file for S1 AFT loaded.
+
 0.6.0 (2017-03-02)
 ------------------
 
 * Fix problem in S1 single scatter definition (#26)
 * S1 Area fraction top included (#16)
 
-
+CutAllEnergy
+	CutFiducialCylinder1T version 2
+	CutInteractionExists version 0
+	CutS2Threshold version 0
+	CutInteractionPeaksBiggest version 0
+	CutS2AreaFractionTop version 2
+	CutS2SingleScatter version 2
+	CutDAQVeto version 0
+	CutS1SingleScatter version 1
+	CutS1AreaFractionTop version 0
+CutLowEnergy
+	CutFiducialCylinder1T version 2
+	CutS1LowEnergyRange version 0
+	CutS2Threshold version 0
+	CutInteractionPeaksBiggest version 0
+	CutS2AreaFractionTop version 2
+	CutS2SingleScatterSimple version 0
+	CutDAQVeto version 0
+	CutS1SingleScatter version 1
+	CutS1AreaFractionTop version 0
+	CutS1PatternLikelihood version 0
+	CutS2Width version 1
+	CutS1MaxPMT version 0
 
 0.5.3 (2017-02-28)
 ------------------
