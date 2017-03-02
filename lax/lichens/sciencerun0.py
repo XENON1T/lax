@@ -15,7 +15,6 @@ PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax import __version__ as lax_version
 
-
 # Store the directory of our data files
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))),
                         '..',
@@ -114,6 +113,7 @@ class FiducialCylinder1T(StringLichen):
         df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
         return df
 
+
 class FiducialAmBe(StringLichen):
     """AmBe Fiducial volume cut.
 
@@ -129,8 +129,8 @@ class FiducialAmBe(StringLichen):
         source_position = (55.965311731903, 43.724893639103577, -50)
 
         df.loc[:, 'distance_to_source'] = ((source_position[0] - df['x']) ** 2 +
-                                            (source_position[1] - df['y']) ** 2 +
-                                             (source_position[2] - df['z']) ** 2) ** 0.5
+                                           (source_position[1] - df['y']) ** 2 +
+                                           (source_position[2] - df['z']) ** 2) ** 0.5
         return df
 
 
@@ -152,7 +152,6 @@ class InteractionPeaksBiggest(StringLichen):
     """
     version = 0
     string = "(s1 > largest_other_s1) & (s2 > largest_other_s2)"
-
 
 
 class S1LowEnergyRange(RangeLichen):
@@ -178,7 +177,6 @@ class S1MaxPMT(StringLichen):
     """
     version = 0
     string = "s1_largest_hit_area < 0.052 * s1 + 4.15"
-
 
 
 class S1PatternLikelihood(Lichen):
@@ -341,7 +339,6 @@ class S2SingleScatterSimple(StringLichen):
     string = 'largest_other_s2 < s2 * 0.00832 + 72.3'
 
 
-
 class S2Threshold(StringLichen):
     """The S2 energy at which the trigger is perfectly efficient.
 
@@ -465,7 +462,3 @@ class SignalOverPreS2Junk(RangeLichen):
     def pre(self, df):
         df.loc[:, self.variable] = (df.area_before_main_s2 - df.s1) / (df.s2 + df.s1)
         return df
-
-
-
-

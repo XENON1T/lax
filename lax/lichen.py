@@ -40,6 +40,7 @@ class Lichen(object):
     def name(self):
         return 'Cut%s' % self.__class__.__name__
 
+
 class StringLichen(Lichen):
     """Allow user to specify cut string
     """
@@ -75,7 +76,7 @@ class RangeLichen(Lichen):
 
     def _process(self, df):
         df.loc[:, self.name()] = (df[self.variable] > self.allowed_range[0]) & (
-        df[self.variable] < self.allowed_range[1])
+            df[self.variable] < self.allowed_range[1])
         return df
 
 
