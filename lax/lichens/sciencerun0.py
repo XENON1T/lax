@@ -4,12 +4,13 @@ This includes all current definitions of the cuts for the first science run
 """
 
 # -*- coding: utf-8 -*-
-import os
 import inspect
+import os
+
 import numpy as np
-from scipy.stats import binom_test
 from pax import units, configuration
 from pax.InterpolatingMap import InterpolatingMap
+from scipy.stats import binom_test
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen

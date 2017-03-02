@@ -4,11 +4,13 @@ Extend the Minitree produced DataFrames with derivative values.
 """
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
+
+import numpy as np
+import pandas as pd
+
 from lax.plotting import plot
 from lax.variables import check_variable_list
-import pandas as pd
-import numpy as np
-from collections import OrderedDict
 
 pd.set_option('display.expand_frame_repr', False)
 
