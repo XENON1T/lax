@@ -283,7 +283,7 @@ class S2AreaFractionTop(Lichen):
 
     def __init__(self, version=2):
         self.version = version
-        if not version in [2, 3]:
+        if version not in [2, 3]:
             raise ValueError('Only versions 2 and 3 are implemented')
 
     def _process(self, df):
