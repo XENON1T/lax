@@ -207,19 +207,19 @@ class S1SingleScatter(Lichen):
     not removed.
 
     Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
-	https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
 
     It should be applicable to data regardless of if it is ER or NR.
 
     Contact: Jacques <jpienaa@purdue.edu>
     """
 
-    version = 0
+    version = 1
 
     def _process(self, df):
         s2width = S2Width
 
-        alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s2_interaction_z'])
+        alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s1_interaction_z'])
         alt_interaction_passes = alt_rel_width < s2width.relative_s2_width_bounds(df.s2.values, kind='high')
         alt_interaction_passes &= alt_rel_width > s2width.relative_s2_width_bounds(df.s2.values, kind='low')
 
