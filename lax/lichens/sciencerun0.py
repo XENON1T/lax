@@ -204,14 +204,14 @@ class S1SingleScatter(Lichen):
     not removed.
 
     Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
-	https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
 
     It should be applicable to data regardless of if it is ER or NR.
 
     Contact: Jacques <jpienaa@purdue.edu>
     """
 
-    version = 0.1
+    version = 1
 
     def _process(self, df):
         s2width = S2Width
