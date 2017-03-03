@@ -464,7 +464,7 @@ class S1AreaFractionTop(RangeLichen):
             data = json.load(data_file)
         r_pts = np.array(data['r_pts'])
         z_pts = np.array(data['z_pts'])
-        aft_vals = np.array([data['map'][i*len(z_pt):(i+1)*len(z_pt)] for i in range(len(r_pts))]) # unpack 1d array to 2d
+        aft_vals = np.array([data['map'][i*len(z_pts):(i+1)*len(z_pts)] for i in range(len(r_pts))]) # unpack 1d array to 2d
         self.aft_map = RectBivariateSpline(r_pts,z_pts,aft_vals)
 
     def pre(self, df):
