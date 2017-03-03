@@ -115,7 +115,7 @@ class FiducialCylinder1T(StringLichen):
         return df
 
 
-class FiducialAmBe(StringLichen):
+class DistanceToAmBe(StringLichen):
     """AmBe Fiducial volume cut.
     This uses the same Z cuts as the 1T fiducial cylinder, but a wider allowed range in R to maximize the number of nuclear recoils.
     There is a third cut on the distance to the source, so that we cut away background ER.
@@ -126,11 +126,10 @@ class FiducialAmBe(StringLichen):
 
     """
     version = 1
-    string = "(distance_to_source < 80) & (-83.45 < z) & (z < -13.45) & (r < 42.00)"
+    string = "(distance_to_source < 80)"
 
     def pre(self, df):
         source_position = (55.965311731903, 43.724893639103577, -50)
-        df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
         df.loc[:, 'distance_to_source'] = ((source_position[0] - df['x']) ** 2 +
                                            (source_position[1] - df['y']) ** 2 +
                                            (source_position[2] - df['z']) ** 2) ** 0.5
