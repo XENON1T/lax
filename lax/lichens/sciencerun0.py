@@ -9,7 +9,7 @@ import inspect
 import numpy as np
 from scipy.stats import binom_test
 from pax import units, configuration
-from scipy.interpolate import RectBiraviateSpline
+from scipy.interpolate import RectBivariateSpline
 import json
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
