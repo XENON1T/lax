@@ -13,8 +13,6 @@ History
 * Fix problem in S1 single scatter definition (#26)
 * S1 Area fraction top included (#16)
 
-lax 0.6.1
-
 CutAllEnergy
   * CutFiducialCylinder1T v2
   * CutInteractionExists v0
