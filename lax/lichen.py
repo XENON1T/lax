@@ -4,11 +4,13 @@ Extend the Minitree produced DataFrames with derivative values.
 """
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
+
+import numpy as np
+import pandas as pd
+
 from lax.plotting import plot
 from lax.variables import check_variable_list
-import pandas as pd
-import numpy as np
-from collections import OrderedDict
 
 pd.set_option('display.expand_frame_repr', False)
 
@@ -41,6 +43,21 @@ class Lichen(object):
         return 'Cut%s' % self.__class__.__name__
 
 
+class StringLichen(Lichen):
+    """Allow user to specify cut string
+    """
+    string = ""
+
+    def _process(self, df):
+        df.loc[:, self.name()] = df.eval(self.string)
+        return df
+
+    def describe(self):
+        print(self.name())
+        print(self.string)
+        print(self.__doc__)
+
+
 class RangeLichen(Lichen):
     allowed_range = None  # tuple of min then max
     variable = None  # variable name in DataFrame
@@ -61,7 +78,7 @@ class RangeLichen(Lichen):
 
     def _process(self, df):
         df.loc[:, self.name()] = (df[self.variable] > self.allowed_range[0]) & (
-        df[self.variable] < self.allowed_range[1])
+            df[self.variable] < self.allowed_range[1])
         return df
 
 

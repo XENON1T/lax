@@ -4,17 +4,17 @@ This includes all current definitions of the cuts for the first science run
 """
 
 # -*- coding: utf-8 -*-
-import os
 import inspect
+import os
+
 import numpy as np
-from scipy.stats import binom_test
 from pax import units, configuration
 from pax.InterpolatingMap import InterpolatingMap
+from scipy.stats import binom_test
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
-from lax.lichen import Lichen, RangeLichen, ManyLichen
+from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax import __version__ as lax_version
-
 
 # Store the directory of our data files
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))),
@@ -94,7 +94,7 @@ class DAQVeto(ManyLichen):
             return df
 
 
-class FiducialCylinder1T(ManyLichen):
+class FiducialCylinder1T(StringLichen):
     """Fiducial volume cut.
 
     The fidicual volume cut defines the region in depth and radius that we
@@ -108,36 +108,44 @@ class FiducialCylinder1T(ManyLichen):
 
     """
     version = 2
+    string = "(-83.45 < z) & (z < -13.45) & (r < 39.85)"
 
-    def __init__(self):
-        self.lichen_list = [self.Z(),
-                            self.R()]
-
-    class Z(RangeLichen):
-        allowed_range = (-83.45, -13.45)
-        variable = 'z'
-
-    class R(RangeLichen):
-        variable = 'r'  # Should add to minitrees
-
-        def pre(self, df):
-            df.loc[:, self.variable] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
-            return df
-
-        allowed_range = (0, 39.85)
+    def pre(self, df):
+        df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
+        return df
 
 
-class InteractionExists(RangeLichen):
+class DistanceToAmBe(StringLichen):
+    """AmBe Fiducial volume cut.
+    This uses the same Z cuts as the 1T fiducial cylinder, but a wider allowed range in R to maximize the number of nuclear recoils.
+    There is a third cut on the distance to the source, so that we cut away background ER.
+    Link to note:
+    https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=xenon:xenon1t:hogenbirk:nr_band_sr0.html
+
+    Contact: Erik Hogenbirk <ehogenbi@nikhef.nl>
+
+    """
+    version = 1
+    string = "(distance_to_source < 80)"
+
+    def pre(self, df):
+        source_position = (55.965311731903, 43.724893639103577, -50)
+        df.loc[:, 'distance_to_source'] = ((source_position[0] - df['x']) ** 2 +
+                                           (source_position[1] - df['y']) ** 2 +
+                                           (source_position[2] - df['z']) ** 2) ** 0.5
+        return df
+
+
+class InteractionExists(StringLichen):
     """Checks that there was a pairing of S1 and S2.
 
     Contact: Christopher Tunnell <tunnell@uchicago.edu>
     """
     version = 0
-    allowed_range = (0, np.inf)
-    variable = 'cs1'
+    string = "0 < cs1"
 
 
-class InteractionPeaksBiggest(ManyLichen):
+class InteractionPeaksBiggest(StringLichen):
     """Ensuring main peak is larger than the other peak
 
     (Should not be a big requirement for pax_v6.5.0)
@@ -145,27 +153,12 @@ class InteractionPeaksBiggest(ManyLichen):
     Contact: Christopher Tunnell <tunnell@uchicago.edu>
     """
     version = 0
-
-    def __init__(self):
-        self.lichen_list = [self.S1(),
-                            self.S2()]
-
-    class S1(Lichen):
-        def _process(self, df):
-            df.loc[:, self.name()] = df.s1 > df.largest_other_s1
-            return df
-
-    class S2(Lichen):
-        def _process(self, df):
-            df.loc[:, self.name()] = df.s2 > df.largest_other_s2
-            return df
+    string = "(s1 > largest_other_s1) & (s2 > largest_other_s2)"
 
 
 class S1LowEnergyRange(RangeLichen):
     """For isolating the low-energy band.
-
     Just an energy selection.
-
     Contact: Christopher Tunnell <tunnell@uchicago.edu>
     """
     version = 0
@@ -173,7 +166,7 @@ class S1LowEnergyRange(RangeLichen):
     variable = 'cs1'
 
 
-class S1MaxPMT(Lichen):
+class S1MaxPMT(StringLichen):
     """Cut events which have a high fraction of the area in a single PMT
 
     Cuts events which are mostly seen by one PMT. These events could be for
@@ -185,14 +178,7 @@ class S1MaxPMT(Lichen):
     Contact: Julien Wulf <jwulf@physik.uzh.ch>
     """
     version = 0
-
-    def pre(self, df):
-        df.loc[:, 'temp'] = 0.052 * df['s1'] + 4.15
-        return df
-
-    def _process(self, df):
-        df.loc[:, self.name()] = df['s1_largest_hit_area'] < df.temp
-        return df
+    string = "s1_largest_hit_area < 0.052 * s1 + 4.15"
 
 
 class S1PatternLikelihood(Lichen):
@@ -298,7 +284,7 @@ class S2AreaFractionTop(Lichen):
 
     def __init__(self, version=2):
         self.version = version
-        if not version in [2, 3]:
+        if version not in [2, 3]:
             raise ValueError('Only versions 2 and 3 are implemented')
 
     def _process(self, df):
@@ -341,7 +327,7 @@ class S2SingleScatter(Lichen):
         return df
 
 
-class S2SingleScatterSimple(Lichen):
+class S2SingleScatterSimple(StringLichen):
     """Check that largest other S2 area is smaller than some bound.
 
     It's the low energy limit of the S2SingleScatter Cut
@@ -352,18 +338,10 @@ class S2SingleScatterSimple(Lichen):
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
     version = 0
-    allowed_range = (0, np.inf)
-    variable = 'temp'
-
-    def other_s2_bound(self, s2):
-        return s2 * 0.00832 + 72.3
-
-    def _process(self, df):
-        df.loc[:, self.name()] = df.largest_other_s2 < self.other_s2_bound(df.s2)
-        return df
+    string = 'largest_other_s2 < s2 * 0.00832 + 72.3'
 
 
-class S2Threshold(RangeLichen):
+class S2Threshold(StringLichen):
     """The S2 energy at which the trigger is perfectly efficient.
 
     See: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:daqtriggerpaxefficiency
@@ -371,8 +349,7 @@ class S2Threshold(RangeLichen):
     Contact: Jelle Aalbers <aalbers@nikhef.nl>
     """
     version = 0
-    allowed_range = (150, np.inf)
-    variable = 's2'
+    string = "150 < s2"
 
 
 class S2Width(ManyLichen):
