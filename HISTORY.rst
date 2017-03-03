@@ -14,28 +14,28 @@ History
 * S1 Area fraction top included (#16)
 
 CutAllEnergy
-	CutFiducialCylinder1T version 2
-	CutInteractionExists version 0
-	CutS2Threshold version 0
-	CutInteractionPeaksBiggest version 0
-	CutS2AreaFractionTop version 2
-	CutS2SingleScatter version 2
-	CutDAQVeto version 0
-	CutS1SingleScatter version 1
-	CutS1AreaFractionTop version 0
+  * CutFiducialCylinder1T v2
+  * CutInteractionExists v0
+  * CutS2Threshold v0
+  * CutInteractionPeaksBiggest v0
+  * CutS2AreaFractionTop v2
+  * CutS2SingleScatter v2
+  * CutDAQVeto v0
+  * CutS1SingleScatter v1
+  * CutS1AreaFractionTop v0
 CutLowEnergy
-	CutFiducialCylinder1T version 2
-	CutS1LowEnergyRange version 0
-	CutS2Threshold version 0
-	CutInteractionPeaksBiggest version 0
-	CutS2AreaFractionTop version 2
-	CutS2SingleScatterSimple version 0
-	CutDAQVeto version 0
-	CutS1SingleScatter version 1
-	CutS1AreaFractionTop version 0
-	CutS1PatternLikelihood version 0
-	CutS2Width version 1
-	CutS1MaxPMT version 0
+  * CutFiducialCylinder1T v2
+  * CutS1LowEnergyRange v0
+  * CutS2Threshold v0
+  * CutInteractionPeaksBiggest v0
+  * CutS2AreaFractionTop v2
+  * CutS2SingleScatterSimple v0
+  * CutDAQVeto v0
+  * CutS1SingleScatter v1
+  * CutS1AreaFractionTop v0
+  * CutS1PatternLikelihood v0
+  * CutS2Width v1
+  * CutS1MaxPMT v0
 
 0.5.3 (2017-02-28)
 ------------------
