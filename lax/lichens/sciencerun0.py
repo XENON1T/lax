@@ -11,6 +11,7 @@ import numpy as np
 from pax import units, configuration
 from pax.InterpolatingMap import InterpolatingMap
 from scipy.stats import binom_test
+from scipy import interpolate
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
@@ -482,12 +483,20 @@ class SingleElectronS2s(Lichen):
     Contact: Miguel Angel Vargas <m_varg03@uni-muenster.de>
     """
     version = 0
-    
-    from scipy import interpolate 
-    
+    allowed_range_area = (10, 200)
+    allowed_range_rt =(11,450)
+    area_variable = 's1'
+    rt_variable = 's1_rise_time'
+    aft_variable = 's1_area_fraction_top'    
+
     bound_v4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60],[70, 70, 61, 61,35,0],
-                                      fill_value='extrapolate', kind='linear')
-    
+                                    fill_value='extrapolate', kind='linear')
+
     def _process(self, df):
-        df.loc[:, self.name()] = df['s1_rise_time'] < SingleElectronS2s.bound_v4(df['s1_area_fraction_top'])
+        cond = ((df[area_variable] < allowed_range_area[0]) & 
+                (df[area_variable] > allowed_range_area[1]) & 
+                (df[rt_variable] > allowed_range_rt[0]) &
+                (df[rt_variable] < allowed_range_rt[1]))
+        df.loc[:, self.name()] = True    # If outside the studied box, pass the event
+        df.loc[:, self.name()][cond] = df[rt_variable][cond] < SingleElectronS2s.bound_v4(df[aft_variable][cond])
         return df
