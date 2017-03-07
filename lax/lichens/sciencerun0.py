@@ -467,30 +467,27 @@ class SignalOverPreS2Junk(RangeLichen):
 
     
 class SingleElectronS2s(Lichen):
-    
-    """Remove mis-identified single electron S2s classified as S1s (Lone-S1s) which could 
-    potentially leak into our NR band.
-    
+    """Remove mis-identified single electron S2s classified as S1s 
+ 
     Details of the definition can be seen in the following note:
     
     https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:exploring_se_cut
     
-    This was done by redrawing and improving the classification bounds for S1s at low energies by building up 
-    from Jelle's low-energy classification work at a peaks level. To do this Rn220 data processed in pax.v6.4.2 was used.
+    This was done by redrawing and improving the classification bounds for S1s at low energies by
+    building up from Jelles low-energy classification work at a peaks level.
+    To do this Rn220 data processed in pax.v6.4.2 was used.
     
-    Requires: 'TotalProperties', 'LowEnergyS1Candidates' minitrees.
+    Requires: TotalProperties, LowEnergyS1Candidates minitrees.
     
-    
-    Contact: Miguel Ángel Vargas <m_varg03@uni-muenster.de>
+    Contact: Miguel Angel Vargas <m_varg03@uni-muenster.de>
     """
     version = 0
     
-    from scipy import interpolate # Don't know if this should be here (I'll keep it meanwhile)
+    from scipy import interpolate 
     
-    s1_bound_4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60], 
-                                               [70, 70, 61, 61,35,0], 
-                                               fill_value='extrapolate', kind='linear')
+    bound_v4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60],[70, 70, 61, 61,35,0],
+                                      fill_value='extrapolate', kind='linear')
     
     def _process(self, df):
-        df.loc[:, self.name()] = df['s1_rise_time'] < SingleElectronS2s.s1_bound_4(df['s1_area_fraction_top']
+        df.loc[:, self.name()] = df['s1_rise_time'] < SingleElectronS2s.bound_v4(df['s1_area_fraction_top'])
         return df
