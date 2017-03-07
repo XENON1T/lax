@@ -40,6 +40,7 @@ class AllEnergy(ManyLichen):
             DAQVeto(),
             S1SingleScatter(),
             S1AreaFractionTop(),
+            S2PatternLikelihood(),
         ]
 
 
