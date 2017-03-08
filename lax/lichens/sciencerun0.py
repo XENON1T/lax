@@ -42,6 +42,7 @@ class AllEnergy(ManyLichen):
             DAQVeto(),
             S1SingleScatter(),
             S1AreaFractionTop(),
+            S2Tails()
         ]
 
 
@@ -81,7 +82,7 @@ class DAQVeto(ManyLichen):
 
     Contact: Daniel Coderre <daniel.coderre@lhep.unibe.ch>
     """
-    version = 0
+    version = 1
 
     def __init__(self):
         self.lichen_list = [self.EndOfRunCheck(),
@@ -119,7 +120,23 @@ class DAQVeto(ManyLichen):
                                       df['event_duration'] / 2)
             return df
 
+        
+class S2Tails(Lichen):
+    """Check if event is in a tail of a previous S2
 
+    Requires S2Tail minitrees.
+
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:subgroup:wimphysics:s2_tails_sr0
+
+    Contact: Daniel Coderre <daniel.coderre@lhep.unibe.ch>
+    """
+    
+    def _process(self, df):
+        df.loc[:, self.name()] = ((~(data['s2_over_tdiff'] >= 0)) |
+                                  (data['s2_over_tdiff'] < 0.04))
+        return df
+
+    
 class FiducialCylinder1T(StringLichen):
     """Fiducial volume cut.
 
