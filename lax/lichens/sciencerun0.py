@@ -179,16 +179,14 @@ class FiducialFourLeafClover1250kg(StringLichen):
 
         # Go to polar coordinates
         def cart2pol(x_, y_):
-        """This is a simple function to change coordinate system.
-        """
+        """This is a simple function to change coordinate system."""
             rho = np.sqrt(x_ ** 2 + y_ ** 2)
             phi = np.arctan2(y_, x_)
             return (rho, phi)
 
         # Find argument of nearest value in array
         def find_nearest(array, values):
-        """This is a simple function to find the argument of a value in an array
-        """
+        """This is a simple function to find the argument of a value in an array. """
             indices = np.abs(np.subtract.outer(array, values)).argmin(0)
             return indices
 
