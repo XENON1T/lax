@@ -386,9 +386,9 @@ class S2Width(ManyLichen):
 
     xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
 
-    Contact: Yuehuan <weiyh@physik.uzh.ch>
+    Contact: Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 1
+    version = 2
 
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
@@ -409,11 +409,11 @@ class S2Width(ManyLichen):
 
     @staticmethod
     def relative_s2_width_bounds(s2, kind='high'):
-        x = 0.3 * np.log10(np.clip(s2, 150, 7000))
+        x = 0.5 * np.log10(np.clip(s2, 150, 4500 if kind == 'high' else 2500))
         if kind == 'high':
-            return 2.3 - x
+            return 3 - x
         elif kind == 'low':
-            return -0.3 + x
+            return -0.9 + x
         raise ValueError("kind must be high or low")
 
     class S2WidthHigh(Lichen):
