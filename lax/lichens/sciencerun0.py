@@ -67,6 +67,8 @@ class LowEnergy(AllEnergy):
             S1PatternLikelihood(),
             S2Width(),
             S1MaxPMT(),
+            SignalOverPreS2Junk(),
+            SingleElectronS2s()
         ]
 
 
