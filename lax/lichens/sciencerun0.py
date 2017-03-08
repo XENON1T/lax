@@ -472,24 +472,15 @@ class S1AreaFractionTop(RangeLichen):
         return df
 
 
-class SignalOverPreS2Junk(RangeLichen):
-    """Cut events with lot of peak area before main S2 (currently working for small s2s)
-
-    Not used.  Compare S1 and S2 area to the area of other peaks before interaction S2
-
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_signal_noise
+class SignalOverPreS2Junk(StringLichen):
+    """Cut events with lot of peak area before main S2 
 
     Contact: Julien Wulf <jwulf@physik.uzh.ch>
     """
-    version = 0
-    allowed_range = (0, 1)
-    variable = 'signal_over_pre_s2_junk'
+    version = 1
+    string = "signal_over_pre_s2_junk - s1 < 300"
 
-    def pre(self, df):
-        df.loc[:, self.variable] = (df.area_before_main_s2 - df.s1) / (df.s2 + df.s1)
-        return df
-
-
+    
 class SingleElectronS2s(Lichen):
     """Remove mis-identified single electron S2s classified as S1s
 
