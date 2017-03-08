@@ -2,6 +2,15 @@
 History
 =======
 
+0.7.0 (2017-03-07)
+------------------
+
+* Update 1T FV (#40)
+* Tune S2 width cut (#38)
+* S1 width cut (#33)
+* S2 pattern likelihood (#34)
+* S1 AFT speed fix (#32)
+
 0.6.2 (2017-03-03)
 ------------------
 
