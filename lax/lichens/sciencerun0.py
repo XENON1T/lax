@@ -6,12 +6,14 @@ This includes all current definitions of the cuts for the first science run
 # -*- coding: utf-8 -*-
 import inspect
 import os
+import json
 
 import numpy as np
 from pax import units, configuration
 
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
+from scipy import interpolate
 import json
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
@@ -485,4 +487,39 @@ class SignalOverPreS2Junk(RangeLichen):
 
     def pre(self, df):
         df.loc[:, self.variable] = (df.area_before_main_s2 - df.s1) / (df.s2 + df.s1)
+        return df
+
+
+class SingleElectronS2s(Lichen):
+    """Remove mis-identified single electron S2s classified as S1s
+
+    Details of the definition can be seen in the following note:
+
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:exploring_se_cut
+    
+    This was done by redrawing and improving the classification bounds for S1s at low energies by
+    building up from Jelles low-energy classification work at a peaks level.
+    To do this Rn220 data processed in pax.v6.4.2 was used.
+    
+    Requires: TotalProperties, LowEnergyS1Candidates minitrees.
+    
+    Contact: Miguel Angel Vargas <m_varg03@uni-muenster.de>
+    """
+    version = 0
+    allowed_range_area = (10, 200)
+    allowed_range_rt =(11,450)
+    area_variable = 's1'
+    rt_variable = 's1_rise_time'
+    aft_variable = 's1_area_fraction_top'
+
+    bound_v4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60],[70, 70, 61, 61,35,0],
+                                    fill_value='extrapolate', kind='linear')
+
+    def _process(self, df):
+        cond = ((df[area_variable] < allowed_range_area[0]) &
+                (df[area_variable] > allowed_range_area[1]) &
+                (df[rt_variable] > allowed_range_rt[0]) &
+                (df[rt_variable] < allowed_range_rt[1]))
+        df.loc[:, self.name()] = True    # If outside the studied box, pass the event
+        df.loc[:, self.name()][cond] = df[rt_variable][cond] < SingleElectronS2s.bound_v4(df[aft_variable][cond])
         return df
