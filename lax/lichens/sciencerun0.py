@@ -478,7 +478,7 @@ class SingleElectronS2s(Lichen):
     """Remove mis-identified single electron S2s classified as S1s
 
     Details of the definition can be seen in the following note:
-    
+
     https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:exploring_se_cut
     
     This was done by redrawing and improving the classification bounds for S1s at low energies by
