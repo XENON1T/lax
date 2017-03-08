@@ -98,15 +98,18 @@ class DAQVeto(ManyLichen):
         def _process(self, df):
             df_runs = df.loc[df.reset_index().groupby(
                 ['run_number'])['event_time'].idxmax()]
-            for index, row in df_runs.iterrows():
-                index = index
-                df = df.loc[(df['event_time'] < row['event_time'] - 21e9)]
+            for _, row in df_runs.iterrows():                
+                df.loc[:, self.name()] = df.apply(
+                    lambda x: df['event_time'] < row['event_time'] - 21e9
+                    if df['run_number'] == row['run_number']
+                )
             return df
 
     class BusyTypeCheck(Lichen):
         def _process(self, df):
-            df = df.loc[(~(df['previous_busy_on'] < 60e9)) |
-                        (df['previous_busy_off'] < df['previous_busy_on'])]
+            df.loc[:, self.name()] = ((~(df['previous_busy_on'] < 60e9)) |
+                                  (df['previous_busy_off'] <
+                                   df['previous_busy_on']))
             return df
 
     class BusyCheck(Lichen):
