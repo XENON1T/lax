@@ -7,6 +7,36 @@ History
 
 * Update cut list
 
+lax 0.8.1
+
+CutAllEnergy
+  * CutFiducialCylinder1T v3
+  * CutInteractionExists v0
+  * CutS2Threshold v0
+  * CutInteractionPeaksBiggest v0
+  * CutS2AreaFractionTop v2
+  * CutS2SingleScatter v2
+  * CutDAQVeto v0
+  * CutS1SingleScatter v1
+  * CutS1AreaFractionTop v1
+  * CutS2PatternLikelihood v0
+CutLowEnergy
+  * CutFiducialCylinder1T v3
+  * CutS1LowEnergyRange v0
+  * CutS2Threshold v0
+  * CutInteractionPeaksBiggest v0
+  * CutS2AreaFractionTop v2
+  * CutS2SingleScatterSimple v0
+  * CutDAQVeto v0
+  * CutS1SingleScatter v1
+  * CutS1AreaFractionTop v1
+  * CutS2PatternLikelihood v0
+  * CutS1PatternLikelihood v0
+  * CutS2Width v2
+  * CutS1MaxPMT v0
+  * CutSignalOverPreS2Junk v1
+  * CutSingleElectronS2s v0
+
 0.8.0 (2017-03-07)
 ------------------
 
