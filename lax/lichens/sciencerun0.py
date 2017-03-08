@@ -469,7 +469,7 @@ class SignalOverPreS2Junk(RangeLichen):
 
 class SingleElectronS2s(Lichen):
   """Remove mis-identified single electron S2s classified as S1s
-  
+
     Details of the definition can be seen in the following note:
     
     https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:exploring_se_cut
@@ -488,7 +488,7 @@ class SingleElectronS2s(Lichen):
     area_variable = 's1'
     rt_variable = 's1_rise_time'
     aft_variable = 's1_area_fraction_top'
-    
+
     bound_v4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60],[70, 70, 61, 61,35,0],
                                     fill_value='extrapolate', kind='linear')
 
