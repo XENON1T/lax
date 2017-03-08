@@ -12,11 +12,11 @@ class AllEnergy(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [
-            FiducialCylinder1T(),
             InteractionExists(),
+            S2SingleScatter(),
+            FiducialCylinder1T(),
             S2Threshold(),
             InteractionPeaksBiggest(),
-            S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
         ]
@@ -26,10 +26,10 @@ class LowEnergy(AllEnergy):
     def __init__(self):
         AllEnergy.__init__(self)
         # Replaces Interaction exists
-        self.lichen_list[1] = S1LowEnergyRange()
+        self.lichen_list[0] = S1LowEnergyRange()
 
         # Use a simpler single scatter cut
-        self.lichen_list[5] = S2SingleScatterSimple()
+        self.lichen_list[1] = S2SingleScatterSimple()
 
         self.lichen_list += [
             S1PatternLikelihood(),
