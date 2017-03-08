@@ -124,7 +124,7 @@ class FiducialCylinder1T(StringLichen):
 class FiducialFourLeafClover1250kg(StringLichen):
     """Fiducial volume cut: Four leaf Clover
     
-    Our FV is constraint by two depth planes (4 cm above the gate, 9 cm below the gate) 
+    Our FV is constraint by two depth planes (4 cm above the gate, 9 cm below the gate)
     and a curved surface which stays 4 cm from the measured walls of the tpc.
 
     The fidicual volume cut defines the region in depth and radius that we
@@ -132,8 +132,8 @@ class FiducialFourLeafClover1250kg(StringLichen):
     we still expect the background distribution is flat.
 
     For the phi dependent shape we took the 210Po data from wall events and
-    calculated where the ... percentile of events leaking in. For the angle 
-    the edge of the event distribution for different z slices where taken. 
+    calculated where the ... percentile of events leaking in. For the angle
+    the edge of the event distribution for different z slices where taken.
     The angel was taken so that both the lower and upper part of the FV stay a similar
     distance away from the edge.
 
@@ -174,33 +174,33 @@ class FiducialFourLeafClover1250kg(StringLichen):
         radius_offset_value = 1  # cm # this sets the angle
         # Set the height
         depth_upper_bound = -9  # cm - exlude all gamma's
-        depth_lower_bound = -96.9 + 4  # cm - stay away from the cathode 
+        depth_lower_bound = -96.9 + 4  # cm - stay away from the cathode
         max_height = depth_upper_bound - depth_lower_bound
 
         # Go to polar coordinates
-        def cart2pol(x_, y_):
+        def cart2pol(x_value, y_value):
             """This is a simple function to change coordinate system.
             """
-            rho = np.sqrt(x_ ** 2 + y_ ** 2)
-            phi = np.arctan2(y_, x_)
+            rho = np.sqrt(x_value ** 2 + y_value ** 2)
+            phi = np.arctan2(y_value, x_value)
             return (rho, phi)
 
         # Find argument of nearest value in array
         def find_nearest(array, values):
-            """This is a simple function to find the argument of a value in an array. 
+            """This is a simple function to find the argument of a value in an array.
             """
             indices = np.abs(np.subtract.outer(array, values)).argmin(0)
             return indices
 
         # Get the dep max radius for a FV in R with an angle set by r_offset
-        # takes depth array [cm], Max radius [cm], radius offset [cm], 
+        # takes depth array [cm], Max radius [cm], radius offset [cm],
         # total height of cylinder [cm], center of cylinder in depth [cm]
-        def coffee_r(z_, R, r_offset, height, z_center):
+        def coffee_r(z_value, R, r_offset, height, z_center):
             """This make the radius depth dependent. For a given r_offset it increases
             the top radius by r_offset and decreases the bottom radius by r_offset while
-            keeping a straight line in the R2-Z space to keep the volume the same. 
+            keeping a straight line in the R2-Z space to keep the volume the same.
             """
-            return np.sqrt((((R + r_offset) ** 2 - (R - r_offset) ** 2) / height) * (z_ - z_center + (height / 2)) + (
+            return np.sqrt((((R + r_offset) ** 2 - (R - r_offset) ** 2) / height) * (z_value - z_center + (height / 2)) + (
                 R - r_offset) ** 2)  # returns radius array [cm]
 
         # Rho from data
