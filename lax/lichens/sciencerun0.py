@@ -475,7 +475,7 @@ class SignalOverPreS2Junk(RangeLichen):
 
 
 class SingleElectronS2s(Lichen):
-  """Remove mis-identified single electron S2s classified as S1s
+    """Remove mis-identified single electron S2s classified as S1s
 
     Details of the definition can be seen in the following note:
     
