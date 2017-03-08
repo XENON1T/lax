@@ -480,7 +480,7 @@ class SignalOverPreS2Junk(StringLichen):
     Contact: Julien Wulf <jwulf@physik.uzh.ch>
     """
     version = 1
-    string = "signal_over_pre_s2_junk - s1 < 300"
+    string = "area_before_main_s2 - s1 < 300"
 
     
 class SingleElectronS2s(Lichen):
@@ -509,10 +509,10 @@ class SingleElectronS2s(Lichen):
                                     fill_value='extrapolate', kind='linear')
 
     def _process(self, df):
-        cond = ((df[area_variable] < allowed_range_area[0]) &
-                (df[area_variable] > allowed_range_area[1]) &
-                (df[rt_variable] > allowed_range_rt[0]) &
-                (df[rt_variable] < allowed_range_rt[1]))
+        cond = ((df[self.area_variable] < self.allowed_range_area[0]) &
+                (df[self.area_variable] > self.allowed_range_area[1]) &
+                (df[self.rt_variable] > self.allowed_range_rt[0]) &
+                (df[self.rt_variable] < self.allowed_range_rt[1]))
         df.loc[:, self.name()] = True    # If outside the studied box, pass the event
-        df.loc[:, self.name()][cond] = df[rt_variable][cond] < SingleElectronS2s.bound_v4(df[aft_variable][cond])
+        df.loc[:, self.name()][cond] = df[self.rt_variable][cond] < SingleElectronS2s.bound_v4(df[self.aft_variable][cond])
         return df
