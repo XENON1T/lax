@@ -73,7 +73,7 @@ class DAQVeto(ManyLichen):
     Make sure no DAQ vetos happen during your event. This
     automatically checks both busy and high-energy vetos.
     Also makes sure last BUSY type is 'off' and cuts
-    last 21 seconds of each run. 
+    last 21 seconds of each run.
 
     Requires Proximity minitrees.
 
@@ -91,7 +91,8 @@ class DAQVeto(ManyLichen):
 
     class EndOfRunCheck(Lichen):
         def _process(self, df):
-            df_runs = df.loc[df.reset_index().groupby(['run_number'])['event_time'].idxmax()]
+            df_runs = df.loc[df.reset_index().groupby(
+                ['run_number'])['event_time'].idxmax()]
             for index, row in df_runs.iterrows():
                 df = df.loc[(df['event_time'] < row['event_time'] - 21e9)]
             return df
@@ -104,12 +105,14 @@ class DAQVeto(ManyLichen):
 
     class BusyCheck(Lichen):
         def _process(self, df):
-            df.loc[:, self.name()] = abs(df['nearest_busy']) > df['event_duration'] / 2
+            df.loc[:, self.name()] = (abs(df['nearest_busy']) >
+                                      df['event_duration'] / 2)
             return df
 
     class HEVCheck(Lichen):
         def _process(self, df):
-            df.loc[:, self.name()] = abs(df['nearest_hev']) > df['event_duration'] / 2
+            df.loc[:, self.name()] = (abs(df['nearest_hev']) >
+                                      df['event_duration'] / 2)
             return df
 
 
