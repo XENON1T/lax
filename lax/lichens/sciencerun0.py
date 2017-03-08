@@ -431,7 +431,7 @@ class S1AreaFractionTop(RangeLichen):
     Author: Darryl Masson, dmasson@purdue.edu
     '''
 
-    version = 0.1
+    version = 1
     variable = 'pvalue_s1_area_fraction_top'
     allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
 
