@@ -106,14 +106,14 @@ class FiducialCylinder1T(StringLichen):
     trust and use for the exposure. This is the region where the background
     distribution is flat.
 
-    This version of the cut is based pax v6.2 bg run 0 data. See the
+    This version of the cut is based pax v6.4 bg run 0 data. See the
     note first results fiducial volume note for the study of the definition.
 
-    Contact: Sander breur sanderb@nikhef.nl
+    Contact: Sander breur <sanderb@nikhef.nl>
 
     """
-    version = 2
-    string = "(-83.45 < z) & (z < -13.45) & (r < 39.85)"
+    version = 3
+    string = "(-92.9 < z) & (z < -9) & (r < 36.94)"
 
     def pre(self, df):
         df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
