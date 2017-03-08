@@ -340,7 +340,7 @@ class S2SingleScatterSimple(StringLichen):
     version = 0
     string = 'largest_other_s2 < s2 * 0.00832 + 72.3'
 
-    
+
 class S2PatternLikelihood(StringLichen):
     """Reject poorly reconstructed S2s and multiple scatters.
 
