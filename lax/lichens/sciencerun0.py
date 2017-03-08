@@ -99,6 +99,7 @@ class DAQVeto(ManyLichen):
             df_runs = df.loc[df.reset_index().groupby(
                 ['run_number'])['event_time'].idxmax()]
             for index, row in df_runs.iterrows():
+                index = index
                 df = df.loc[(df['event_time'] < row['event_time'] - 21e9)]
             return df
 
