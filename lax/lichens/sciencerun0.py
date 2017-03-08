@@ -42,6 +42,7 @@ class AllEnergy(ManyLichen):
             DAQVeto(),
             S1SingleScatter(),
             S1AreaFractionTop(),
+            S2PatternLikelihood(),
         ]
 
 
@@ -209,7 +210,6 @@ class S1PatternLikelihood(Lichen):
         df.loc[:, self.name()] = df['s1_pattern_fit'] < df.temp
         return df
 
-
 class S1SingleScatter(Lichen):
     """Requires only one valid interaction between the largest S2, and any S1 recorded before it.
 
@@ -341,6 +341,22 @@ class S2SingleScatterSimple(StringLichen):
     """
     version = 0
     string = 'largest_other_s2 < s2 * 0.00832 + 72.3'
+
+
+class S2PatternLikelihood(StringLichen):
+    """Reject poorly reconstructed S2s and multiple scatters.
+
+    Details of the likelihood can be seen in the following note. Here, 98
+    quantile acceptance line estimated with Rn220 data (pax_v6.4.2) is used.
+
+       xenon:xenon1t:analysis:firstresults:s2_pattern_likelihood_cut
+
+    Requires Extended minitrees.
+
+    Contact: Bart Pelssers  <bart.pelssers@fysik.su.se>
+    """
+    version = 0
+    string = "s2_pattern_fit < 75 + 10 * s2**0.45"
 
 
 class S2Threshold(StringLichen):
