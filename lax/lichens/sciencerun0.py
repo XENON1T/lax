@@ -466,10 +466,10 @@ class SignalOverPreS2Junk(RangeLichen):
         df.loc[:, self.variable] = (df.area_before_main_s2 - df.s1) / (df.s2 + df.s1)
         return df
 
-    
+
 class SingleElectronS2s(Lichen):
-    """Remove mis-identified single electron S2s classified as S1s 
- 
+  """Remove mis-identified single electron S2s classified as S1s
+  
     Details of the definition can be seen in the following note:
     
     https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:exploring_se_cut
@@ -487,14 +487,14 @@ class SingleElectronS2s(Lichen):
     allowed_range_rt =(11,450)
     area_variable = 's1'
     rt_variable = 's1_rise_time'
-    aft_variable = 's1_area_fraction_top'    
-
+    aft_variable = 's1_area_fraction_top'
+    
     bound_v4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60],[70, 70, 61, 61,35,0],
                                     fill_value='extrapolate', kind='linear')
 
     def _process(self, df):
-        cond = ((df[area_variable] < allowed_range_area[0]) & 
-                (df[area_variable] > allowed_range_area[1]) & 
+        cond = ((df[area_variable] < allowed_range_area[0]) &
+                (df[area_variable] > allowed_range_area[1]) &
                 (df[rt_variable] > allowed_range_rt[0]) &
                 (df[rt_variable] < allowed_range_rt[1]))
         df.loc[:, self.name()] = True    # If outside the studied box, pass the event
