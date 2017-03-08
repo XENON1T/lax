@@ -121,6 +121,89 @@ class FiducialCylinder1T(StringLichen):
         df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
         return df
 
+class FiducialCylinder1250kg(StringLichen):
+    """Fiducial volume cut: Four leaf Clover
+
+    The fidicual volume cut defines the region in depth and radius that we
+    trust and could use for the first science run. This is the region where
+    we still expect the background distribution is flat.
+
+    This uses bla bla - need to be done
+
+    This version of the cut is based pax v6.4 bg run 0 data. See the
+    note first results fiducial volume note for the study of the definition.
+
+    Contact: Sander breur <sanderb@nikhef.nl>
+
+    """
+    version = 0
+
+    string = "(-92.9 < z) & (z < -9) & (r_phi < r_max)"
+
+    def pre(self, df):
+
+        # first get the points from 210Po
+        # open file and get text
+        rho_phi_filename = os.path.join(DATA_DIR,
+                                       'R_phi_curve_360points.txt')
+        with open(rho_phi_filename) as file:
+            text = file.readlines()
+        # get value per line
+        phi_values = []
+        r_values = []
+        for line in text:
+            phi_values.append(float(line.split()[0]))
+            r_values.append(float(line.split()[1]))
+
+        # Set values needed for phi dependent radius
+        phi_values = np.array(phi_values)
+        r_values = np.array(r_values)
+        average_radius_egg = np.average(r_values)
+        tpc_length = 96.9
+
+        # set user defined values for the FV:
+        radius_scaling_value = 41  # cm
+        radius_offset_value = 1  # cm
+        depth_upper_bound = -9  # cm - exlude all gamma's
+        depth_lower_bound = -tpc_length + 4  # cm - stay away from the cathode
+        max_height = depth_upper_bound - depth_lower_bound
+
+        # Change coordinates
+        def cart2pol(x, y):
+            rho = np.sqrt(x ** 2 + y ** 2)
+            phi = np.arctan2(y, x)
+            return (rho, phi)
+
+        def pol2cart(rho, phi):
+            x = rho * np.cos(phi)
+            y = rho * np.sin(phi)
+            return (x, y)
+
+        # Find argument of nearest value in array
+        def find_nearest(array, values):
+            indices = np.abs(np.subtract.outer(array, values)).argmin(0)
+            return indices
+
+        # Get the dep max radius for a FV in R with an angle set by r_offset
+        # takes depth array [cm], Max radius [cm], radius offset [cm], total height of cylinder [cm], center of cylinder in depth [cm]
+        def coffee_r(z, R, r_offset, height, z_center):
+            return np.sqrt((((R + r_offset) ** 2 - (R - r_offset) ** 2) / height) * (z - z_center + (height / 2)) + (
+                R - r_offset) ** 2)  # returns radius array [cm]
+
+        df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
+
+        df.loc[:, 'r_phi'] = cart2pol(df['x'], df['y'])[0]
+
+
+        df.loc[:, 'r_max'] = ((radius_scaling_value/ average_radius_egg) *
+                                coffee_r(df['z'],
+                                r_values[find_nearest(phi_values, cart2pol(df['x'], df['y'])[1])],
+                                radius_offset_value,
+                                max_height,
+                                -max_height / 2 + depth_upper_bound))
+
+        return df
+
 
 class DistanceToAmBe(StringLichen):
     """AmBe Fiducial volume cut.
