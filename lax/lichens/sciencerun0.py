@@ -179,14 +179,16 @@ class FiducialFourLeafClover1250kg(StringLichen):
 
         # Go to polar coordinates
         def cart2pol(x_, y_):
-        """This is a simple function to change coordinate system."""
+            """This is a simple function to change coordinate system.
+            """
             rho = np.sqrt(x_ ** 2 + y_ ** 2)
             phi = np.arctan2(y_, x_)
             return (rho, phi)
 
         # Find argument of nearest value in array
         def find_nearest(array, values):
-        """This is a simple function to find the argument of a value in an array. """
+            """This is a simple function to find the argument of a value in an array. 
+            """
             indices = np.abs(np.subtract.outer(array, values)).argmin(0)
             return indices
 
@@ -194,10 +196,10 @@ class FiducialFourLeafClover1250kg(StringLichen):
         # takes depth array [cm], Max radius [cm], radius offset [cm], 
         # total height of cylinder [cm], center of cylinder in depth [cm]
         def coffee_r(z_, R, r_offset, height, z_center):
-        """This make the radius depth dependent. For a given r_offset it increases
-        the top radius by r_offset and decreases the bottom radius by r_offset while
-        keeping a straight line in the R2-Z space to keep the volume the same. 
-        """
+            """This make the radius depth dependent. For a given r_offset it increases
+            the top radius by r_offset and decreases the bottom radius by r_offset while
+            keeping a straight line in the R2-Z space to keep the volume the same. 
+            """
             return np.sqrt((((R + r_offset) ** 2 - (R - r_offset) ** 2) / height) * (z_ - z_center + (height / 2)) + (
                 R - r_offset) ** 2)  # returns radius array [cm]
 
