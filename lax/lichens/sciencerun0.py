@@ -9,8 +9,10 @@ import os
 
 import numpy as np
 from pax import units, configuration
-from pax.InterpolatingMap import InterpolatingMap
+
+from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
+import json
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
@@ -420,7 +422,7 @@ class S1AreaFractionTop(RangeLichen):
 
     Uses scipy.stats.binom_test to compute a p-value based on the
     observed number of s1 photons in the top array, given the expected
-    probability that a photon at the event's (x,y,z) makes it to the top array.
+    probability that a photon at the event's (r,z) makes it to the top array.
 
     Uses a 3D map generated with Kr83m 32 keV line
 
@@ -429,21 +431,25 @@ class S1AreaFractionTop(RangeLichen):
     Author: Darryl Masson, dmasson@purdue.edu
     '''
 
-    version = 0
+    version = 0.1
     variable = 'pvalue_s1_area_fraction_top'
     allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
 
     def __init__(self):
         aftmap_filename = os.path.join(DATA_DIR,
-                                       's1_aft_xyz_24Feb2017.json')
-        self.aft_map = InterpolatingMap(aftmap_filename)
+                                       's1_aft_rz_02Mar2017.json')
+        with open(aftmap_filename) as data_file:
+            data = json.load(data_file)
+        r_pts = np.array(data['r_pts'])
+        z_pts = np.array(data['z_pts'])
+        aft_vals = np.array([data['map'][i*len(z_pts):(i+1)*len(z_pts)] for i in range(len(r_pts))]) # unpack 1d array to 2d
+        self.aft_map = RectBivariateSpline(r_pts,z_pts,aft_vals)
 
     def pre(self, df):
         df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
                                                                    np.round(row['s1']),
-                                                                   self.aft_map.get_value(row['x'],
-                                                                                          row['y'],
-                                                                                          row['z'])),
+                                                                   self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
+                                                                                row['z'])[0,0]),
                                             axis=1)
         return df
 
