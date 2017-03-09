@@ -650,10 +650,17 @@ class SingleElectronS2s(Lichen):
                                     fill_value='extrapolate', kind='linear')
 
     def _process(self, df):
+        # Is the event inside the area box considered for this study?
         cond = ((df[self.area_variable] < self.allowed_range_area[0]) &
                 (df[self.area_variable] > self.allowed_range_area[1]) &
                 (df[self.rt_variable] > self.allowed_range_rt[0]) &
                 (df[self.rt_variable] < self.allowed_range_rt[1]))
-        df.loc[:, self.name()] = True    # If outside the studied box, pass the event
-        df.loc[:, self.name()][cond] = df[self.rt_variable][cond] < SingleElectronS2s.bound_v4(df[self.aft_variable][cond])
+
+        # Pass events by default
+        passes = np.ones(len(df), dtype=np.bool)
+
+        # Reject events inside the box that don't pass the bound
+        passes[cond] = df[self.rt_variable][cond] < SingleElectronS2s.bound_v4(df[self.aft_variable][cond])
+
+        df.loc[:, self.name()] = passes
         return df
