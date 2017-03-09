@@ -6,7 +6,7 @@ This includes all current definitions of the cuts for the first science run
 # -*- coding: utf-8 -*-
 import inspect
 import os
-import json
+import pytz
 
 import numpy as np
 from pax import units, configuration
@@ -98,12 +98,22 @@ class DAQVeto(ManyLichen):
         """Check that the event does not come in the last 21 seconds of the run
         """
         def _process(self, df):
-            df_runs = df.loc[df.reset_index().groupby(['run_number'])['event_time'].idxmax()]
-            runvals = {}
-            for _, row in df_runs.iterrows():
-                runvals[row['run_number']] = row['event_time']
+            import hax          # noqa
+            if not len(hax.config):
+                # User didn't init hax yet... let's do it now
+                hax.init()
+
+            # Get the end times for each run
+            # The datetime -> timestamp logic here is the same as in the pax event builder
+            run_numbers = np.unique(df.run_number.values)
+            run_end_times = [int(q.replace(tzinfo=pytz.utc).timestamp() * int(1e9))
+                             for q in hax.runs.get_run_info(run_numbers.tolist(), 'end')]
+            run_end_times = {run_numbers[i]: run_end_times[i]
+                             for i in range(len(run_numbers))}
+
+            # Pass events that occur before (end time - 21 sec) of the run they are in
             df.loc[:, self.name()] = df.apply(lambda row: row['event_time'] <
-                                              runvals[row['run_number']] - 21e9, axis=1)
+                                              run_end_times[row['run_number']] - 21e9, axis=1)
             return df
 
     class BusyTypeCheck(Lichen):
