@@ -141,6 +141,7 @@ class S2Tails(Lichen):
 
     Contact: Daniel Coderre <daniel.coderre@lhep.unibe.ch>
     """
+    version = 0
     
     def _process(self, df):
         df.loc[:, self.name()] = ((~(df['s2_over_tdiff'] >= 0)) |
