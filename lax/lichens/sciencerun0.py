@@ -22,8 +22,7 @@ from lax import __version__ as lax_version
 
 # Store the directory of our data files
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))),
-                        '..',
-                        'data')
+                        '..', 'data')
 
 
 class AllEnergy(ManyLichen):
@@ -45,6 +44,7 @@ class AllEnergy(ManyLichen):
             S1SingleScatter(),
             S1AreaFractionTop(),
             S2PatternLikelihood(),
+            S2Tails()
         ]
 
 
@@ -77,6 +77,8 @@ class DAQVeto(ManyLichen):
 
     Make sure no DAQ vetos happen during your event. This
     automatically checks both busy and high-energy vetos.
+    Also makes sure last BUSY type is 'off' and cuts
+    last 21 seconds of each run.
 
     Requires Proximity minitrees.
 
@@ -84,23 +86,68 @@ class DAQVeto(ManyLichen):
 
     Contact: Daniel Coderre <daniel.coderre@lhep.unibe.ch>
     """
-    version = 0
+    version = 1
 
     def __init__(self):
-        self.lichen_list = [self.BusyCheck(),
+        self.lichen_list = [self.EndOfRunCheck(),
+                            self.BusyTypeCheck(),
+                            self.BusyCheck(),
                             self.HEVCheck()]
 
-    class BusyCheck(Lichen):
+    class EndOfRunCheck(Lichen):
+        """Check that the event does not come in the last 21 seconds of the run
+        """
         def _process(self, df):
-            df.loc[:, self.name()] = abs(df['nearest_busy']) > df['event_duration'] / 2
+            df_runs = df.loc[df.reset_index().groupby(['run_number'])['event_time'].idxmax()]
+            runvals = {}
+            for _, row in df_runs.iterrows():
+                runvals[row['run_number']] = row['event_time']
+            df.loc[:, self.name()] = df.apply(lambda row: row['event_time'] <
+                                              runvals[row['run_number']] - 21e9, axis=1)
+            return df
+
+    class BusyTypeCheck(Lichen):
+        """Ensure that the last busy type (if any) is OFF
+        """
+        def _process(self, df):
+            df.loc[:, self.name()] = ((~(df['previous_busy_on'] < 60e9)) |
+                                  (df['previous_busy_off'] <
+                                   df['previous_busy_on']))
+            return df
+
+    class BusyCheck(Lichen):
+        """Check if the event contains a BUSY veto trigger
+        """
+        def _process(self, df):
+            df.loc[:, self.name()] = (abs(df['nearest_busy']) >
+                                      df['event_duration'] / 2)
             return df
 
     class HEVCheck(Lichen):
+        """Check if the event contains a HE veto trigger
+        """
         def _process(self, df):
-            df.loc[:, self.name()] = abs(df['nearest_hev']) > df['event_duration'] / 2
+            df.loc[:, self.name()] = (abs(df['nearest_hev']) >
+                                      df['event_duration'] / 2)
             return df
 
 
+class S2Tails(Lichen):
+    """Check if event is in a tail of a previous S2
+
+    Requires S2Tail minitrees.
+
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:subgroup:wimphysics:s2_tails_sr0
+
+    Contact: Daniel Coderre <daniel.coderre@lhep.unibe.ch>
+    """
+    
+    def _process(self, df):
+        df.loc[:, self.name()] = ((~(data['s2_over_tdiff'] >= 0)) |
+                                  (data['s2_over_tdiff'] < 0.04))
+        return df
+
+    
 class FiducialCylinder1T(StringLichen):
     """Fiducial volume cut.
 
