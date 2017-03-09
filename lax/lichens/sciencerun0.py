@@ -95,16 +95,20 @@ class DAQVeto(ManyLichen):
                             self.HEVCheck()]
 
     class EndOfRunCheck(Lichen):
+        """Check that the event does not come in the last 21 seconds of the run
+        """
         def _process(self, df):
             df_runs = df.loc[df.reset_index().groupby(['run_number'])['event_time'].idxmax()]
             runvals = {}
             for _, row in df_runs.iterrows():
                 runvals[row['run_number']] = row['event_time']
             df.loc[:, self.name()] = df.apply(lambda row: row['event_time'] <
-                                              runvals[row['run_number']] - 21e9, axis=1)            
+                                              runvals[row['run_number']] - 21e9, axis=1)
             return df
 
     class BusyTypeCheck(Lichen):
+        """Ensure that the last busy type (if any) is OFF
+        """
         def _process(self, df):
             df.loc[:, self.name()] = ((~(df['previous_busy_on'] < 60e9)) |
                                   (df['previous_busy_off'] <
@@ -112,18 +116,22 @@ class DAQVeto(ManyLichen):
             return df
 
     class BusyCheck(Lichen):
+        """Check if the event contains a BUSY veto trigger
+        """
         def _process(self, df):
             df.loc[:, self.name()] = (abs(df['nearest_busy']) >
                                       df['event_duration'] / 2)
             return df
 
     class HEVCheck(Lichen):
+        """Check if the event contains a HE veto trigger
+        """
         def _process(self, df):
             df.loc[:, self.name()] = (abs(df['nearest_hev']) >
                                       df['event_duration'] / 2)
             return df
 
-        
+
 class S2Tails(Lichen):
     """Check if event is in a tail of a previous S2
 
