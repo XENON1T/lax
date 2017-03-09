@@ -152,13 +152,13 @@ class S2Tails(Lichen):
     Contact: Daniel Coderre <daniel.coderre@lhep.unibe.ch>
     """
     version = 0
-    
+
     def _process(self, df):
         df.loc[:, self.name()] = ((~(df['s2_over_tdiff'] >= 0)) |
                                     (df['s2_over_tdiff'] < 0.04))
         return df
 
-    
+
 class FiducialCylinder1T(StringLichen):
     """Fiducial volume cut.
 
@@ -181,7 +181,7 @@ class FiducialCylinder1T(StringLichen):
 
 class FiducialFourLeafClover1250kg(StringLichen):
     """Fiducial volume cut: Four leaf Clover
-    
+
     Our FV is constraint by two depth planes (4 cm above the gate, 9 cm below the gate)
     and a curved surface which stays 4 cm from the measured walls of the tpc.
 
@@ -273,7 +273,7 @@ class FiducialFourLeafClover1250kg(StringLichen):
         return df
 
 
-class DistanceToAmBe(StringLichen):
+class AmBeFiducial(StringLichen):
     """AmBe Fiducial volume cut.
     This uses the same Z cuts as the 1T fiducial cylinder, but a wider allowed range in R to maximize the number of nuclear recoils.
     There is a third cut on the distance to the source, so that we cut away background ER.
@@ -284,7 +284,7 @@ class DistanceToAmBe(StringLichen):
 
     """
     version = 1
-    string = "(distance_to_source < 80)"
+    string = "(distance_to_source < 80) & (-83.45 < z) & (z < -13.45) & (r < 42.00)"
 
     def pre(self, df):
         source_position = (55.965311731903, 43.724893639103577, -50)
@@ -626,27 +626,27 @@ class S1AreaFractionTop(RangeLichen):
 
 
 class SignalOverPreS2Junk(StringLichen):
-    """Cut events with lot of peak area before main S2 
+    """Cut events with lot of peak area before main S2
 
     Contact: Julien Wulf <jwulf@physik.uzh.ch>
     """
     version = 1
     string = "area_before_main_s2 - s1 < 300"
 
-    
+
 class SingleElectronS2s(Lichen):
     """Remove mis-identified single electron S2s classified as S1s
 
     Details of the definition can be seen in the following note:
 
     https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:exploring_se_cut
-    
+
     This was done by redrawing and improving the classification bounds for S1s at low energies by
     building up from Jelles low-energy classification work at a peaks level.
     To do this Rn220 data processed in pax.v6.4.2 was used.
-    
+
     Requires: TotalProperties, LowEnergyS1Candidates minitrees.
-    
+
     Contact: Miguel Angel Vargas <m_varg03@uni-muenster.de>
     """
     version = 0
