@@ -144,7 +144,7 @@ class S2Tails(Lichen):
     
     def _process(self, df):
         df.loc[:, self.name()] = ((~(df['s2_over_tdiff'] >= 0)) |
-                                  (df['s2_over_tdiff'] < 0.04))
+                                    (df['s2_over_tdiff'] < 0.04))
         return df
 
     
