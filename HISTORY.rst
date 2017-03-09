@@ -2,6 +2,13 @@
 History
 =======
 
+0.9.2 (2017-03-09)
+------------------
+
+* AmBe fiducial change to include z/r cut.
+* Get runtime from hax for DAQ cut (#43)
+* Fix warning in SingleElectronS2s (#44)
+
 0.9.1 (2017-03-08)
 ------------------
 
