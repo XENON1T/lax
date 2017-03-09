@@ -96,13 +96,12 @@ class DAQVeto(ManyLichen):
 
     class EndOfRunCheck(Lichen):
         def _process(self, df):
-            df_runs = df.loc[df.reset_index().groupby(
-                ['run_number'])['event_time'].idxmax()]
-            for _, row in df_runs.iterrows():                
-                df.loc[:, self.name()] = df.apply(
-                    lambda x: df['event_time'] < row['event_time'] - 21e9
-                    if df['run_number'] == row['run_number']
-                )
+            df_runs = df.loc[df.reset_index().groupby(['run_number'])['event_time'].idxmax()]
+            runvals = {}
+            for _, row in df_runs.iterrows():
+                runvals[row['run_number']] = row['event_time']
+            df.loc[:, self.name()] = df.apply(lambda row: row['event_time'] <
+                                              runvals[row['run_number']] - 21e9, axis=1)            
             return df
 
     class BusyTypeCheck(Lichen):
