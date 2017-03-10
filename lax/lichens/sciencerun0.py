@@ -521,7 +521,7 @@ class S2Threshold(StringLichen):
 
     Contact: Jelle Aalbers <aalbers@nikhef.nl>
     """
-    version = 0
+    version = 1
     string = "200 < s2"
 
 
