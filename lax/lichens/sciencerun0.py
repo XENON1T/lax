@@ -522,7 +522,7 @@ class S2Threshold(StringLichen):
     Contact: Jelle Aalbers <aalbers@nikhef.nl>
     """
     version = 0
-    string = "150 < s2"
+    string = "200 < s2"
 
 
 class S2Width(ManyLichen):
