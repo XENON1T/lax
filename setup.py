@@ -23,7 +23,7 @@ test_requirements = [
 
 setup(
     name='lax',
-    version='0.9.3',
+    version='0.9.4',
     description="Package for standardizing event selections on hax minitrees.",
     long_description=readme + '\n\n' + history,
     author="Christopher Tunnell",
