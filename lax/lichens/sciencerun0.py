@@ -51,8 +51,8 @@ class AllEnergy(ManyLichen):
 class LowEnergy(AllEnergy):
     """Select events with cs1<200
 
-    This is the list that we'll use for the actual DM search, therefore
-    those energies.
+    This is the list that we use for the Rn220 data to calibrate ER in the region of interest.
+    It doesn't contain the SignalOverPreS2Junk cut
     """
 
     def __init__(self):
@@ -68,6 +68,30 @@ class LowEnergy(AllEnergy):
             S2Width(),
             S1MaxPMT(),
 #            SignalOverPreS2Junk(),
+            SingleElectronS2s()
+        ]
+        
+
+class LowEnergyBackground(AllEnergy):
+    """Select events with cs1<200
+
+    This is the list that we'll use for the actual DM search. Additionally to the LowEnergy list it contains the
+    SignalOverPreS2Junk
+    """
+
+    def __init__(self):
+        AllEnergy.__init__(self)
+        # Replaces Interaction exists
+        self.lichen_list[1] = S1LowEnergyRange()
+
+        # Use a simpler single scatter cut
+        self.lichen_list[5] = S2SingleScatterSimple()
+
+        self.lichen_list += [
+            S1PatternLikelihood(),
+            S2Width(),
+            S1MaxPMT(),
+            SignalOverPreS2Junk(),
             SingleElectronS2s()
         ]
 
