@@ -172,8 +172,8 @@ class FiducialCylinder1T(StringLichen):
     Contact: Sander breur <sanderb@nikhef.nl>
 
     """
-    version = 3
-    string = "(-92.9 < z) & (z < -9) & (r < 36.94)"
+    version = 4
+    string = "(-92.9 < z) & (z < -9) & (sqrt(x*x + y*y) < 36.94)"
 
     def pre(self, df):
         df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
