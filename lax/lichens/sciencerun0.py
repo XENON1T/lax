@@ -284,7 +284,7 @@ class AmBeFiducial(StringLichen):
 
     """
     version = 1
-    string = "(distance_to_source < 80) & (-83.45 < z) & (z < -13.45) & (r < 42.00)"
+    string = "(distance_to_source < 80) & (-83.45 < z) & (z < -13.45) & (sqrt(x*x + y*y) < 42.00)"
 
     def pre(self, df):
         source_position = (55.965311731903, 43.724893639103577, -50)
