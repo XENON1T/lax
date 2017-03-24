@@ -661,8 +661,8 @@ class SingleElectronS2s(Lichen):
 
     def _process(self, df):
         # Is the event inside the area box considered for this study?
-        cond = ((df[self.area_variable] < self.allowed_range_area[0]) &
-                (df[self.area_variable] > self.allowed_range_area[1]) &
+        cond = ((df[self.area_variable] > self.allowed_range_area[0]) &
+                (df[self.area_variable] < self.allowed_range_area[1]) &
                 (df[self.rt_variable] > self.allowed_range_rt[0]) &
                 (df[self.rt_variable] < self.allowed_range_rt[1]))
 
