@@ -53,7 +53,7 @@ class LowEnergyRn220(AllEnergy):
 
     This is the list that we use for the Rn220 data to calibrate ER in the
     region of interest.
-    
+
     It doesn't contain the PreS2Junk cut
     """
 
@@ -76,7 +76,7 @@ class LowEnergyRn220(AllEnergy):
 class LowEnergyBackground(LowEnergyRn220):
     """Select background events with cs1<200
 
-    This is the list that we'll use for the actual DM search. Additionally to the 
+    This is the list that we'll use for the actual DM search. Additionally to the
     LowEnergyRn220 list it contains the PreS2Junk
     """
 
