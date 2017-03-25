@@ -2,6 +2,12 @@
 History
 =======
 
+0.10.0 (2017-03-24)
+------------------
+
+* Fix bug in SingleElectron lichen definition
+* Create LowEnergyBackground, LowEnergyRn220, LowEnergyAmBe to simplfy cut application
+
 0.9.5 (2017-03-23)
 ------------------
 
