@@ -48,11 +48,13 @@ class AllEnergy(ManyLichen):
         ]
 
 
-class LowEnergy(AllEnergy):
-    """Select events with cs1<200
+class LowEnergyRn220(AllEnergy):
+    """Select Rn220 events with cs1<200
 
-    This is the list that we'll use for the actual DM search, therefore
-    those energies.
+    This is the list that we use for the Rn220 data to calibrate ER in the
+    region of interest.
+
+    It doesn't contain the PreS2Junk cut
     """
 
     def __init__(self):
@@ -67,11 +69,37 @@ class LowEnergy(AllEnergy):
             S1PatternLikelihood(),
             S2Width(),
             S1MaxPMT(),
-#            SignalOverPreS2Junk(),
             SingleElectronS2s()
         ]
+        
 
+class LowEnergyBackground(LowEnergyRn220):
+    """Select background events with cs1<200
 
+    This is the list that we'll use for the actual DM search. Additionally to the
+    LowEnergyRn220 list it contains the PreS2Junk
+    """
+
+    def __init__(self):
+        LowEnergyRn220.__init__(self)
+
+        self.lichen_list.append += [
+            PreS2Junk(),
+        ]
+        
+class LowEnergyAmBe(LowEnergyRn220):
+    """Select AmBe events with cs1<200 with appropriate cuts
+
+    It is the same as the LowEnergyRn220 cuts, except uses an AmBe fiducial.
+    """
+
+    def __init__(self):
+        LowEnergyRn220.__init__(self)
+
+        # Replaces Fiducial
+        self.lichen_list[0] = AmBeFiducial()
+
+        
 class DAQVeto(ManyLichen):
     """Check if DAQ busy or HE veto
 
@@ -625,7 +653,7 @@ class S1AreaFractionTop(RangeLichen):
         return df
 
 
-class SignalOverPreS2Junk(StringLichen):
+class PreS2Junk(StringLichen):
     """Cut events with lot of peak area before main S2
 
     Contact: Julien Wulf <jwulf@physik.uzh.ch>
