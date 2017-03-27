@@ -692,7 +692,6 @@ class SingleElectronS2s(Lichen):
                 (df[self.area_variable] < self.allowed_range_area[1]) &
                 (df[self.rt_variable] > self.allowed_range_rt[0]) &
                 (df[self.rt_variable] < self.allowed_range_rt[1]))
-        print('cond:',cond)
 
         # Pass events by default
         passes = np.ones(len(df), dtype=np.bool)
