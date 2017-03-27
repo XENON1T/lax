@@ -83,7 +83,7 @@ class LowEnergyBackground(LowEnergyRn220):
     def __init__(self):
         LowEnergyRn220.__init__(self)
 
-        self.lichen_list.append += [
+        self.lichen_list += [
             PreS2Junk(),
         ]
         
