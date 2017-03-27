@@ -42,7 +42,7 @@ class AllEnergy(ManyLichen):
             S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
-            S1AreaFractionTop(),
+#            S1AreaFractionTop(),
             S2PatternLikelihood(),
             S2Tails()
         ]
@@ -684,8 +684,7 @@ class SingleElectronS2s(Lichen):
     rt_variable = 's1_rise_time'
     aft_variable = 's1_area_fraction_top'
 
-    bound_v4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60],[70, 70, 61, 61,35,0],
-                                    fill_value='extrapolate', kind='linear')
+    bound_v4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60,1.0],[70, 70, 61, 61,35,0,0], kind='linear')
 
     def _process(self, df):
         # Is the event inside the area box considered for this study?
@@ -693,12 +692,13 @@ class SingleElectronS2s(Lichen):
                 (df[self.area_variable] < self.allowed_range_area[1]) &
                 (df[self.rt_variable] > self.allowed_range_rt[0]) &
                 (df[self.rt_variable] < self.allowed_range_rt[1]))
+        print('cond:',cond)
 
         # Pass events by default
         passes = np.ones(len(df), dtype=np.bool)
 
         # Reject events inside the box that don't pass the bound
-        passes[cond] = df[self.rt_variable][cond] < SingleElectronS2s.bound_v4(df[self.aft_variable][cond])
+        passes = (df[self.rt_variable] < SingleElectronS2s.bound_v4(df[self.aft_variable])) & cond
 
         df.loc[:, self.name()] = passes
         return df
