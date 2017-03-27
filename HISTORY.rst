@@ -2,7 +2,7 @@
 History
 =======
 
-0.10.0 (2017-03-24)
+0.10.2 (2017-03-27)
 ------------------
 
 * Bug in lichen definition (append not used as function)
