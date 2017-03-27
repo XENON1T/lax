@@ -42,7 +42,7 @@ class AllEnergy(ManyLichen):
             S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
-#            S1AreaFractionTop(),
+            S1AreaFractionTop(),
             S2PatternLikelihood(),
             S2Tails()
         ]
