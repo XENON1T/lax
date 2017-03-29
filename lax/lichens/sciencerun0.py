@@ -677,27 +677,28 @@ class SingleElectronS2s(Lichen):
 
     Contact: Miguel Angel Vargas <m_varg03@uni-muenster.de>
     """
-    version = 0
+    version = 3
     allowed_range_area = (10, 200)
     allowed_range_rt =(11,450)
     area_variable = 's1'
     rt_variable = 's1_rise_time'
     aft_variable = 's1_area_fraction_top'
 
-    bound_v4 = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60,1.0],[70, 70, 61, 61,35,0,0], kind='linear')
+    bound = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60,1.0],[70, 70, 61, 61,35,0,0], kind='linear')
 
     def _process(self, df):
         # Is the event inside the area box considered for this study?
-        cond = ((df[self.area_variable] > self.allowed_range_area[0]) &
+        cond1 = ((df[self.area_variable] > self.allowed_range_area[0]) &
                 (df[self.area_variable] < self.allowed_range_area[1]) &
                 (df[self.rt_variable] > self.allowed_range_rt[0]) &
                 (df[self.rt_variable] < self.allowed_range_rt[1]))
+        cond2 = (df[self.rt_variable] < SingleElectronS2s.bound(df[self.aft_variable]))
 
         # Pass events by default
         passes = np.ones(len(df), dtype=np.bool)
 
         # Reject events inside the box that don't pass the bound
-        passes = (df[self.rt_variable] < SingleElectronS2s.bound_v4(df[self.aft_variable])) & cond
+        passes = (True ^ (cond1)) | (cond1 & cond2)
 
         df.loc[:, self.name()] = passes
         return df
