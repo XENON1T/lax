@@ -718,7 +718,7 @@ class MuonVeto(Lichen):
     """
 
     version = 1
-    not_allowed_range = (-1000000,0)
+    not_allowed_range = (-1000000,10000)
 
     def _process(self, df):
         cond1 = (df['event_duration'] / 2) - 1001000 + df['nearest_muon_veto_trigger'] < self.not_allowed_range[0]
