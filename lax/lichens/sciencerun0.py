@@ -702,3 +702,28 @@ class SingleElectronS2s(Lichen):
 
         df.loc[:, self.name()] = passes
         return df
+
+
+class MuonVeto(Lichen):
+    """Remove events in coincidence with Muon Veto triggers.
+    It checks the distance in time (ns) between a reference position inside the waveform
+    and the nearest MV trigger (which is determined with respect to the center of the event).
+    The event is excluded if the nearest MV trigger falls in a [-1ms,+10us] time window 
+    with respect to the reference position.
+
+    Requires Proximity minitrees.
+
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:mv_xe1t:syncro_with_muons
+
+    Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
+    """
+
+    version = 1
+    not_allowed_range = (-1000000, 10000)
+
+    def _process(self, df):
+        cond1 = (df['event_duration'] / 2) - 1000000 + df['nearest_muon_veto_trigger'] < self.not_allowed_range[0]
+        cond2 = (df['event_duration'] / 2) - 1000000 + df['nearest_muon_veto_trigger'] > self.not_allowed_range[1]
+
+        df.loc[:, self.name()] = cond1 | cond2
+        return df
