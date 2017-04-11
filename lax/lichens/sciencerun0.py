@@ -708,7 +708,8 @@ class MuonVeto(Lichen):
     """Remove events in coincidence with Muon Veto triggers.
     It checks the distance in time (ns) between a reference position inside the waveform
     and the nearest MV trigger (which is determined with respect to the center of the event).
-    The event is excluded if the nearest MV trigger falls in a [-1ms,+10us] time window with respect to the reference position.
+    The event is excluded if the nearest MV trigger falls in a [-1ms,+10us] time window
+    with respect to the reference position.
     Requires Proximity minitrees.
     https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:mv_xe1t:syncro_with_muons
     Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
