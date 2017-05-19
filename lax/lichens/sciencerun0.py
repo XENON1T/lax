@@ -12,6 +12,9 @@ import numpy as np
 from pax import units, configuration
 from pax import __version__ as pax_version
 
+from scipy.interpolate import RectBivariateSpline
+from scipy.stats import binom_test
+from scipy import interpolate
 import json
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
