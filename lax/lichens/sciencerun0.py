@@ -638,9 +638,9 @@ class S1AreaFractionTop(StringLichen):
 
     variable = 's1_area_fraction_top_probability'
     allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
-    self.min_pax_version = 660  # before v6.6.0 p-value not calculated
 
     def __init__(self):
+        self.min_pax_version = 660  # before v6.6.0 p-value not calculated
         if int(pax_version.replace('.', '')) < self.min_pax_version:
             version = 1
             aftmap_filename = os.path.join(DATA_DIR, 's1_aft_rz_02Mar2017.json')
