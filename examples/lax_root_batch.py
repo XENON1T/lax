@@ -1,8 +1,8 @@
 """Make ROOT file of all lax output
 
 Usage with real data:
-     python lax_root_batch.py --run_number 6731 --pax_version 6.6.5 --minitree_path /project/lgrandi/xenon1t/minitrees/pax_v6.6.5 
-     
+     python lax_root_batch.py --run_number 6731 --pax_version 6.6.5 --minitree_path /project/lgrandi/xenon1t/minitrees/pax_v6.6.5
+
 Usage with MC:
     python lax_root_batch.py --run_number -1 --pax_version 6.6.5 --minitree_path output --filename Xenon1T_TPC_Rn222_00000_g4mc_G4_Sort_pax
 """
@@ -44,8 +44,8 @@ minitree_names = ['Fundamentals', 'Basics', 'TotalProperties',
                   'Extended', 'TailCut', 'Proximity']
 output_path = args.OUTPUT_PATH
 
-LaxLichens = [sciencerun0.AllEnergy(), 
-              sciencerun0.LowEnergyRn220(), 
+LaxLichens = [sciencerun0.AllEnergy(),
+              sciencerun0.LowEnergyRn220(),
               sciencerun0.LowEnergyAmBe(),
               sciencerun0.LowEnergyBackground()]
               
