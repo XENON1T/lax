@@ -19,7 +19,7 @@ import root_pandas
 
 parser = argparse.ArgumentParser(description="Create lichen ROOT files with lax")
 
-parser.add_argument('--RUN_NUMBER', dest='RUN_NUMBER',
+parser.add_argument('--run_number', dest='RUN_NUMBER',
                     action='store', required=True, type=int,
                     help='Run number to process (-1 for MC)')
 
@@ -35,7 +35,7 @@ parser.add_argument('--filename', dest='FILENAME',
                     action='store', required=False,
                     help='Name of pax file (without .root)')
 
-parser.add_argument('--OUTPUT_PATH', dest='OUTPUT_PATH',
+parser.add_argument('--output_path', dest='OUTPUT_PATH',
                     action='store', required=False, default='',
                     help='Name of output file (without .root)')
 
