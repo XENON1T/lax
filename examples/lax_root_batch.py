@@ -1,10 +1,12 @@
 """Make ROOT file of all lax output
 
 Usage with real data:
-     python lax_root_batch.py --run_number 6731 --pax_version 6.6.5 --minitree_path /project/lgrandi/xenon1t/minitrees/pax_v6.6.5
+     python lax_root_batch.py --RUN_NUMBER 6731 -a-pax_version 6.6.5 \
+         --minitree_path /project/lgrandi/xenon1t/minitrees/pax_v6.6.5
 
 Usage with MC:
-    python lax_root_batch.py --run_number -1 --pax_version 6.6.5 --minitree_path output --filename Xenon1T_TPC_Rn222_00000_g4mc_G4_Sort_pax
+    python lax_root_batch.py --RUN_NUMBER -1 --pax_version 6.6.5 \
+         --minitree_path output --filename Xenon1T_TPC_Rn222_00000_g4mc_G4_Sort_pax
 """
 import argparse
 import sys
@@ -14,9 +16,10 @@ from lax.lichens import sciencerun0
 
 import root_pandas
 
+
 parser = argparse.ArgumentParser(description="Create lichen ROOT files with lax")
 
-parser.add_argument('--run_number', dest='RUN_NUMBER',
+parser.add_argument('--RUN_NUMBER', dest='RUN_NUMBER',
                     action='store', required=True, type=int,
                     help='Run number to process (-1 for MC)')
 
@@ -32,67 +35,69 @@ parser.add_argument('--filename', dest='FILENAME',
                     action='store', required=False,
                     help='Name of pax file (without .root)')
 
-parser.add_argument('--output_path', dest='OUTPUT_PATH',
+parser.add_argument('--OUTPUT_PATH', dest='OUTPUT_PATH',
                     action='store', required=False, default='',
                     help='Name of output file (without .root)')
 
 args = parser.parse_args(sys.argv[1:])
 
-pax_version_policy = args.PAX_VERSION
-run_number = args.RUN_NUMBER
-minitree_names = ['Fundamentals', 'Basics', 'TotalProperties',
+PAX_VERSION_POLICY = args.PAX_VERSION
+RUN_NUMBER = args.RUN_NUMBER
+MINITREE_NAMES = ['Fundamentals', 'Basics', 'TotalProperties',
                   'Extended', 'TailCut', 'Proximity']
-output_path = args.OUTPUT_PATH
+OUTPUT_PATH = args.OUTPUT_PATH
 
-LaxLichens = [sciencerun0.AllEnergy(),
-              sciencerun0.LowEnergyRn220(),
-              sciencerun0.LowEnergyAmBe(),
-              sciencerun0.LowEnergyBackground()]
-              
-treename = 'tree'
+LAX_LICHENS = [sciencerun0.AllEnergy(),
+               sciencerun0.LowEnergyRn220(),
+               sciencerun0.LowEnergyAmBe(),
+               sciencerun0.LowEnergyBackground()]
+
+TREENAME = 'tree'
 
 # MC
 if args.RUN_NUMBER < 0:
     
     # No run dependent sims yet
-    pax_version_policy = 'loose'
+    PAX_VERSION_POLICY = 'loose'
     
     # Use filename instead of run number
-    run_number = args.MINITREE_PATH+'/'+args.FILENAME
+    RUN_NUMBER = args.MINITREE_PATH+'/'+args.FILENAME
     
     # Remove meaningless variables
-    minitree_names.remove('TailCut')
-    minitree_names.remove('Proximity')
+    MINITREE_NAMES.remove('TailCut')
+    MINITREE_NAMES.remove('Proximity')
 
     # Remove meaningless cuts (HARDCODE WARNING)
-    for cuts in LaxLichens:
+    for cuts in LAX_LICHENS:
         cuts.lichen_list.pop(6)  # DAQVeto
         cuts.lichen_list.pop(9)  # S2Tails
 
-    treename += 'mc'
+    TREENAME += 'mc'
         
-    if output_path is '':
-        output_path = args.FILENAME+"_lax"
+    if OUTPUT_PATH is '':
+        OUTPUT_PATH = args.FILENAME+"_lax"
 
-if output_path is '':
-    output_path = "%d_lax" % run_number
+if OUTPUT_PATH is '':
+    OUTPUT_PATH = "%d_lax" % RUN_NUMBER
 
 # Initialize hax
-kwargs = {'experiment': 'XENON1T',
-          'pax_version_policy': pax_version_policy,
-          'minitree_paths': ['.', args.MINITREE_PATH]
-         }
+HAX_KWARGS = {'experiment': 'XENON1T',
+              'pax_version_policy': PAX_VERSION_POLICY,
+              'minitree_paths': ['.', args.MINITREE_PATH]
+             }
 
 # Be careful what you're doing here
 if args.RUN_NUMBER < 0:
-    kwargs['blinding_cut'] = 'run_number<=0'
+    HAX_KWARGS['blinding_cut'] = 'RUN_NUMBER<=0'
 
-hax.init(**kwargs)
+HAX_KWARGS['runs_url'] = 'mongodb://eb:{password}@xenon1t-daq.lngs.infn.it:27017/run'
+
+hax.init(**HAX_KWARGS)
         
-df_all = hax.minitrees.load(run_number, minitree_names)
+DF_ALL = hax.minitrees.load(RUN_NUMBER, MINITREE_NAMES)
 
-for cuts in LaxLichens:
+for cuts in LAX_LICHENS:
 
-    df_all = cuts.process(df_all)
+    DF_ALL = cuts.process(DF_ALL)
 
-    df_all.to_root(output_path+'.root', treename)
+DF_ALL.to_root(OUTPUT_PATH+'.root', TREENAME)
