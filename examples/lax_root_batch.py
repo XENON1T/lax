@@ -56,13 +56,13 @@ TREENAME = 'tree'
 
 # MC
 if args.RUN_NUMBER < 0:
-    
+
     # No run dependent sims yet
     PAX_VERSION_POLICY = 'loose'
-    
+
     # Use filename instead of run number
     RUN_NUMBER = args.MINITREE_PATH+'/'+args.FILENAME
-    
+
     # Remove meaningless variables
     MINITREE_NAMES.remove('TailCut')
     MINITREE_NAMES.remove('Proximity')
@@ -73,7 +73,7 @@ if args.RUN_NUMBER < 0:
         cuts.lichen_list.pop(9)  # S2Tails
 
     TREENAME += 'mc'
-        
+
     if OUTPUT_PATH is '':
         OUTPUT_PATH = args.FILENAME+"_lax"
 
@@ -93,7 +93,7 @@ if args.RUN_NUMBER < 0:
 HAX_KWARGS['runs_url'] = 'mongodb://eb:{password}@xenon1t-daq.lngs.infn.it:27017/run'
 
 hax.init(**HAX_KWARGS)
-        
+
 DF_ALL = hax.minitrees.load(RUN_NUMBER, MINITREE_NAMES)
 
 for cuts in LAX_LICHENS:
