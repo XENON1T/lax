@@ -1,11 +1,11 @@
 """Make ROOT file of all lax output
 
 Usage with real data:
-     python lax_root_batch.py --RUN_NUMBER 6731 -a-pax_version 6.6.5 \
+     python lax_root_batch.py --run_number 6731 --pax_version 6.6.5 \
          --minitree_path /project/lgrandi/xenon1t/minitrees/pax_v6.6.5
 
 Usage with MC:
-    python lax_root_batch.py --RUN_NUMBER -1 --pax_version 6.6.5 \
+    python lax_root_batch.py --run_number -1 --pax_version 6.6.5 \
          --minitree_path output --filename Xenon1T_TPC_Rn222_00000_g4mc_G4_Sort_pax
 """
 import argparse
@@ -88,7 +88,7 @@ HAX_KWARGS = {'experiment': 'XENON1T',
 
 # Be careful what you're doing here
 if args.RUN_NUMBER < 0:
-    HAX_KWARGS['blinding_cut'] = 'RUN_NUMBER<=0'
+    HAX_KWARGS['blinding_cut'] = 'run_number<=0'
 
 #HAX_KWARGS['runs_url'] = 'mongodb://eb:{password}@xenon1t-daq.lngs.infn.it:27017/run'
 

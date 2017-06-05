@@ -35,6 +35,7 @@ setup(
     ],
     package_dir={'lax':
                  'lax'},
+    scripts=['bin/laxer'],
     entry_points={
         'console_scripts': [
             'lax=lax.cli:main'
