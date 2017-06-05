@@ -90,7 +90,7 @@ HAX_KWARGS = {'experiment': 'XENON1T',
 if args.RUN_NUMBER < 0:
     HAX_KWARGS['blinding_cut'] = 'RUN_NUMBER<=0'
 
-HAX_KWARGS['runs_url'] = 'mongodb://eb:{password}@xenon1t-daq.lngs.infn.it:27017/run'
+#HAX_KWARGS['runs_url'] = 'mongodb://eb:{password}@xenon1t-daq.lngs.infn.it:27017/run'
 
 hax.init(**HAX_KWARGS)
 
