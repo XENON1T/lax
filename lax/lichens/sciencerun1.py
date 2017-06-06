@@ -155,8 +155,6 @@ class NGFiducial(StringLichen):
         return df
 
 
-InteractionExists = sciencerun0.InteractionExists
-
 InteractionPeaksBiggest = sciencerun0.InteractionPeaksBiggest
 
 S1LowEnergyRange = sciencerun0.S1LowEnergyRange
@@ -182,3 +180,4 @@ S2Width = sciencerun0.S2Width
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
 PreS2Junk = sciencerun0.PreS2Junk
+
