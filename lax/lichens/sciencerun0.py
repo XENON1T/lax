@@ -10,7 +10,6 @@ import pytz
 
 import numpy as np
 from pax import units, configuration
-from pax import __version__ as pax_version
 
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
@@ -617,7 +616,7 @@ class S2Width(ManyLichen):
             return df
 
 
-class S1AreaFractionTop(StringLichen):
+class S1AreaFractionTop(RangeLichen):
     '''S1 area fraction top cut
 
     Uses a modified version of scipy.stats.binom_test to compute a p-value based on the
@@ -627,11 +626,12 @@ class S1AreaFractionTop(StringLichen):
     For pax < v6.6.0 computes p-value live, otherwise loads it from disk. Computation done here is
     not as accurate as in pax > v6.6.5
 
-    Requires Extended minitrees >= v0.0.4
+    Ideally requires Extended minitrees >= v0.0.4
 
     Uses a 3D map generated with Kr83m 32 keV line
 
     note: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
+    also https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
 
     Contact: Darryl Masson, dmasson@purdue.edu
     '''
@@ -640,21 +640,17 @@ class S1AreaFractionTop(StringLichen):
     allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
 
     def __init__(self):
-        self.min_pax_version = 660  # before v6.6.0 p-value not calculated
-        if int(pax_version.replace('.', '')) < self.min_pax_version:
-            version = 1
-            aftmap_filename = os.path.join(DATA_DIR, 's1_aft_rz_02Mar2017.json')
-            with open(aftmap_filename) as data_file:
-                data = json.load(data_file)
-            r_pts = np.array(data['r_pts'])
-            z_pts = np.array(data['z_pts'])
-            aft_vals = np.array([data['map'][i*len(z_pts):(i+1)*len(z_pts)] for i in range(len(r_pts))]) # unpack 1d array to 2d
-            self.aft_map = RectBivariateSpline(r_pts, z_pts, aft_vals)
-        else:
-            version = 2
+        version = 2
+        aftmap_filename = os.path.join(DATA_DIR, 's1_aft_rz_02Mar2017.json')
+        with open(aftmap_filename) as data_file:
+            data = json.load(data_file)
+        r_pts = np.array(data['r_pts'])
+        z_pts = np.array(data['z_pts'])
+        aft_vals = np.array(data['map']).reshape(len(r_pts), len(z_pts))
+        self.aft_map = RectBivariateSpline(r_pts, z_pts, aft_vals)
 
     def pre(self, df):
-        if version == 1:
+        if self.variable not in df:
             df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
                                                                        np.round(row['s1']),
                                                                        self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
