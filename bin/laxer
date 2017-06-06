@@ -98,9 +98,6 @@ def main():
     if args.RUN_NUMBER < 0:
         HAX_KWARGS['blinding_cut'] = 'run_number<=0'
     
-    # For stand-alone DB server
-    #HAX_KWARGS['runs_url'] = 'mongodb://eb:{password}@xenon1t-daq.lngs.infn.it:27017/run'
-    
     hax.init(**HAX_KWARGS)
 
     DF_ALL = hax.minitrees.load(RUN_NUMBER, MINITREE_NAMES)
