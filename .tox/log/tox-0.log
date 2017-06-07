@@ -1,0 +1,104 @@
+actionid: tox
+msg: packaging
+cmdargs: ['/home/xedaq/anaconda3/bin/python', local('/home/xedaq/lax/setup.py'), 'sdist', '--formats=zip', '--dist-dir', local('/home/xedaq/lax/.tox/dist')]
+env: None
+
+running sdist
+running egg_info
+writing entry points to lax.egg-info/entry_points.txt
+writing lax.egg-info/PKG-INFO
+writing requirements to lax.egg-info/requires.txt
+writing top-level names to lax.egg-info/top_level.txt
+writing dependency_links to lax.egg-info/dependency_links.txt
+reading manifest file 'lax.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+warning: no previously-included files matching '__pycache__' found under directory '*'
+warning: no files found matching '*.jpg' under directory 'docs'
+warning: no files found matching '*.png' under directory 'docs'
+warning: no files found matching '*.gif' under directory 'docs'
+writing manifest file 'lax.egg-info/SOURCES.txt'
+running check
+creating lax-0.11.1
+creating lax-0.11.1/docs
+creating lax-0.11.1/lax
+creating lax-0.11.1/lax.egg-info
+creating lax-0.11.1/lax/lichens
+creating lax-0.11.1/tests
+copying files to lax-0.11.1...
+copying AUTHORS.rst -> lax-0.11.1
+copying CONTRIBUTING.rst -> lax-0.11.1
+copying HISTORY.rst -> lax-0.11.1
+copying LICENSE -> lax-0.11.1
+copying MANIFEST.in -> lax-0.11.1
+copying README.rst -> lax-0.11.1
+copying setup.cfg -> lax-0.11.1
+copying setup.py -> lax-0.11.1
+copying docs/Makefile -> lax-0.11.1/docs
+copying docs/authors.rst -> lax-0.11.1/docs
+copying docs/conf.py -> lax-0.11.1/docs
+copying docs/contributing.rst -> lax-0.11.1/docs
+copying docs/history.rst -> lax-0.11.1/docs
+copying docs/index.rst -> lax-0.11.1/docs
+copying docs/installation.rst -> lax-0.11.1/docs
+copying docs/make.bat -> lax-0.11.1/docs
+copying docs/readme.rst -> lax-0.11.1/docs
+copying docs/usage.rst -> lax-0.11.1/docs
+copying lax/__init__.py -> lax-0.11.1/lax
+copying lax/cli.py -> lax-0.11.1/lax
+copying lax/lax.py -> lax-0.11.1/lax
+copying lax/lichen.py -> lax-0.11.1/lax
+copying lax/plotting.py -> lax-0.11.1/lax
+copying lax/variables.py -> lax-0.11.1/lax
+copying lax.egg-info/PKG-INFO -> lax-0.11.1/lax.egg-info
+copying lax.egg-info/SOURCES.txt -> lax-0.11.1/lax.egg-info
+copying lax.egg-info/dependency_links.txt -> lax-0.11.1/lax.egg-info
+copying lax.egg-info/entry_points.txt -> lax-0.11.1/lax.egg-info
+copying lax.egg-info/not-zip-safe -> lax-0.11.1/lax.egg-info
+copying lax.egg-info/requires.txt -> lax-0.11.1/lax.egg-info
+copying lax.egg-info/top_level.txt -> lax-0.11.1/lax.egg-info
+copying lax/lichens/__init__.py -> lax-0.11.1/lax/lichens
+copying lax/lichens/sciencerun0.py -> lax-0.11.1/lax/lichens
+copying tests/__init__.py -> lax-0.11.1/tests
+copying tests/test_sr0.py -> lax-0.11.1/tests
+copying tests/test_variables.py -> lax-0.11.1/tests
+Writing lax-0.11.1/setup.cfg
+creating .tox/dist
+creating '.tox/dist/lax-0.11.1.zip' and adding 'lax-0.11.1' to it
+adding 'lax-0.11.1/README.rst'
+adding 'lax-0.11.1/LICENSE'
+adding 'lax-0.11.1/MANIFEST.in'
+adding 'lax-0.11.1/setup.cfg'
+adding 'lax-0.11.1/setup.py'
+adding 'lax-0.11.1/PKG-INFO'
+adding 'lax-0.11.1/CONTRIBUTING.rst'
+adding 'lax-0.11.1/AUTHORS.rst'
+adding 'lax-0.11.1/HISTORY.rst'
+adding 'lax-0.11.1/tests/test_variables.py'
+adding 'lax-0.11.1/tests/test_sr0.py'
+adding 'lax-0.11.1/tests/__init__.py'
+adding 'lax-0.11.1/lax.egg-info/not-zip-safe'
+adding 'lax-0.11.1/lax.egg-info/entry_points.txt'
+adding 'lax-0.11.1/lax.egg-info/dependency_links.txt'
+adding 'lax-0.11.1/lax.egg-info/top_level.txt'
+adding 'lax-0.11.1/lax.egg-info/requires.txt'
+adding 'lax-0.11.1/lax.egg-info/SOURCES.txt'
+adding 'lax-0.11.1/lax.egg-info/PKG-INFO'
+adding 'lax-0.11.1/lax/lax.py'
+adding 'lax-0.11.1/lax/plotting.py'
+adding 'lax-0.11.1/lax/lichen.py'
+adding 'lax-0.11.1/lax/__init__.py'
+adding 'lax-0.11.1/lax/cli.py'
+adding 'lax-0.11.1/lax/variables.py'
+adding 'lax-0.11.1/lax/lichens/__init__.py'
+adding 'lax-0.11.1/lax/lichens/sciencerun0.py'
+adding 'lax-0.11.1/docs/conf.py'
+adding 'lax-0.11.1/docs/Makefile'
+adding 'lax-0.11.1/docs/index.rst'
+adding 'lax-0.11.1/docs/installation.rst'
+adding 'lax-0.11.1/docs/readme.rst'
+adding 'lax-0.11.1/docs/usage.rst'
+adding 'lax-0.11.1/docs/authors.rst'
+adding 'lax-0.11.1/docs/history.rst'
+adding 'lax-0.11.1/docs/contributing.rst'
+adding 'lax-0.11.1/docs/make.bat'
+removing 'lax-0.11.1' (and everything under it)
