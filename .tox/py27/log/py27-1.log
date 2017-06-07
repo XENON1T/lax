@@ -1,0 +1,347 @@
+actionid: py27
+msg: getenv
+cmdargs: ['/home/xedaq/lax/.tox/py27/bin/pip', 'install', '-r/home/xedaq/lax/requirements_dev.txt']
+env: {'LC_PAPER': 'it_IT.UTF-8', 'M2_HOME': '/usr/local/maven', 'VIRTUAL_ENV': '/home/xedaq/lax/.tox/py27', '_': '/home/xedaq/anaconda3/bin/tox', 'PYTHONHASHSEED': '3590564184', 'LC_MONETARY': 'it_IT.UTF-8', 'SSH_CLIENT': '192.168.131.1 37684 22', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '52', 'SHLVL': '1', 'LC_NAME': 'it_IT.UTF-8', 'PYTHONPATH': '/home/xedaq/lax:/home/xedaq/lax/lax', 'LC_TIME': 'it_IT.UTF-8', 'MAIL': '/var/mail/xedaq', 'LD_LIBRARY_PATH': '/usr/local/lib:', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'it_IT.UTF-8', 'LANGUAGE': 'en_GB:en', 'LC_TELEPHONE': 'it_IT.UTF-8', 'SHELL': '/bin/bash', 'HOME': '/home/xedaq', 'LANG': 'en_GB.UTF-8', 'PWD': '/home/xedaq/lax', 'LC_NUMERIC': 'it_IT.UTF-8', 'LC_ADDRESS': 'it_IT.UTF-8', 'LOGNAME': 'xedaq', 'XDG_RUNTIME_DIR': '/run/user/1000', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:', 'USER': 'xedaq', 'MONGO_PASSWORD': 'luxstinks', 'SSH_CONNECTION': '192.168.131.1 37684 192.168.131.15 22', 'PATH': '/home/xedaq/lax/.tox/py27/bin:/home/xedaq/anaconda3/bin:/home/xedaq/anaconda3/bin:/var/lib/mongodb-mms-automation/bin:/usr/local/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games', 'LC_IDENTIFICATION': 'it_IT.UTF-8', 'OLDPWD': '/home/xedaq', 'SSH_TTY': '/dev/pts/0'}
+
+Collecting pip==8.1.2 (from -r /home/xedaq/lax/requirements_dev.txt (line 1))
+/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/pip/_vendor/requests/packages/urllib3/util/ssl_.py:318: SNIMissingWarning: An HTTPS request has been made, but the SNI (Subject Name Indication) extension to TLS is not available on this platform. This may cause the server to present an incorrect TLS certificate, which can cause validation failures. You can upgrade to a newer version of Python to solve this. For more information, see https://urllib3.readthedocs.io/en/latest/security.html#snimissingwarning.
+  SNIMissingWarning
+/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/pip/_vendor/requests/packages/urllib3/util/ssl_.py:122: InsecurePlatformWarning: A true SSLContext object is not available. This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail. You can upgrade to a newer version of Python to solve this. For more information, see https://urllib3.readthedocs.io/en/latest/security.html#insecureplatformwarning.
+  InsecurePlatformWarning
+  Downloading pip-8.1.2-py2.py3-none-any.whl (1.2MB)
+Collecting bumpversion==0.5.3 (from -r /home/xedaq/lax/requirements_dev.txt (line 2))
+  Downloading bumpversion-0.5.3-py2.py3-none-any.whl
+Requirement already satisfied: wheel==0.29.0 in ./.tox/py27/lib/python2.7/site-packages (from -r /home/xedaq/lax/requirements_dev.txt (line 3))
+Collecting watchdog==0.8.3 (from -r /home/xedaq/lax/requirements_dev.txt (line 4))
+  Downloading watchdog-0.8.3.tar.gz (83kB)
+Collecting flake8==2.6.0 (from -r /home/xedaq/lax/requirements_dev.txt (line 5))
+  Downloading flake8-2.6.0-py2.py3-none-any.whl
+Collecting tox==2.3.1 (from -r /home/xedaq/lax/requirements_dev.txt (line 6))
+  Downloading tox-2.3.1-py2.py3-none-any.whl (40kB)
+Collecting coverage==4.1 (from -r /home/xedaq/lax/requirements_dev.txt (line 7))
+  Downloading coverage-4.1.tar.gz (370kB)
+Collecting Sphinx==1.4.8 (from -r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading Sphinx-1.4.8-py2.py3-none-any.whl (1.6MB)
+Collecting cryptography==1.7 (from -r /home/xedaq/lax/requirements_dev.txt (line 9))
+  Downloading cryptography-1.7.tar.gz (420kB)
+Collecting PyYAML==3.11 (from -r /home/xedaq/lax/requirements_dev.txt (line 10))
+  Downloading PyYAML-3.11.zip (371kB)
+Collecting pytest==2.9.2 (from -r /home/xedaq/lax/requirements_dev.txt (line 11))
+  Downloading pytest-2.9.2-py2.py3-none-any.whl (162kB)
+Collecting argh>=0.24.1 (from watchdog==0.8.3->-r /home/xedaq/lax/requirements_dev.txt (line 4))
+  Downloading argh-0.26.2-py2.py3-none-any.whl
+Collecting pathtools>=0.1.1 (from watchdog==0.8.3->-r /home/xedaq/lax/requirements_dev.txt (line 4))
+  Downloading pathtools-0.1.2.tar.gz
+Collecting mccabe<0.6,>=0.2.1 (from flake8==2.6.0->-r /home/xedaq/lax/requirements_dev.txt (line 5))
+  Downloading mccabe-0.5.3-py2.py3-none-any.whl
+Collecting pyflakes!=1.2.0,!=1.2.1,!=1.2.2,<1.3,>=0.8.1 (from flake8==2.6.0->-r /home/xedaq/lax/requirements_dev.txt (line 5))
+  Downloading pyflakes-1.2.3-py2.py3-none-any.whl (209kB)
+Collecting pycodestyle<2.1,>=2.0 (from flake8==2.6.0->-r /home/xedaq/lax/requirements_dev.txt (line 5))
+  Downloading pycodestyle-2.0.0-py2.py3-none-any.whl (42kB)
+Collecting pluggy<0.4.0,>=0.3.0 (from tox==2.3.1->-r /home/xedaq/lax/requirements_dev.txt (line 6))
+  Downloading pluggy-0.3.1-py2.py3-none-any.whl
+Collecting py>=1.4.17 (from tox==2.3.1->-r /home/xedaq/lax/requirements_dev.txt (line 6))
+  Downloading py-1.4.33-py2.py3-none-any.whl (83kB)
+Collecting virtualenv>=1.11.2 (from tox==2.3.1->-r /home/xedaq/lax/requirements_dev.txt (line 6))
+  Using cached virtualenv-15.1.0-py2.py3-none-any.whl
+Collecting alabaster<0.8,>=0.7 (from Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading alabaster-0.7.10-py2.py3-none-any.whl
+Collecting docutils>=0.11 (from Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading docutils-0.13.1-py2-none-any.whl (537kB)
+Requirement already satisfied: six>=1.5 in ./.tox/py27/lib/python2.7/site-packages (from Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+Collecting babel!=2.0,>=1.3 (from Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading Babel-2.4.0-py2.py3-none-any.whl (6.8MB)
+Collecting imagesize (from Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading imagesize-0.7.1-py2.py3-none-any.whl
+Collecting Pygments>=2.0 (from Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading Pygments-2.2.0-py2.py3-none-any.whl (841kB)
+Collecting Jinja2>=2.3 (from Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading Jinja2-2.9.6-py2.py3-none-any.whl (340kB)
+Collecting snowballstemmer>=1.1 (from Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading snowballstemmer-1.2.1-py2.py3-none-any.whl (64kB)
+Collecting idna>=2.0 (from cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+  Downloading idna-2.5-py2.py3-none-any.whl (55kB)
+Collecting pyasn1>=0.1.8 (from cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+  Downloading pyasn1-0.2.3-py2.py3-none-any.whl (53kB)
+Requirement already satisfied: setuptools>=11.3 in ./.tox/py27/lib/python2.7/site-packages (from cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+Collecting enum34 (from cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+  Downloading enum34-1.1.6-py2-none-any.whl
+Collecting ipaddress (from cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+  Downloading ipaddress-1.0.18-py2-none-any.whl
+Collecting cffi>=1.4.1 (from cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+  Downloading cffi-1.10.0-cp27-cp27mu-manylinux1_x86_64.whl (392kB)
+Collecting pytz>=0a (from babel!=2.0,>=1.3->Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading pytz-2017.2-py2.py3-none-any.whl (484kB)
+Collecting MarkupSafe>=0.23 (from Jinja2>=2.3->Sphinx==1.4.8->-r /home/xedaq/lax/requirements_dev.txt (line 8))
+  Downloading MarkupSafe-1.0.tar.gz
+Requirement already satisfied: appdirs>=1.4.0 in ./.tox/py27/lib/python2.7/site-packages (from setuptools>=11.3->cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+Requirement already satisfied: packaging>=16.8 in ./.tox/py27/lib/python2.7/site-packages (from setuptools>=11.3->cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+Collecting pycparser (from cffi>=1.4.1->cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+  Downloading pycparser-2.17.tar.gz (231kB)
+Requirement already satisfied: pyparsing in ./.tox/py27/lib/python2.7/site-packages (from packaging>=16.8->setuptools>=11.3->cryptography==1.7->-r /home/xedaq/lax/requirements_dev.txt (line 9))
+Building wheels for collected packages: watchdog, coverage, cryptography, PyYAML, pathtools, MarkupSafe, pycparser
+  Running setup.py bdist_wheel for watchdog: started
+  Running setup.py bdist_wheel for watchdog: finished with status 'done'
+  Stored in directory: /home/xedaq/.cache/pip/wheels/3c/9c/be/e82ae5a37c19baf8abe88623d1f47d2d502bed7b54d4f34740
+  Running setup.py bdist_wheel for coverage: started
+  Running setup.py bdist_wheel for coverage: finished with status 'done'
+  Stored in directory: /home/xedaq/.cache/pip/wheels/1f/e3/62/698ea59b941f33c9c936c4fd12c27b94bc157fa071d00e5773
+  Running setup.py bdist_wheel for cryptography: started
+  Running setup.py bdist_wheel for cryptography: finished with status 'error'
+  Complete output from command /home/xedaq/lax/.tox/py27/bin/python2.7 -u -c "import setuptools, tokenize;__file__='/tmp/pip-build-VrugGn/cryptography/setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" bdist_wheel -d /tmp/tmpWYYuDTpip-wheel- --python-tag cp27:
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  c/_cffi_backend.c:2:20: fatal error: Python.h: No such file or directory
+   #include <Python.h>
+                      ^
+  compilation terminated.
+  Traceback (most recent call last):
+    File "<string>", line 1, in <module>
+    File "/tmp/pip-build-VrugGn/cryptography/setup.py", line 334, in <module>
+      **keywords_with_side_effects(sys.argv)
+    File "/usr/lib/python2.7/distutils/core.py", line 111, in setup
+      _setup_distribution = dist = klass(attrs)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/dist.py", line 318, in __init__
+      self.fetch_build_eggs(attrs['setup_requires'])
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/dist.py", line 373, in fetch_build_eggs
+      replace_conflicting=True,
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/pkg_resources/__init__.py", line 851, in resolve
+      dist = best[req.key] = env.best_match(req, ws, installer)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/pkg_resources/__init__.py", line 1123, in best_match
+      return self.obtain(req, installer)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/pkg_resources/__init__.py", line 1135, in obtain
+      return installer(requirement)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/dist.py", line 441, in fetch_build_egg
+      return cmd.easy_install(req)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 674, in easy_install
+      return self.install_item(spec, dist.location, tmpdir, deps)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 700, in install_item
+      dists = self.install_eggs(spec, download, tmpdir)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 881, in install_eggs
+      return self.build_and_install(setup_script, setup_base)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 1120, in build_and_install
+      self.run_setup(setup_script, setup_base, args)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 1108, in run_setup
+      raise DistutilsError("Setup script exited with %s" % (v.args[0],))
+  distutils.errors.DistutilsError: Setup script exited with error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+  
+  ----------------------------------------
+  Failed building wheel for cryptography
+  Running setup.py clean for cryptography
+  Complete output from command /home/xedaq/lax/.tox/py27/bin/python2.7 -u -c "import setuptools, tokenize;__file__='/tmp/pip-build-VrugGn/cryptography/setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" clean --all:
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  Package libffi was not found in the pkg-config search path.
+  Perhaps you should add the directory containing `libffi.pc'
+  to the PKG_CONFIG_PATH environment variable
+  No package 'libffi' found
+  c/_cffi_backend.c:2:20: fatal error: Python.h: No such file or directory
+   #include <Python.h>
+                      ^
+  compilation terminated.
+  Traceback (most recent call last):
+    File "<string>", line 1, in <module>
+    File "/tmp/pip-build-VrugGn/cryptography/setup.py", line 334, in <module>
+      **keywords_with_side_effects(sys.argv)
+    File "/usr/lib/python2.7/distutils/core.py", line 111, in setup
+      _setup_distribution = dist = klass(attrs)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/dist.py", line 318, in __init__
+      self.fetch_build_eggs(attrs['setup_requires'])
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/dist.py", line 373, in fetch_build_eggs
+      replace_conflicting=True,
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/pkg_resources/__init__.py", line 851, in resolve
+      dist = best[req.key] = env.best_match(req, ws, installer)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/pkg_resources/__init__.py", line 1123, in best_match
+      return self.obtain(req, installer)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/pkg_resources/__init__.py", line 1135, in obtain
+      return installer(requirement)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/dist.py", line 441, in fetch_build_egg
+      return cmd.easy_install(req)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 674, in easy_install
+      return self.install_item(spec, dist.location, tmpdir, deps)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 700, in install_item
+      dists = self.install_eggs(spec, download, tmpdir)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 881, in install_eggs
+      return self.build_and_install(setup_script, setup_base)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 1120, in build_and_install
+      self.run_setup(setup_script, setup_base, args)
+    File "/home/xedaq/lax/.tox/py27/local/lib/python2.7/site-packages/setuptools/command/easy_install.py", line 1108, in run_setup
+      raise DistutilsError("Setup script exited with %s" % (v.args[0],))
+  distutils.errors.DistutilsError: Setup script exited with error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+  
+  ----------------------------------------
+  Failed cleaning build dir for cryptography
+  Running setup.py bdist_wheel for PyYAML: started
+  Running setup.py bdist_wheel for PyYAML: finished with status 'done'
+  Stored in directory: /home/xedaq/.cache/pip/wheels/4a/bf/14/d79994d19a59d4f73efdafb8682961f582d45ed6b459420346
+  Running setup.py bdist_wheel for pathtools: started
+  Running setup.py bdist_wheel for pathtools: finished with status 'done'
+  Stored in directory: /home/xedaq/.cache/pip/wheels/60/0d/2a/ffe065d190b580be6af9a862c68ed6a8a89c1778bd5c7ba7b8
+  Running setup.py bdist_wheel for MarkupSafe: started
+  Running setup.py bdist_wheel for MarkupSafe: finished with status 'done'
+  Stored in directory: /home/xedaq/.cache/pip/wheels/88/a7/30/e39a54a87bcbe25308fa3ca64e8ddc75d9b3e5afa21ee32d57
+  Running setup.py bdist_wheel for pycparser: started
+  Running setup.py bdist_wheel for pycparser: finished with status 'done'
+  Stored in directory: /home/xedaq/.cache/pip/wheels/a8/0b/41/dc95621f9d3a0da7bc191b8a71f0e8182ffd3cc5f33ac55005
+Successfully built watchdog coverage PyYAML pathtools MarkupSafe pycparser
+Failed to build cryptography
+Installing collected packages: pip, bumpversion, PyYAML, argh, pathtools, watchdog, mccabe, pyflakes, pycodestyle, flake8, pluggy, py, virtualenv, tox, coverage, alabaster, docutils, pytz, babel, imagesize, Pygments, MarkupSafe, Jinja2, snowballstemmer, Sphinx, idna, pyasn1, enum34, ipaddress, pycparser, cffi, cryptography, pytest
+  Found existing installation: pip 9.0.1
+    Uninstalling pip-9.0.1:
+      Successfully uninstalled pip-9.0.1
+  Running setup.py install for cryptography: started
+    Running setup.py install for cryptography: finished with status 'error'
+    Complete output from command /home/xedaq/lax/.tox/py27/bin/python2.7 -u -c "import setuptools, tokenize;__file__='/tmp/pip-build-VrugGn/cryptography/setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" install --record /tmp/pip-3nYyak-record/install-record.txt --single-version-externally-managed --compile --install-headers /home/xedaq/lax/.tox/py27/include/site/python2.7/cryptography:
+    running install
+    running build
+    running build_py
+    creating build
+    creating build/lib.linux-x86_64-2.7
+    creating build/lib.linux-x86_64-2.7/cryptography
+    copying src/cryptography/__about__.py -> build/lib.linux-x86_64-2.7/cryptography
+    copying src/cryptography/fernet.py -> build/lib.linux-x86_64-2.7/cryptography
+    copying src/cryptography/__init__.py -> build/lib.linux-x86_64-2.7/cryptography
+    copying src/cryptography/utils.py -> build/lib.linux-x86_64-2.7/cryptography
+    copying src/cryptography/exceptions.py -> build/lib.linux-x86_64-2.7/cryptography
+    creating build/lib.linux-x86_64-2.7/cryptography/x509
+    copying src/cryptography/x509/base.py -> build/lib.linux-x86_64-2.7/cryptography/x509
+    copying src/cryptography/x509/extensions.py -> build/lib.linux-x86_64-2.7/cryptography/x509
+    copying src/cryptography/x509/name.py -> build/lib.linux-x86_64-2.7/cryptography/x509
+    copying src/cryptography/x509/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/x509
+    copying src/cryptography/x509/oid.py -> build/lib.linux-x86_64-2.7/cryptography/x509
+    copying src/cryptography/x509/general_name.py -> build/lib.linux-x86_64-2.7/cryptography/x509
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat
+    copying src/cryptography/hazmat/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/backends
+    copying src/cryptography/hazmat/backends/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends
+    copying src/cryptography/hazmat/backends/multibackend.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends
+    copying src/cryptography/hazmat/backends/interfaces.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    copying src/cryptography/hazmat/primitives/hmac.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    copying src/cryptography/hazmat/primitives/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    copying src/cryptography/hazmat/primitives/padding.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    copying src/cryptography/hazmat/primitives/cmac.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    copying src/cryptography/hazmat/primitives/serialization.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    copying src/cryptography/hazmat/primitives/keywrap.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    copying src/cryptography/hazmat/primitives/constant_time.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    copying src/cryptography/hazmat/primitives/hashes.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings
+    copying src/cryptography/hazmat/bindings/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/commoncrypto
+    copying src/cryptography/hazmat/backends/commoncrypto/hmac.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/commoncrypto
+    copying src/cryptography/hazmat/backends/commoncrypto/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/commoncrypto
+    copying src/cryptography/hazmat/backends/commoncrypto/ciphers.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/commoncrypto
+    copying src/cryptography/hazmat/backends/commoncrypto/backend.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/commoncrypto
+    copying src/cryptography/hazmat/backends/commoncrypto/hashes.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/commoncrypto
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/dh.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/decode_asn1.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/hmac.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/ciphers.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/x509.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/dsa.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/ec.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/cmac.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/rsa.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/encode_asn1.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/backend.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/utils.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    copying src/cryptography/hazmat/backends/openssl/hashes.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/backends/openssl
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/twofactor
+    copying src/cryptography/hazmat/primitives/twofactor/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/twofactor
+    copying src/cryptography/hazmat/primitives/twofactor/hotp.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/twofactor
+    copying src/cryptography/hazmat/primitives/twofactor/totp.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/twofactor
+    copying src/cryptography/hazmat/primitives/twofactor/utils.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/twofactor
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/kdf
+    copying src/cryptography/hazmat/primitives/kdf/x963kdf.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/kdf
+    copying src/cryptography/hazmat/primitives/kdf/kbkdf.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/kdf
+    copying src/cryptography/hazmat/primitives/kdf/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/kdf
+    copying src/cryptography/hazmat/primitives/kdf/concatkdf.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/kdf
+    copying src/cryptography/hazmat/primitives/kdf/scrypt.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/kdf
+    copying src/cryptography/hazmat/primitives/kdf/pbkdf2.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/kdf
+    copying src/cryptography/hazmat/primitives/kdf/hkdf.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/kdf
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/interfaces
+    copying src/cryptography/hazmat/primitives/interfaces/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/interfaces
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/asymmetric
+    copying src/cryptography/hazmat/primitives/asymmetric/dh.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/asymmetric
+    copying src/cryptography/hazmat/primitives/asymmetric/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/asymmetric
+    copying src/cryptography/hazmat/primitives/asymmetric/padding.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/asymmetric
+    copying src/cryptography/hazmat/primitives/asymmetric/dsa.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/asymmetric
+    copying src/cryptography/hazmat/primitives/asymmetric/ec.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/asymmetric
+    copying src/cryptography/hazmat/primitives/asymmetric/rsa.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/asymmetric
+    copying src/cryptography/hazmat/primitives/asymmetric/utils.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/asymmetric
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/ciphers
+    copying src/cryptography/hazmat/primitives/ciphers/base.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/ciphers
+    copying src/cryptography/hazmat/primitives/ciphers/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/ciphers
+    copying src/cryptography/hazmat/primitives/ciphers/algorithms.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/ciphers
+    copying src/cryptography/hazmat/primitives/ciphers/modes.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/primitives/ciphers
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings/commoncrypto
+    copying src/cryptography/hazmat/bindings/commoncrypto/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings/commoncrypto
+    copying src/cryptography/hazmat/bindings/commoncrypto/binding.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings/commoncrypto
+    creating build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings/openssl
+    copying src/cryptography/hazmat/bindings/openssl/_conditional.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings/openssl
+    copying src/cryptography/hazmat/bindings/openssl/__init__.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings/openssl
+    copying src/cryptography/hazmat/bindings/openssl/binding.py -> build/lib.linux-x86_64-2.7/cryptography/hazmat/bindings/openssl
+    running egg_info
+    writing dependency_links to src/cryptography.egg-info/dependency_links.txt
+    writing src/cryptography.egg-info/PKG-INFO
+    writing entry points to src/cryptography.egg-info/entry_points.txt
+    writing requirements to src/cryptography.egg-info/requires.txt
+    writing top-level names to src/cryptography.egg-info/top_level.txt
+    reading manifest file 'src/cryptography.egg-info/SOURCES.txt'
+    reading manifest template 'MANIFEST.in'
+    no previously-included directories found matching 'docs/_build'
+    warning: no previously-included files matching '*' found under directory 'vectors'
+    writing manifest file 'src/cryptography.egg-info/SOURCES.txt'
+    running build_ext
+    generating cffi module 'build/temp.linux-x86_64-2.7/_padding.c'
+    creating build/temp.linux-x86_64-2.7
+    generating cffi module 'build/temp.linux-x86_64-2.7/_constant_time.c'
+    generating cffi module 'build/temp.linux-x86_64-2.7/_openssl.c'
+    building '_openssl' extension
+    creating build/temp.linux-x86_64-2.7/build
+    creating build/temp.linux-x86_64-2.7/build/temp.linux-x86_64-2.7
+    x86_64-linux-gnu-gcc -pthread -fno-strict-aliasing -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -fPIC -I/usr/include/python2.7 -c build/temp.linux-x86_64-2.7/_openssl.c -o build/temp.linux-x86_64-2.7/build/temp.linux-x86_64-2.7/_openssl.o
+    build/temp.linux-x86_64-2.7/_openssl.c:12:24: fatal error: pyconfig.h: No such file or directory
+     #  include <pyconfig.h>
+                            ^
+    compilation terminated.
+    error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+    
+    ----------------------------------------
+Command "/home/xedaq/lax/.tox/py27/bin/python2.7 -u -c "import setuptools, tokenize;__file__='/tmp/pip-build-VrugGn/cryptography/setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" install --record /tmp/pip-3nYyak-record/install-record.txt --single-version-externally-managed --compile --install-headers /home/xedaq/lax/.tox/py27/include/site/python2.7/cryptography" failed with error code 1 in /tmp/pip-build-VrugGn/cryptography/
+You are using pip version 8.1.2, however version 9.0.1 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
