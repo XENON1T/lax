@@ -241,6 +241,7 @@ class S2Width(ManyLichen):
 
     def subpre(self, df):
         # relative_s2_width
+        @staticmethod
         df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(df['z'])
         return df
 
