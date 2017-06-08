@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """lax reduction program
 
 Produces a ROOT file containing booleans of all cuts and their
