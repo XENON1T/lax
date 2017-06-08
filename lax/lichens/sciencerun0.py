@@ -493,19 +493,19 @@ class S2SingleScatter(Lichen):
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
 
-    version = 2
+    version = 3
     allowed_range = (0, np.inf)
     variable = 'temp'
 
     @classmethod
     def other_s2_bound(cls, s2_area):
-        rescaled_s2_0 = s2_area * 0.00832 + 72.3
-        rescaled_s2_1 = s2_area * 0.03 - 109
+        linear_func_of_s2_0 = s2_area * 0.01 + 90.0
+        linear_func_of_s2_1 = s2_area * 0.025 + 766.0
 
-        another_term_0 = 1 / (np.exp((s2_area - 23300) * 5.91e-4) + 1)
-        another_term_1 = 1 / (np.exp((23300 - s2_area) * 5.91e-4) + 1)
+        fermi_dirac_coef_0 = 1 / (np.exp((s2_area - 26000) * 6.0e-4) + 1)
+        fermi_dirac_coef_1 = 1 / (np.exp((26000 - s2_area) * 6.0e-4) + 1)
 
-        return rescaled_s2_0 * another_term_0 + rescaled_s2_1 * another_term_1
+        return linear_func_of_s2_0 * fermi_dirac_coef_0 + linear_func_of_s2_1 * fermi_dirac_coef_1
 
     def _process(self, df):
         df.loc[:, self.name()] = df.largest_other_s2 < self.other_s2_bound(df.s2)
@@ -522,8 +522,8 @@ class S2SingleScatterSimple(StringLichen):
 
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
-    version = 0
-    string = 'largest_other_s2 < s2 * 0.00832 + 72.3'
+    version = 1
+    string = 'largest_other_s2 < s2 * 0.01 + 90.0'
 
 
 class S2PatternLikelihood(StringLichen):
