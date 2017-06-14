@@ -9,7 +9,7 @@ import os
 from pax import configuration
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
-from lax.lichen import RangeLichen, ManyLichen, StringLichen
+from lax.lichen import ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
 
@@ -79,7 +79,7 @@ class LowEnergyBackground(LowEnergyRn220):
         self.lichen_list += [
             PreS2Junk(),
         ]
-        
+
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
@@ -115,7 +115,8 @@ FiducialFourLeafClover1250kg = sciencerun0.FiducialFourLeafClover1250kg
 
 class AmBeFiducial(StringLichen):
     """AmBe Fiducial volume cut.
-    This uses the same Z cuts as the 1T fiducial cylinder, but a wider allowed range in R to maximize the number of nuclear recoils.
+    This uses the same Z cuts as the 1T fiducial cylinder, 
+    but a wider allowed range in R to maximize the number of nuclear recoils.
     There is a third cut on the distance to the source, so that we cut away background ER.
     Link to note:
     https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=xenon:xenon1t:hogenbirk:nr_band_sr0.html
