@@ -6,18 +6,10 @@ This includes all current definitions of the cuts for the first science run
 # -*- coding: utf-8 -*-
 import inspect
 import os
-import pytz
-
-import numpy as np
-from pax import units, configuration
-
-from scipy.interpolate import RectBivariateSpline
-from scipy.stats import binom_test
-from scipy import interpolate
-import json
+from pax import configuration
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
-from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
+from lax.lichen import RangeLichen, ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
 
@@ -72,7 +64,7 @@ class LowEnergyRn220(AllEnergy):
             S1MaxPMT(),
             SingleElectronS2s()
         ]
-        
+
 
 class LowEnergyBackground(LowEnergyRn220):
     """Select background events with cs1<200
@@ -119,7 +111,7 @@ S2Tails = sciencerun0.S2Tails
 
 FiducialCylinder1T = sciencerun0.S2Tails
 
-FiducialFourLeafClover1250kg = sciencerun0.FiducialFourLeafClover1250kg        
+FiducialFourLeafClover1250kg = sciencerun0.FiducialFourLeafClover1250kg
 
 class AmBeFiducial(StringLichen):
     """AmBe Fiducial volume cut.
@@ -160,7 +152,7 @@ class NGFiducial(StringLichen):
         df.loc[:, 'distance_to_source'] = ((source_position[0] - df['x']) ** 2 +
                                            (source_position[1] - df['y']) ** 2 +
                                            (source_position[2] - df['z']) ** 2) ** 0.5
-        return df    
+        return df
 
 
 InteractionExists = sciencerun0.InteractionExists
