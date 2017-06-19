@@ -109,7 +109,7 @@ DAQVeto = sciencerun0.DAQVeto
 
 S2Tails = sciencerun0.S2Tails
 
-FiducialCylinder1T = sciencerun0.S2Tails
+FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
 FiducialFourLeafClover1250kg = sciencerun0.FiducialFourLeafClover1250kg
 
