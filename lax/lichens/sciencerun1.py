@@ -115,7 +115,7 @@ FiducialFourLeafClover1250kg = sciencerun0.FiducialFourLeafClover1250kg
 
 class AmBeFiducial(StringLichen):
     """AmBe Fiducial volume cut.
-    This uses the same Z cuts as the 1T fiducial cylinder, 
+    This uses the same Z cuts as the 1T fiducial cylinder,
     but a wider allowed range in R to maximize the number of nuclear recoils.
     There is a third cut on the distance to the source, so that we cut away background ER.
     Link to note:
