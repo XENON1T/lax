@@ -61,8 +61,7 @@ class LowEnergyRn220(AllEnergy):
         self.lichen_list += [
             S1PatternLikelihood(),
             S2Width(),
-            S1MaxPMT(),
-            SingleElectronS2s()
+            S1MaxPMT()
         ]
 
 
@@ -183,5 +182,3 @@ S2Width = sciencerun0.S2Width
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
 PreS2Junk = sciencerun0.PreS2Junk
-
-SingleElectronS2s = sciencerun0.SingleElectronS2s
