@@ -90,7 +90,7 @@ class LowEnergyAmBe(LowEnergyRn220):
 
         # Replaces Fiducial
         self.lichen_list[0] = AmBeFiducial()
-        
+
 class LowEnergyNG(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
