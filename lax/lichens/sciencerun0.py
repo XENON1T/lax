@@ -638,9 +638,9 @@ class S1AreaFractionTop(RangeLichen):
 
     variable = 's1_area_fraction_top_probability'
     allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
+    version = 2
 
     def __init__(self):
-        version = 2
         aftmap_filename = os.path.join(DATA_DIR, 's1_aft_rz_02Mar2017.json')
         with open(aftmap_filename) as data_file:
             data = json.load(data_file)
@@ -654,8 +654,8 @@ class S1AreaFractionTop(RangeLichen):
             df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
                                                                        np.round(row['s1']),
                                                                        self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
-                                                                                    row['z'])[0,0]),
-                                                                       axis=1)
+                                                                                            row['z'])[0,0]),
+                                                axis=1)
         return df
 
 
