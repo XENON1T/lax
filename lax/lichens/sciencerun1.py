@@ -103,7 +103,7 @@ class LowEnergyNG(LowEnergyRn220):
         # Replaces Fiducial
         self.lichen_list[0] = NGFiducial()
 
-        
+
 DAQVeto = sciencerun0.DAQVeto
 
 S2Tails = sciencerun0.S2Tails
