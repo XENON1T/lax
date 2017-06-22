@@ -79,6 +79,7 @@ class LowEnergyBackground(LowEnergyRn220):
             PreS2Junk(),
         ]
 
+
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
@@ -90,6 +91,7 @@ class LowEnergyAmBe(LowEnergyRn220):
 
         # Replaces Fiducial
         self.lichen_list[0] = AmBeFiducial()
+
 
 class LowEnergyNG(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
@@ -112,6 +114,7 @@ FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
 FiducialFourLeafClover1250kg = sciencerun0.FiducialFourLeafClover1250kg
 
+
 class AmBeFiducial(StringLichen):
     """AmBe Fiducial volume cut.
     This uses the same Z cuts as the 1T fiducial cylinder,
@@ -121,7 +124,7 @@ class AmBeFiducial(StringLichen):
     https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=xenon:xenon1t:hogenbirk:nr_band_sr0.html
 
     Contact: Erik Hogenbirk <ehogenbi@nikhef.nl>
-    
+
     Position updated to reflect correct I-Belt 1 position. Link to Note:xenon:xenon1t:analysis:dominick:sr1_ambe_check
 
     """
@@ -134,15 +137,13 @@ class AmBeFiducial(StringLichen):
                                            (source_position[1] - df['y']) ** 2 +
                                            (source_position[2] - df['z']) ** 2) ** 0.5
         return df
-    
+
+
 class NGFiducial(StringLichen):
     """NG Fiducial volume cut.
     Early Implimentation og NG Fiducial Volume. Might not be Needed
-    
-    
+
     Link to Note:xenon:xenon1t:analysis:dominick:sr1_ambe_check (By Dominic)
-    
-    
     """
     version = 0
     string = "(distance_to_source < 111.5) & (-92.9 < z) & (z < -9) & (sqrt(x*x + y*y) < 42.00)"
