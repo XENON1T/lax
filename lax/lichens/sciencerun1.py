@@ -225,7 +225,7 @@ class S2Width(ManyLichen):
 
     Contact: Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 3
+    version = 2
 
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
@@ -239,7 +239,7 @@ class S2Width(ManyLichen):
         w0 = 309.7 * units.ns
         return np.sqrt(w0 ** 2 - 5.880 * diffusion_constant * z / v_drift ** 3)
 
-    def subpre(df):
+    def subpre(self, df):
         # relative_s2_width
         df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(df['z'])
         return df
