@@ -200,6 +200,7 @@ class S2Width(ManyLichen):
         w0 = 309.7 * units.ns
         return np.sqrt(w0 ** 2 - 5.880 * diffusion_constant * z / v_drift ** 3)
 
+    @staticmethod
     def subpre(self, df):
         # relative_s2_width
         df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(df['z'])
