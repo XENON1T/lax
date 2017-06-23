@@ -126,7 +126,6 @@ class AmBeFiducial(StringLichen):
     Contact: Erik Hogenbirk <ehogenbi@nikhef.nl>
 
     Position updated to reflect correct I-Belt 1 position. Link to Note:xenon:xenon1t:analysis:dominick:sr1_ambe_check
-
     """
     version = 2
     string = "(distance_to_source < 103.5) & (-92.9 < z) & (z < -9) & (sqrt(x*x + y*y) < 42.00)"
@@ -175,7 +174,6 @@ S2SingleScatterSimple = sciencerun0.S2SingleScatterSimple
 S2PatternLikelihood = sciencerun0.S2PatternLikelihood
 
 S2Threshold = sciencerun0.S2Threshold
-
 
 class S2Width(ManyLichen):
     """S2 Width cut based on diffusion model
