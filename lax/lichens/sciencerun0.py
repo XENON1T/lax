@@ -309,10 +309,11 @@ class AmBeFiducial(StringLichen):
     https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=xenon:xenon1t:hogenbirk:nr_band_sr0.html
 
     Contact: Erik Hogenbirk <ehogenbi@nikhef.nl>
-
+    
+    Position updated to reflect correct I-Belt 1 position. Link to Note:xenon:xenon1t:analysis:dominick:sr1_ambe_check.
     """
-    version = 1
-    string = "(distance_to_source < 80) & (-83.45 < z) & (z < -13.45) & (sqrt(x*x + y*y) < 42.00)"
+    version = 2
+    string = "(distance_to_source < 103.5) & (-92.9 < z) & (z < -9) & (sqrt(x*x + y*y) < 42.00)"
 
     def pre(self, df):
         source_position = (55.965311731903, 43.724893639103577, -50)
