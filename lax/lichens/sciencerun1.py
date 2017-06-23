@@ -177,7 +177,7 @@ S2Threshold = sciencerun0.S2Threshold
 
 
 class S2Width(ManyLichen):
-    """S2 Width cut based on diffusion model.
+    """S2 Width cut based on diffusion model
     The S2 width cut compares the S2 width to what we could expect based on its depth in the detector. The inputs to
     this are the drift velocity and the diffusion constant. The allowed variation in S2 width is greater at low
     energy (since it is fluctuating statistically) Ref: (arXiv:1102.2865)
@@ -185,7 +185,7 @@ class S2Width(ManyLichen):
     above cS2 = 1e5 pe ERs the acceptance will go down due to track length effects.
     Tune the diffusion model parameters based on pax v6.4.2 AmBe data according to note:
     xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
-    
+
     Contact: Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
     version = 2
@@ -193,7 +193,7 @@ class S2Width(ManyLichen):
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
                             self.S2WidthLow()]
-    
+
     @staticmethod
     def s2_width_model(z):
         diffusion_constant = PAX_CONFIG['WaveformSimulator']['diffusion_constant_liquid']
@@ -201,7 +201,7 @@ class S2Width(ManyLichen):
 
         w0 = 309.7 * units.ns
         return np.sqrt(w0 ** 2 - 5.880 * diffusion_constant * z / v_drift ** 3)
-      
+
     @staticmethod
     def subpre(self, df):
         df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(df['z'])
