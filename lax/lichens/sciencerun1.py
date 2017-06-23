@@ -6,10 +6,11 @@ This includes all current definitions of the cuts for the first science run
 # -*- coding: utf-8 -*-
 import inspect
 import os
-from pax import configuration
+import numpy as np
+from pax import units, configuration
 
 PAX_CONFIG = configuration.load_configuration('XENON1T')
-from lax.lichen import ManyLichen, StringLichen
+from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
 
@@ -155,7 +156,7 @@ class NGFiducial(StringLichen):
         return df
 
 
-InteractionPeaksBiggest = sciencerun0.InteractionPeaksBiggest
+InteractionExists = sciencerun0.InteractionExists
 
 S1LowEnergyRange = sciencerun0.S1LowEnergyRange
 
@@ -174,6 +175,7 @@ S2SingleScatterSimple = sciencerun0.S2SingleScatterSimple
 S2PatternLikelihood = sciencerun0.S2PatternLikelihood
 
 S2Threshold = sciencerun0.S2Threshold
+
 
 class S2Width(ManyLichen):
     """S2 Width cut based on diffusion model
@@ -233,7 +235,7 @@ class S2Width(ManyLichen):
                                                                        kind='low') <= df.temp)
             return df
 
+
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
 PreS2Junk = sciencerun0.PreS2Junk
-
