@@ -178,13 +178,6 @@ S2Threshold = sciencerun0.S2Threshold
 
 class S2Width(ManyLichen):
     """S2 Width cut based on diffusion model
-    The S2 width cut compares the S2 width to what we could expect based on its depth in the detector. The inputs to
-    this are the drift velocity and the diffusion constant. The allowed variation in S2 width is greater at low
-    energy (since it is fluctuating statistically) Ref: (arXiv:1102.2865)
-    It should be applicable to data regardless of if it ER or NR;
-    above cS2 = 1e5 pe ERs the acceptance will go down due to track length effects.
-    Tune the diffusion model parameters based on pax v6.4.2 AmBe data according to note:
-    xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
 
     Contact: Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
@@ -221,8 +214,7 @@ class S2Width(ManyLichen):
             return S2Width.subpre(self, df)
 
         def _process(self, df):
-            df.loc[:, self.name()] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2,
-                                                                                  kind='high'))
+            df.loc[:, self.name()] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2, kind='high'))
             return df
 
     class S2WidthLow(RangeLichen):
@@ -230,8 +222,7 @@ class S2Width(ManyLichen):
             return S2Width.subpre(self, df)
 
         def _process(self, df):
-            df.loc[:, self.name()] = (S2Width.relative_s2_width_bounds(df.s2,
-                                                                       kind='low') <= df.temp)
+            df.loc[:, self.name()] = (S2Width.relative_s2_width_bounds(df.s2, kind='low') <= df.temp)
             return df
 
 
