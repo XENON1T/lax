@@ -177,8 +177,8 @@ S2Threshold = sciencerun0.S2Threshold
 
 
 class S2Width(ManyLichen):
-    """
-    S2 Width cut based on diffusion model
+    """S2 Width cut based on diffusion model
+    
     The S2 width cut compares the S2 width to what we could expect based on its depth in the detector. The inputs to
     this are the drift velocity and the diffusion constant. The allowed variation in S2 width is greater at low
     energy (since it is fluctuating statistically) Ref: (arXiv:1102.2865)
