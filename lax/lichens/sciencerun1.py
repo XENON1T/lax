@@ -175,6 +175,7 @@ S2PatternLikelihood = sciencerun0.S2PatternLikelihood
 
 S2Threshold = sciencerun0.S2Threshold
 
+
 class S2Width(ManyLichen):
     """S2 Width cut based on diffusion model
     The S2 width cut compares the S2 width to what we could expect based on its depth in the detector. The inputs to
