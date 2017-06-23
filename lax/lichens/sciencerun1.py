@@ -30,7 +30,6 @@ class AllEnergy(ManyLichen):
             FiducialCylinder1T(),
             InteractionExists(),
             S2Threshold(),
-            InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
             DAQVeto(),
