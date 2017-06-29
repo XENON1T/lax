@@ -578,11 +578,13 @@ class S2Width(ManyLichen):
 
     @staticmethod
     def s2_width_model(z):
-        diffusion_constant = PAX_CONFIG['WaveformSimulator']['diffusion_constant_liquid']
-        v_drift = PAX_CONFIG['DEFAULT']['drift_velocity_liquid']
+        diffusion_constant =  22.8 * ((units.cm)**2) / units.s 
+        v_drift = 1.44 * (units.um) / units.ns
+        GausSigmaToR50 = 1.349
 
-        w0 = 348.6 * units.ns
-        return np.sqrt(w0 ** 2 - 4.0325 * diffusion_constant * z / v_drift ** 3)
+        EffectivePar = 1.10795
+        Sigma_0 = 258.41 * units.ns
+        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar *2 * diffusion_constant * z / v_drift ** 3)
 
     def subpre(self, df):
         # relative_s2_width
