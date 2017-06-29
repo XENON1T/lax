@@ -582,8 +582,8 @@ class S2Width(ManyLichen):
         v_drift = 1.44 * (units.um) / units.ns
         GausSigmaToR50 = 1.349
 
-        EffectivePar = 1.11
-        Sigma_0 = 258.4 * units.ns
+        EffectivePar = 1.10795
+        Sigma_0 = 258.41 * units.ns
         return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar *2 * diffusion_constant * z / v_drift ** 3)
 
     def subpre(self, df):
