@@ -195,7 +195,7 @@ class S2Width(ManyLichen):
 
     @staticmethod
     def s2_width_model(z):
-        diffusion_constant =  31.73 * ((units.cm)**2) / units.s 
+        diffusion_constant =  31.73 * ((units.cm)**2) / units.s
         v_drift = 1.335 * (units.um) / units.ns
         GausSigmaToR50 = 1.349
 
