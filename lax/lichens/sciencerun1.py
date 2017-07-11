@@ -56,7 +56,7 @@ class LowEnergyRn220(AllEnergy):
         self.lichen_list[1] = S1LowEnergyRange()
 
         # Use a simpler single scatter cut
-        self.lichen_list[5] = S2SingleScatterSimple()
+        self.lichen_list[4] = S2SingleScatterSimple()
 
         self.lichen_list += [
             S1PatternLikelihood(),
