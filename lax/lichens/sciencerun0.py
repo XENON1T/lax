@@ -44,7 +44,8 @@ class AllEnergy(ManyLichen):
             S1SingleScatter(),
             S1AreaFractionTop(),
             S2PatternLikelihood(),
-            S2Tails()
+            S2Tails(),
+            MuonVeto()
         ]
 
 
