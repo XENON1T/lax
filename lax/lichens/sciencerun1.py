@@ -237,3 +237,5 @@ class S2Width(ManyLichen):
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
 PreS2Junk = sciencerun0.PreS2Junk
+
+MuonVeto = sciencerun0.MuonVeto

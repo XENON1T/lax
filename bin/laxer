@@ -98,7 +98,7 @@ def main():
                 print ("Pruning cuts for MC:", cuts)
 
             for idx, lichen in enumerate(cuts.lichen_list):
-                if lichen.name() == "CutDAQVeto" or lichen.name() == "CutS2Tails":
+                if lichen.name() == "CutDAQVeto" or lichen.name() == "CutS2Tails" or lichen.name() == "CutMuonVeto":
                     if args.verbose:
                         print ("Removing", cuts.lichen_list[idx].name())
                     cuts.lichen_list.pop(idx)
