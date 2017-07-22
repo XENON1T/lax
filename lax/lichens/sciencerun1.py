@@ -195,13 +195,13 @@ class S2Width(ManyLichen):
 
     @staticmethod
     def s2_width_model(z):
-        diffusion_constant =  31.73 * ((units.cm)**2) / units.s
+        diffusion_constant = 31.73 * ((units.cm)**2) / units.s
         v_drift = 1.335 * (units.um) / units.ns
         GausSigmaToR50 = 1.349
 
         EffectivePar = 1.16
         Sigma_0 = 229.58 * units.ns
-        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar *2 * diffusion_constant * z / v_drift ** 3)
+        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar * 2 * diffusion_constant * z / v_drift ** 3)
 
     @staticmethod
     def subpre(self, df):
