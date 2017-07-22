@@ -1,0 +1,147 @@
+#!/usr/bin/env python
+"""lax reduction program
+
+Produces a ROOT file containing booleans of all cuts and their
+dependent parameters.  Warning: this currently needs to be updated
+manually as cut sets are added.
+
+Usage with real data:
+     laxer --run_number 6731 --pax_version 6.6.5 \
+         --minitree_path /project/lgrandi/xenon1t/minitrees/pax_v6.6.5
+
+Usage with MC:
+    laxer --run_number -1 --pax_version 6.6.5 \
+         --minitree_path output --filename Xenon1T_TPC_Rn222_00000_g4mc_G4_Sort_pax
+"""
+import argparse
+import sys
+
+import hax
+from lax.lichens import sciencerun0, sciencerun1
+
+import root_pandas
+
+
+def main():
+
+    parser = argparse.ArgumentParser(description="Create lichen ROOT files with lax")
+
+    parser.add_argument('-v', '--verbose',
+                        action='store_true',
+                        help='Increase output verbosity')
+
+    parser.add_argument('-r', '--run_number', dest='RUN_NUMBER',
+                        action='store', required=True, type=int,
+                        help='Run number to process (-1 for MC)')
+
+    parser.add_argument('-s', '--sciencerun', dest='SCIENCERUN',
+                        action='store', required=True, type=int, choices=range(0,2),
+                        help='lax science run cuts to use')
+
+    parser.add_argument('-p', '--pax_version', dest='PAX_VERSION',
+                        action='store', required=True,
+                        help='pax version to process')
+
+    parser.add_argument('-m', '--minitree_path', dest='MINITREE_PATH',
+                        action='store', required=True,
+                        help='Path to hax minitrees')
+
+    parser.add_argument('-f', '--filename', dest='FILENAME',
+                        action='store', required=False,
+                        help='Name of pax file (without .root)')
+
+    parser.add_argument('-o', '--output_path', dest='OUTPUT_PATH',
+                        action='store', required=False, default='',
+                        help='Name of output file (without .root)')
+
+    args = parser.parse_args(sys.argv[1:])
+
+    PAX_VERSION_POLICY = args.PAX_VERSION
+    RUN_NUMBER = args.RUN_NUMBER
+    MINITREE_NAMES = ['Fundamentals', 'Corrections', 'Basics', 'TotalProperties',
+                      'Extended', 'TailCut', 'Proximity']
+    OUTPUT_PATH = args.OUTPUT_PATH
+
+    # Harcode warning: This should be more flexible, allowing
+    # specification of SR and sample, or drawing from RunsDB
+    if args.SCIENCERUN == 0:
+        LAX_LICHENS = [sciencerun0.AllEnergy(),
+                       sciencerun0.LowEnergyRn220(),
+                       sciencerun0.LowEnergyAmBe(),
+                       sciencerun0.LowEnergyBackground()]
+
+    elif args.SCIENCERUN == 1:
+        LAX_LICHENS = [sciencerun1.AllEnergy(),
+                       sciencerun1.LowEnergyRn220(),
+                       sciencerun1.LowEnergyAmBe(),
+                       sciencerun1.LowEnergyNG(),
+                       sciencerun1.LowEnergyBackground()]
+
+    TREENAME = 'tree'
+
+    # MC
+    if RUN_NUMBER < 0:
+
+        # No run dependent sims yet
+        PAX_VERSION_POLICY = 'loose'
+
+        # Use filename instead of run number
+        RUN_NUMBER = args.FILENAME
+
+        # Remove meaningless variables
+        MINITREE_NAMES.remove('TailCut')
+        MINITREE_NAMES.remove('Proximity')
+
+        # Remove meaningless cuts (DAQVeto, S2Tails)
+        for cuts in LAX_LICHENS:
+            if args.verbose:
+                print ("Pruning cuts for MC:", cuts)
+
+            for idx, lichen in enumerate(cuts.lichen_list):
+                if lichen.name() == "CutDAQVeto" or lichen.name() == "CutS2Tails":
+                    if args.verbose:
+                        print ("Removing", cuts.lichen_list[idx].name())
+                    cuts.lichen_list.pop(idx)
+                    idx -= 1
+
+            if args.verbose:
+                print (cuts.lichen_list, "\n")
+
+        TREENAME += 'mc'
+
+        if OUTPUT_PATH is '':
+            OUTPUT_PATH = args.FILENAME+"_lax"
+
+    if OUTPUT_PATH is '':
+        OUTPUT_PATH = "%d_lax" % RUN_NUMBER
+
+    OUTPUT_PATH += "_SR%d" % args.SCIENCERUN
+
+    # Initialize hax
+    HAX_KWARGS = {'experiment': 'XENON1T',
+                  'pax_version_policy': PAX_VERSION_POLICY,
+                  'minitree_paths': ['.', args.MINITREE_PATH]
+                 }
+
+    # Be careful what you're doing here
+    if args.RUN_NUMBER < 0:
+        HAX_KWARGS['blinding_cut'] = 'run_number<=0'
+
+    hax.init(**HAX_KWARGS)
+
+    DF_ALL = hax.minitrees.load(RUN_NUMBER, MINITREE_NAMES)
+
+    print ("hax initialized with", HAX_KWARGS, "\nRUN_NUMBER = ", RUN_NUMBER,
+           "\nMINITREE_NAMES = ", MINITREE_NAMES)
+
+    for cuts in LAX_LICHENS:
+
+        DF_ALL = cuts.process(DF_ALL)
+
+    OUTPUT_FILE = OUTPUT_PATH+'.root' 
+    DF_ALL.to_root(OUTPUT_FILE, TREENAME)
+
+    print ("Output file written to: ", OUTPUT_FILE)
+
+if __name__ == "__main__":
+    main()

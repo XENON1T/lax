@@ -2,6 +2,14 @@
 History
 =======
 
+1.0.0 (2017-06-22)
+------------------
+
+* Start SR1 lichens (#58)
+* Neutron gun and updated AmBe FV (Also in #58)
+* MC compatability (#57)
+* Remove InteractionPeakBiggest for SR1 since done by pax
+
 0.11.1 (2017-03-29)
 ------------------
 

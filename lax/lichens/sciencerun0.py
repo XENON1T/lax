@@ -310,10 +310,11 @@ class AmBeFiducial(StringLichen):
     https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=xenon:xenon1t:hogenbirk:nr_band_sr0.html
 
     Contact: Erik Hogenbirk <ehogenbi@nikhef.nl>
-
+    
+    Position updated to reflect correct I-Belt 1 position. Link to Note:xenon:xenon1t:analysis:dominick:sr1_ambe_check.
     """
-    version = 1
-    string = "(distance_to_source < 80) & (-83.45 < z) & (z < -13.45) & (sqrt(x*x + y*y) < 42.00)"
+    version = 2
+    string = "(distance_to_source < 103.5) & (-92.9 < z) & (z < -9) & (sqrt(x*x + y*y) < 42.00)"
 
     def pre(self, df):
         source_position = (55.965311731903, 43.724893639103577, -50)
@@ -578,11 +579,13 @@ class S2Width(ManyLichen):
 
     @staticmethod
     def s2_width_model(z):
-        diffusion_constant = PAX_CONFIG['WaveformSimulator']['diffusion_constant_liquid']
-        v_drift = PAX_CONFIG['DEFAULT']['drift_velocity_liquid']
+        diffusion_constant =  22.8 * ((units.cm)**2) / units.s
+        v_drift = 1.44 * (units.um) / units.ns
+        GausSigmaToR50 = 1.349
 
-        w0 = 348.6 * units.ns
-        return np.sqrt(w0 ** 2 - 4.0325 * diffusion_constant * z / v_drift ** 3)
+        EffectivePar = 1.10795
+        Sigma_0 = 258.41 * units.ns
+        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar *2 * diffusion_constant * z / v_drift ** 3)
 
     def subpre(self, df):
         # relative_s2_width
@@ -620,37 +623,43 @@ class S2Width(ManyLichen):
 class S1AreaFractionTop(RangeLichen):
     '''S1 area fraction top cut
 
-    Uses scipy.stats.binom_test to compute a p-value based on the
+    Uses a modified version of scipy.stats.binom_test to compute a p-value based on the
     observed number of s1 photons in the top array, given the expected
-    probability that a photon at the event's (r,z) makes it to the top array.
+    probability that a photon at the event's (x,y,z) makes it to the top array.
+    Modifications made to original algorithm implemented in pax increase sensitivity for small s1s.
+    For pax < v6.6.0 computes p-value live, otherwise loads it from disk. Computation done here is
+    not as accurate as in pax > v6.6.5
+
+    Ideally requires Extended minitrees >= v0.0.4
 
     Uses a 3D map generated with Kr83m 32 keV line
 
     note: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
+    also https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
 
-    Author: Darryl Masson, dmasson@purdue.edu
+    Contact: Darryl Masson, dmasson@purdue.edu
     '''
 
-    version = 1
-    variable = 'pvalue_s1_area_fraction_top'
+    variable = 's1_area_fraction_top_probability'
     allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
+    version = 2
 
     def __init__(self):
-        aftmap_filename = os.path.join(DATA_DIR,
-                                       's1_aft_rz_02Mar2017.json')
+        aftmap_filename = os.path.join(DATA_DIR, 's1_aft_rz_02Mar2017.json')
         with open(aftmap_filename) as data_file:
             data = json.load(data_file)
         r_pts = np.array(data['r_pts'])
         z_pts = np.array(data['z_pts'])
-        aft_vals = np.array([data['map'][i*len(z_pts):(i+1)*len(z_pts)] for i in range(len(r_pts))]) # unpack 1d array to 2d
-        self.aft_map = RectBivariateSpline(r_pts,z_pts,aft_vals)
+        aft_vals = np.array(data['map']).reshape(len(r_pts), len(z_pts))
+        self.aft_map = RectBivariateSpline(r_pts, z_pts, aft_vals)
 
     def pre(self, df):
-        df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
-                                                                   np.round(row['s1']),
-                                                                   self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
-                                                                                row['z'])[0,0]),
-                                            axis=1)
+        if self.variable not in df:
+            df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
+                                                                       np.round(row['s1']),
+                                                                       self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
+                                                                                            row['z'])[0,0]),
+                                                axis=1)
         return df
 
 
