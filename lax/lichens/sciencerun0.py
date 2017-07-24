@@ -494,7 +494,7 @@ class S2SingleScatter(Lichen):
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
 
-    version = 2
+    version = 3
     allowed_range = (0, np.inf)
     variable = 'temp'
 
@@ -509,7 +509,8 @@ class S2SingleScatter(Lichen):
         return rescaled_s2_0 * another_term_0 + rescaled_s2_1 * another_term_1
 
     def _process(self, df):
-        df.loc[:, self.name()] = df.largest_other_s2 < self.other_s2_bound(df.s2)
+        largest_other_s2_is_nan = np.isnan(df.largest_other_s2)
+        df.loc[:, self.name()] = largest_other_s2_is_nan | df.largest_other_s2 < self.other_s2_bound(df.s2)
         return df
 
 
@@ -523,8 +524,8 @@ class S2SingleScatterSimple(StringLichen):
 
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
-    version = 0
-    string = 'largest_other_s2 < s2 * 0.00832 + 72.3'
+    version = 2
+    string = '(~ (largest_other_s2 > 0)) | (largest_other_s2 < s2 * 0.00832 + 72.3)'
 
 
 class S2PatternLikelihood(StringLichen):
