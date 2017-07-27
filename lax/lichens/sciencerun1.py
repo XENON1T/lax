@@ -30,7 +30,6 @@ class AllEnergy(ManyLichen):
         self.lichen_list = [
             FiducialCylinder1T(),
             InteractionExists(),
-            InteractionPeaksBiggest(),
             S2Threshold(),
             S2AreaFractionTop(),
             S2SingleScatter(),
@@ -38,7 +37,8 @@ class AllEnergy(ManyLichen):
             S1SingleScatter(),
             S1AreaFractionTop(),
             S2PatternLikelihood(),
-            S2Tails()
+            S2Tails(),
+            InteractionPeaksBiggest()
         ]
 
 
@@ -61,9 +61,8 @@ class LowEnergyRn220(AllEnergy):
 
         self.lichen_list += [
             S1PatternLikelihood(),
-            InteractionPeaksBiggest(),
             S2Width(),
-            S1MaxPMT()
+            S1MaxPMT(),
         ]
 
 
