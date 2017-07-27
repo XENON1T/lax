@@ -157,6 +157,8 @@ class NGFiducial(StringLichen):
 
 InteractionExists = sciencerun0.InteractionExists
 
+InteractionPeaksBiggest = sciencerun0.InteractionPeaksBiggest
+
 S1LowEnergyRange = sciencerun0.S1LowEnergyRange
 
 S1MaxPMT = sciencerun0.S1MaxPMT
