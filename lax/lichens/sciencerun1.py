@@ -30,6 +30,7 @@ class AllEnergy(ManyLichen):
         self.lichen_list = [
             FiducialCylinder1T(),
             InteractionExists(),
+            InteractionPeaksBiggest(),
             S2Threshold(),
             S2AreaFractionTop(),
             S2SingleScatter(),
