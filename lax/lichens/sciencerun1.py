@@ -37,7 +37,8 @@ class AllEnergy(ManyLichen):
             S1SingleScatter(),
             S1AreaFractionTop(),
             S2PatternLikelihood(),
-            S2Tails()
+            S2Tails(),
+            InteractionPeaksBiggest()
         ]
 
 
@@ -156,6 +157,8 @@ class NGFiducial(StringLichen):
 
 
 InteractionExists = sciencerun0.InteractionExists
+
+InteractionPeaksBiggest = sciencerun0.InteractionPeaksBiggest
 
 S1LowEnergyRange = sciencerun0.S1LowEnergyRange
 
