@@ -494,7 +494,7 @@ class S2SingleScatter(Lichen):
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
 
-    version = 3
+    version = 4
     allowed_range = (0, np.inf)
     variable = 'temp'
 
