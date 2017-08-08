@@ -1,6 +1,6 @@
-"""The cuts for science run 0
+"""The cuts for science run 1
 
-This includes all current definitions of the cuts for the first science run
+This includes all current definitions of the cuts for the second science run
 """
 
 # -*- coding: utf-8 -*-
@@ -113,8 +113,6 @@ S2Tails = sciencerun0.S2Tails
 
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
-FiducialFourLeafClover1250kg = sciencerun0.FiducialFourLeafClover1250kg
-
 
 class AmBeFiducial(StringLichen):
     """AmBe Fiducial volume cut.
@@ -158,7 +156,7 @@ class NGFiducial(StringLichen):
 
 InteractionExists = sciencerun0.InteractionExists
 
-InteractionPeaksBiggest = sciencerun0.InteractionPeaksBiggest
+InteractionPeaksBiggest = sciencerun0.InteractionPeaksBiggest  # See PR #70
 
 S1LowEnergyRange = sciencerun0.S1LowEnergyRange
 
