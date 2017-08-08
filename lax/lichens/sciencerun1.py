@@ -1,6 +1,7 @@
-"""The cuts for science run 0
+"""The cuts for science run 1
 
-This includes all current definitions of the cuts for the first science run
+This includes all current definitions of the cuts for the second science run (SR1).
+Some are based on the first science run (SR0)
 """
 
 # -*- coding: utf-8 -*-
@@ -38,7 +39,6 @@ class AllEnergy(ManyLichen):
             S1AreaFractionTop(),
             S2PatternLikelihood(),
             S2Tails(),
-            InteractionPeaksBiggest()
         ]
 
 
@@ -157,8 +157,6 @@ class NGFiducial(StringLichen):
 
 
 InteractionExists = sciencerun0.InteractionExists
-
-InteractionPeaksBiggest = sciencerun0.InteractionPeaksBiggest
 
 S1LowEnergyRange = sciencerun0.S1LowEnergyRange
 
