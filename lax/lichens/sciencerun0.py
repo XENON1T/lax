@@ -510,7 +510,7 @@ class S2SingleScatter(Lichen):
 
     def _process(self, df):
         largest_other_s2_is_nan = np.isnan(df.largest_other_s2)
-        df.loc[:, self.name()] = largest_other_s2_is_nan | df.largest_other_s2 < self.other_s2_bound(df.s2)
+        df.loc[:, self.name()] = largest_other_s2_is_nan | (df.largest_other_s2 < self.other_s2_bound(df.s2))
         return df
 
 
