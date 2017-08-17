@@ -188,7 +188,7 @@ class S2Width(ManyLichen):
     xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
     Contact: Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 2
+    version = 3
 
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
