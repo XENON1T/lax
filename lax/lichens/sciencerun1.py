@@ -120,8 +120,7 @@ class S2Tails(Lichen):
     version = 1
 
     def _process(self, df):
-        df.loc[:, self.name()] = ((~(df['s2_over_tdiff'] >= 0)) |
-                                    (df['s2_over_tdiff'] < 0.025))
+        df.loc[:, self.name()] = (df['s2_over_tdiff'] < 0.025)
         return df
 
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
