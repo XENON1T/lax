@@ -241,7 +241,9 @@ class S2SingleScatterSimple(StringLichen):
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
     version = 3
-    string = '(~ (other_s2_area > 0)) | (other_s2_area < s2 * 0.023 + 35.0) | ((other_s2_area < 110) & (other_s2_pattern_fit > 15 * (other_s2_area -10) ** 0.45))'
+    string = '(~ (other_s2_area > 0)) | \
+(other_s2_area < s2 * 0.023 + 35.0) | \
+((other_s2_area < 110) & (other_s2_pattern_fit > 15 * (other_s2_area -10) ** 0.45))'
 
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
