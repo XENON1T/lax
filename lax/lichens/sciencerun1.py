@@ -182,8 +182,6 @@ S2AreaFractionTop = sciencerun0.S2AreaFractionTop
 
 S2SingleScatter = sciencerun0.S2SingleScatter
 
-S2SingleScatterSimple = sciencerun0.S2SingleScatterSimple
-
 S2PatternLikelihood = sciencerun0.S2PatternLikelihood
 
 S2Threshold = sciencerun0.S2Threshold
@@ -246,6 +244,18 @@ class S2Width(ManyLichen):
             df.loc[:, self.name()] = (S2Width.relative_s2_width_bounds(df.s2, kind='low') <= df.temp)
             return df
 
+
+class S2SingleScatterSimple(StringLichen):
+    """Check that largest other S2 area is smaller than some bound.
+    It's the low energy limit of the S2SingleScatter Cut
+    applies to S2 < 20000
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:sr1cutdesignconcept
+    Contact: Tianyu Zhu <tz2263@columbia.edu>
+    """
+    version = 3
+    string = '(~ (other_s2_area > 0)) | \
+(other_s2_area < s2 * 0.023 + 35.0) | \
+((other_s2_area < 110) & (other_s2_pattern_fit > 15 * (other_s2_area -10) ** 0.45))'
 
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
