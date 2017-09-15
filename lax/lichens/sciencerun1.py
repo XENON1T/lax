@@ -109,7 +109,19 @@ class LowEnergyNG(LowEnergyRn220):
 
 DAQVeto = sciencerun0.DAQVeto
 
-S2Tails = sciencerun0.S2Tails
+class S2Tails(Lichen):
+    """Check if event is in a tail of a previous S2
+    Requires S2Tail minitrees.
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:subgroup:wimphysics:s2_tails_sr0 (SR0)
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:subgroup:20170720_sr1_cut_s2_tail (SR1)
+    Contact: Daniel Coderre <daniel.coderre@physik.uni-freiburg.de>
+             Diego Ramírez <diego.ramirez@physik.uni-freiburg.de>
+    """
+    version = 1
+
+    def _process(self, df):
+        df.loc[:, self.name()] = (df['s2_over_tdiff'] < 0.025)
+        return df
 
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
