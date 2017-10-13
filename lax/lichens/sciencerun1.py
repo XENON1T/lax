@@ -184,7 +184,18 @@ S2SingleScatter = sciencerun0.S2SingleScatter
 
 S2SingleScatterSimple = sciencerun0.S2SingleScatterSimple
 
-S2PatternLikelihood = sciencerun0.S2PatternLikelihood
+
+class S2PatternLikelihood(StringLichen):
+    """Reject poorly reconstructed S2s and multiple scatters.
+    Details of the likelihood can be seen in the following note. Here, 95
+    quantile acceptance line estimated with Rn220 data (pax_v6.8.0) is used.
+       xenon:xenon1t:sim:notes:tzhu:pattern_cut_tuning
+    Requires Extended minitrees.
+    Contact: Bart Pelssers  <bart.pelssers@fysik.su.se> Tianyu Zhu <tz2263@columbia.edu>
+    """
+    version = 1
+    string = "s2_pattern_fit <  0.043 * s2 + 435 * s2**0.08 - 500"
+
 
 S2Threshold = sciencerun0.S2Threshold
 
