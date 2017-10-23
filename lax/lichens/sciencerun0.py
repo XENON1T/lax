@@ -42,7 +42,6 @@ class AllEnergy(ManyLichen):
             S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
-            S1AreaFractionTop(),
             S2PatternLikelihood(),
             S2Tails()
         ]
@@ -69,7 +68,8 @@ class LowEnergyRn220(AllEnergy):
             S1PatternLikelihood(),
             S2Width(),
             S1MaxPMT(),
-            SingleElectronS2s()
+            SingleElectronS2s(),
+            S1AreaFractionTop(),
         ]
         
 
@@ -634,8 +634,8 @@ class S1AreaFractionTop(RangeLichen):
 
     Uses a 3D map generated with Kr83m 32 keV line
 
-    note: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
-    also https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
+    note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
+    also https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
 
     Contact: Darryl Masson, dmasson@purdue.edu
     '''

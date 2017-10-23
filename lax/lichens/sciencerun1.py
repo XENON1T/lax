@@ -35,7 +35,6 @@ class AllEnergy(ManyLichen):
             S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
-            S1AreaFractionTop(),
             S2PatternLikelihood(),
             S2Tails(),
             InteractionPeaksBiggest()
@@ -62,7 +61,8 @@ class LowEnergyRn220(AllEnergy):
         self.lichen_list += [
             S1PatternLikelihood(),
             S2Width(),
-            S1MaxPMT()
+            S1MaxPMT(),
+            S1AreaFractionTop(),
         ]
 
 
