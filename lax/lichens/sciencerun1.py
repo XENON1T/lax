@@ -36,6 +36,7 @@ class AllEnergy(ManyLichen):
             DAQVeto(),
             S1SingleScatter(),
             S2PatternLikelihood(),
+            S2Tails(),
             InteractionPeaksBiggest()
         ]
 
@@ -76,7 +77,6 @@ class LowEnergyBackground(LowEnergyRn220):
         LowEnergyRn220.__init__(self)
 
         self.lichen_list += [
-            S2Tails(),
             PreS2Junk(),
         ]
 
