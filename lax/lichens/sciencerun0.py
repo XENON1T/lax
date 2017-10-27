@@ -560,10 +560,10 @@ class S2PatternLikelihood(StringLichen):
 
     Requires Extended minitrees.
 
-    Contact: Bart Pelssers  <bart.pelssers@fysik.su.se>
+    Contact: Bart Pelssers  <bart.pelssers@fysik.su.se> Tianyu Zhu  <tz2263@columbia.edu>
     """
-    version = 0
-    string = "s2_pattern_fit < 75 + 10 * s2**0.45"
+    version = 1
+    string = "s2_pattern_fit < 0.0390*s2 + 609*s2**0.0602 - 666"
 
 
 class S2Threshold(StringLichen):
