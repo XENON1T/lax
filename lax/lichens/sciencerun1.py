@@ -9,7 +9,6 @@ import os
 import numpy as np
 from pax import units, configuration
 
-PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
@@ -109,6 +108,7 @@ class LowEnergyNG(LowEnergyRn220):
 
 DAQVeto = sciencerun0.DAQVeto
 
+
 class S2Tails(Lichen):
     """Check if event is in a tail of a previous S2
     Requires S2Tail minitrees.
@@ -124,6 +124,8 @@ class S2Tails(Lichen):
         return df
 
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
+
+FiducialCylinder1p3T = sciencerun0.FiducialCylinder1p3T
 
 
 class AmBeFiducial(StringLichen):
@@ -219,13 +221,13 @@ class S2Width(ManyLichen):
 
     @staticmethod
     def s2_width_model(z):
-        diffusion_constant =  31.73 * ((units.cm)**2) / units.s
+        diffusion_constant = 31.73 * ((units.cm)**2) / units.s
         v_drift = 1.335 * (units.um) / units.ns
         GausSigmaToR50 = 1.349
 
         EffectivePar = 0.925
         Sigma_0 = 229.58 * units.ns
-        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar *2 * diffusion_constant * z / v_drift ** 3)
+        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar * 2 * diffusion_constant * z / v_drift ** 3)
 
     @staticmethod
     def subpre(self, df):
@@ -242,6 +244,7 @@ class S2Width(ManyLichen):
         raise ValueError("kind must be high or low")
 
     class S2WidthHigh(Lichen):
+
         def pre(self, df):
             return S2Width.subpre(self, df)
 
@@ -250,6 +253,7 @@ class S2Width(ManyLichen):
             return df
 
     class S2WidthLow(RangeLichen):
+
         def pre(self, df):
             return S2Width.subpre(self, df)
 

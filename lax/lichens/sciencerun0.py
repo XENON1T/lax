@@ -16,7 +16,6 @@ from scipy.stats import binom_test
 from scipy import interpolate
 import json
 
-PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax import __version__ as lax_version
 
@@ -71,7 +70,7 @@ class LowEnergyRn220(AllEnergy):
             SingleElectronS2s(),
             S1AreaFractionTop(),
         ]
-        
+
 
 class LowEnergyBackground(LowEnergyRn220):
     """Select background events with cs1<200
@@ -86,7 +85,8 @@ class LowEnergyBackground(LowEnergyRn220):
         self.lichen_list += [
             PreS2Junk(),
         ]
-        
+
+
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
@@ -99,7 +99,7 @@ class LowEnergyAmBe(LowEnergyRn220):
         # Replaces Fiducial
         self.lichen_list[0] = AmBeFiducial()
 
-        
+
 class DAQVeto(ManyLichen):
     """Check if DAQ busy or HE veto
 
@@ -125,6 +125,7 @@ class DAQVeto(ManyLichen):
     class EndOfRunCheck(Lichen):
         """Check that the event does not come in the last 21 seconds of the run
         """
+
         def _process(self, df):
             import hax          # noqa
             if not len(hax.config):
@@ -147,15 +148,17 @@ class DAQVeto(ManyLichen):
     class BusyTypeCheck(Lichen):
         """Ensure that the last busy type (if any) is OFF
         """
+
         def _process(self, df):
             df.loc[:, self.name()] = ((~(df['previous_busy_on'] < 60e9)) |
-                                  (df['previous_busy_off'] <
-                                   df['previous_busy_on']))
+                                      (df['previous_busy_off'] <
+                                       df['previous_busy_on']))
             return df
 
     class BusyCheck(Lichen):
         """Check if the event contains a BUSY veto trigger
         """
+
         def _process(self, df):
             df.loc[:, self.name()] = (abs(df['nearest_busy']) >
                                       df['event_duration'] / 2)
@@ -164,6 +167,7 @@ class DAQVeto(ManyLichen):
     class HEVCheck(Lichen):
         """Check if the event contains a HE veto trigger
         """
+
         def _process(self, df):
             df.loc[:, self.name()] = (abs(df['nearest_hev']) >
                                       df['event_duration'] / 2)
@@ -183,7 +187,7 @@ class S2Tails(Lichen):
 
     def _process(self, df):
         df.loc[:, self.name()] = ((~(df['s2_over_tdiff'] >= 0)) |
-                                    (df['s2_over_tdiff'] < 0.04))
+                                  (df['s2_over_tdiff'] < 0.04))
         return df
 
 
@@ -206,6 +210,23 @@ class FiducialCylinder1T(StringLichen):
     def pre(self, df):
         df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
         return df
+
+
+class FiducialCylinder1p3T(StringLichen):
+    """Larger fiducial volume cut for benchmarking and development.
+
+    Using new 3D FDC positions. Tested in e.g. following note:
+
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:kazama:ambe_ng_comparison:performance_check_ng_ambe
+
+    """
+    version = 0
+    string = "(-92.9 < z_3d_nn) & (z_3d_nn < -9) & (sqrt(x_3d_nn*x_3d_nn + y_3d_nn*y_3d_nn) < 41.26)"
+
+    def pre(self, df):
+        df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn'] * df['x_3d_nn'] + df['y_3d_nn'] * df['y_3d_nn'])
+        return df
+
 
 class FiducialFourLeafClover1250kg(StringLichen):
     """Fiducial volume cut: Four leaf Clover
@@ -238,7 +259,7 @@ class FiducialFourLeafClover1250kg(StringLichen):
         # first get the points from 210Po
         # open file and get text
         rho_phi_filename = os.path.join(DATA_DIR,
-                                       'R_phi_curve_360points.txt')
+                                        'R_phi_curve_360points.txt')
         with open(rho_phi_filename) as file:
             text = file.readlines()
         # get value per line
@@ -292,12 +313,12 @@ class FiducialFourLeafClover1250kg(StringLichen):
         # Rho from data
         df.loc[:, 'r_phi'] = cart2pol(df['x'], df['y'])[0]
         # Max Rho
-        df.loc[:, 'r_max'] = ((radius_scaling_value/ average_radius_egg) *
-                                coffee_r(df['z'],
-                                r_values[find_nearest(phi_values, cart2pol(df['x'], df['y'])[1])],
-                                radius_offset_value,
-                                max_height,
-                                -max_height / 2 + depth_upper_bound))
+        df.loc[:, 'r_max'] = ((radius_scaling_value / average_radius_egg) *
+                              coffee_r(df['z'],
+                                       r_values[find_nearest(phi_values, cart2pol(df['x'], df['y'])[1])],
+                                       radius_offset_value,
+                                       max_height,
+                                       -max_height / 2 + depth_upper_bound))
         return df
 
 
@@ -309,7 +330,7 @@ class AmBeFiducial(StringLichen):
     https://xecluster.lngs.infn.it/dokuwiki/lib/exe/fetch.php?media=xenon:xenon1t:hogenbirk:nr_band_sr0.html
 
     Contact: Erik Hogenbirk <ehogenbi@nikhef.nl>
-    
+
     Position updated to reflect correct I-Belt 1 position. Link to Note:xenon:xenon1t:analysis:dominick:sr1_ambe_check.
     """
     version = 2
@@ -385,14 +406,15 @@ class S1PatternLikelihood(Lichen):
 
     def pre(self, df):
         df.loc[:, 'temp'] = -2.39535 + \
-                            25.5857 * pow(df['s1'], 0.5) + \
-                            1.30652 * df['s1'] - \
-                            0.0638579 * np.power(df['s1'], 1.5)
+            25.5857 * pow(df['s1'], 0.5) + \
+            1.30652 * df['s1'] - \
+            0.0638579 * np.power(df['s1'], 1.5)
         return df
 
     def _process(self, df):
         df.loc[:, self.name()] = df['s1_pattern_fit'] < df.temp
         return df
+
 
 class S1SingleScatter(Lichen):
     """Requires only one valid interaction between the largest S2, and any S1 recorded before it.
@@ -461,10 +483,10 @@ class S2AreaFractionTop(Lichen):
 
         aft_variable = 's2_area_fraction_top'
         s2_variable = 's2'
-        df.loc[:, self.name()] = ((df[aft_variable]
-                                   < upper_limit_s2_aft(df[s2_variable])) &
-                                  (df[aft_variable]
-                                   > lower_limit_s2_aft(df[s2_variable])))
+        df.loc[:, self.name()] = ((df[aft_variable] <
+                                   upper_limit_s2_aft(df[s2_variable])) &
+                                  (df[aft_variable] >
+                                   lower_limit_s2_aft(df[s2_variable])))
 
         return df
 
@@ -579,13 +601,13 @@ class S2Width(ManyLichen):
 
     @staticmethod
     def s2_width_model(z):
-        diffusion_constant =  22.8 * ((units.cm)**2) / units.s
+        diffusion_constant = 22.8 * ((units.cm)**2) / units.s
         v_drift = 1.44 * (units.um) / units.ns
         GausSigmaToR50 = 1.349
 
         EffectivePar = 1.10795
         Sigma_0 = 258.41 * units.ns
-        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar *2 * diffusion_constant * z / v_drift ** 3)
+        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar * 2 * diffusion_constant * z / v_drift ** 3)
 
     def subpre(self, df):
         # relative_s2_width
@@ -602,6 +624,7 @@ class S2Width(ManyLichen):
         raise ValueError("kind must be high or low")
 
     class S2WidthHigh(Lichen):
+
         def pre(self, df):
             return S2Width.subpre(self, df)
 
@@ -611,6 +634,7 @@ class S2Width(ManyLichen):
             return df
 
     class S2WidthLow(RangeLichen):
+
         def pre(self, df):
             return S2Width.subpre(self, df)
 
@@ -658,7 +682,7 @@ class S1AreaFractionTop(RangeLichen):
             df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
                                                                        np.round(row['s1']),
                                                                        self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
-                                                                                            row['z'])[0,0]),
+                                                                                    row['z'])[0, 0]),
                                                 axis=1)
         return df
 
@@ -689,19 +713,19 @@ class SingleElectronS2s(Lichen):
     """
     version = 3
     allowed_range_area = (10, 200)
-    allowed_range_rt =(11,450)
+    allowed_range_rt = (11, 450)
     area_variable = 's1'
     rt_variable = 's1_rise_time'
     aft_variable = 's1_area_fraction_top'
 
-    bound = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60,1.0],[70, 70, 61, 61,35,0,0], kind='linear')
+    bound = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60, 1.0], [70, 70, 61, 61, 35, 0, 0], kind='linear')
 
     def _process(self, df):
         # Is the event inside the area box considered for this study?
         cond1 = ((df[self.area_variable] > self.allowed_range_area[0]) &
-                (df[self.area_variable] < self.allowed_range_area[1]) &
-                (df[self.rt_variable] > self.allowed_range_rt[0]) &
-                (df[self.rt_variable] < self.allowed_range_rt[1]))
+                 (df[self.area_variable] < self.allowed_range_area[1]) &
+                 (df[self.rt_variable] > self.allowed_range_rt[0]) &
+                 (df[self.rt_variable] < self.allowed_range_rt[1]))
         cond2 = (df[self.rt_variable] < SingleElectronS2s.bound(df[self.aft_variable]))
 
         # Pass events by default
