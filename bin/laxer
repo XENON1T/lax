@@ -73,8 +73,6 @@ def main():
     elif args.SCIENCERUN == 1:
         LAX_LICHENS = [sciencerun1.AllEnergy(),
                        sciencerun1.LowEnergyRn220(),
-                       sciencerun1.LowEnergyAmBe(),
-                       sciencerun1.LowEnergyNG(),
                        sciencerun1.LowEnergyBackground()]
 
     TREENAME = 'tree'

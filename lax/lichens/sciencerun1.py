@@ -68,8 +68,8 @@ class LowEnergyRn220(AllEnergy):
 class LowEnergyBackground(LowEnergyRn220):
     """Select background events with cs1<200
 
-    This is the list that we'll use for the actual DM search. Additionally to the
-    LowEnergyRn220 list it contains the PreS2Junk
+    This is the list that we'll use for the actual DM search. In addition to the
+    LowEnergyRn220 list, it contains S2Tails and PreS2Junk.
     """
 
     def __init__(self):
@@ -78,32 +78,6 @@ class LowEnergyBackground(LowEnergyRn220):
         self.lichen_list += [
             PreS2Junk(),
         ]
-
-
-class LowEnergyAmBe(LowEnergyRn220):
-    """Select AmBe events with cs1<200 with appropriate cuts
-
-    It is the same as the LowEnergyRn220 cuts, except uses an AmBe fiducial.
-    """
-
-    def __init__(self):
-        LowEnergyRn220.__init__(self)
-
-        # Replaces Fiducial
-        self.lichen_list[0] = AmBeFiducial()
-
-
-class LowEnergyNG(LowEnergyRn220):
-    """Select AmBe events with cs1<200 with appropriate cuts
-
-    It is the same as the LowEnergyRn220 cuts, except uses an AmBe fiducial.
-    """
-
-    def __init__(self):
-        LowEnergyRn220.__init__(self)
-
-        # Replaces Fiducial
-        self.lichen_list[0] = NGFiducial()
 
 
 DAQVeto = sciencerun0.DAQVeto
