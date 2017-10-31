@@ -690,6 +690,9 @@ class S1AreaFractionTop(RangeLichen):
 class PreS2Junk(StringLichen):
     """Cut events with lot of peak area before main S2
 
+    SR0: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_signal_noise
+    SR1: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:julien:analysis:sciencerun1:s1_noise_cut
+
     Contact: Julien Wulf <jwulf@physik.uzh.ch>
     """
     version = 1
