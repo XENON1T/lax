@@ -9,7 +9,7 @@ import os
 import pytz
 
 import numpy as np
-from pax import units, configuration
+from pax import units
 
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
@@ -217,7 +217,7 @@ class FiducialCylinder1T_TPF2dFDC(StringLichen):
 class FiducialCylinder1T(StringLichen):
     """Fiducial volume cut using NN 3D FDC instead of TPF 2D FDC above.
 
-    Temporary/under development, for preliminary comparisons to 
+    Temporary/under development, for preliminary comparisons to
     FiducialCylinder1p3T below.
 
     """

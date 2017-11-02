@@ -7,7 +7,7 @@ This includes all current definitions of the cuts for the second science run
 import inspect
 import os
 import numpy as np
-from pax import units, configuration
+from pax import units
 
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax.lichens import sciencerun0
