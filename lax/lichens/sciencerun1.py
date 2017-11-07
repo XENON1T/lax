@@ -7,7 +7,7 @@ This includes all current definitions of the cuts for the second science run
 import inspect
 import os
 import numpy as np
-from pax import units, configuration
+from pax import units
 
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax.lichens import sciencerun0
@@ -27,7 +27,7 @@ class AllEnergy(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [
-            FiducialCylinder1T(),
+            FiducialCylinder1p3T(),
             InteractionExists(),
             S2Threshold(),
             S2AreaFractionTop(),
@@ -96,6 +96,8 @@ class S2Tails(Lichen):
     def _process(self, df):
         df.loc[:, self.name()] = (df['s2_over_tdiff'] < 0.025)
         return df
+
+FiducialCylinder1T_TPF2dFDC = sciencerun0.FiducialCylinder1T_TPF2dFDC
 
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 

@@ -9,7 +9,7 @@ import os
 import pytz
 
 import numpy as np
-from pax import units, configuration
+from pax import units
 
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
@@ -33,7 +33,7 @@ class AllEnergy(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [
-            FiducialCylinder1T(),
+            FiducialCylinder1p3T(),
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
@@ -191,7 +191,7 @@ class S2Tails(Lichen):
         return df
 
 
-class FiducialCylinder1T(StringLichen):
+class FiducialCylinder1T_TPF2dFDC(StringLichen):
     """Fiducial volume cut.
 
     The fidicual volume cut defines the region in depth and radius that we
@@ -201,6 +201,8 @@ class FiducialCylinder1T(StringLichen):
     This version of the cut is based pax v6.4 bg run 0 data. See the
     note first results fiducial volume note for the study of the definition.
 
+    (Used to be "FiducialCylinder1T" version 4.)
+
     Contact: Sander breur <sanderb@nikhef.nl>
 
     """
@@ -209,6 +211,21 @@ class FiducialCylinder1T(StringLichen):
 
     def pre(self, df):
         df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
+        return df
+
+
+class FiducialCylinder1T(StringLichen):
+    """Fiducial volume cut using NN 3D FDC instead of TPF 2D FDC above.
+
+    Temporary/under development, for preliminary comparisons to
+    FiducialCylinder1p3T below.
+
+    """
+    version = 5
+    string = "(-92.9 < z_3d_nn) & (z_3d_nn < -9) & (sqrt(x_3d_nn*x_3d_nn + y_3d_nn*y_3d_nn) < 36.94)"
+
+    def pre(self, df):
+        df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn'] * df['x_3d_nn'] + df['y_3d_nn'] * df['y_3d_nn'])
         return df
 
 
