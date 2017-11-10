@@ -1,15 +1,14 @@
-"""The cuts for science run 0
+"""The cuts for science run 1
 
-This includes all current definitions of the cuts for the first science run
+This includes all current definitions of the cuts for the second science run
 """
 
 # -*- coding: utf-8 -*-
 import inspect
 import os
 import numpy as np
-from pax import units, configuration
+from pax import units
 
-PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
@@ -28,16 +27,16 @@ class AllEnergy(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [
-            FiducialCylinder1T(),
+            FiducialCylinder1p3T(),
             InteractionExists(),
             S2Threshold(),
             S2AreaFractionTop(),
             S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
-            S1AreaFractionTop(),
             S2PatternLikelihood(),
-            S2Tails()
+            S2Tails(),
+            InteractionPeaksBiggest()
         ]
 
 
@@ -61,15 +60,16 @@ class LowEnergyRn220(AllEnergy):
         self.lichen_list += [
             S1PatternLikelihood(),
             S2Width(),
-            S1MaxPMT()
+            S1MaxPMT(),
+            S1AreaFractionTop(),
         ]
 
 
 class LowEnergyBackground(LowEnergyRn220):
     """Select background events with cs1<200
 
-    This is the list that we'll use for the actual DM search. Additionally to the
-    LowEnergyRn220 list it contains the PreS2Junk
+    This is the list that we'll use for the actual DM search. In addition to the
+    LowEnergyRn220 list, it contains S2Tails and PreS2Junk.
     """
 
     def __init__(self):
@@ -80,39 +80,28 @@ class LowEnergyBackground(LowEnergyRn220):
         ]
 
 
-class LowEnergyAmBe(LowEnergyRn220):
-    """Select AmBe events with cs1<200 with appropriate cuts
-
-    It is the same as the LowEnergyRn220 cuts, except uses an AmBe fiducial.
-    """
-
-    def __init__(self):
-        LowEnergyRn220.__init__(self)
-
-        # Replaces Fiducial
-        self.lichen_list[0] = AmBeFiducial()
-
-
-class LowEnergyNG(LowEnergyRn220):
-    """Select AmBe events with cs1<200 with appropriate cuts
-
-    It is the same as the LowEnergyRn220 cuts, except uses an AmBe fiducial.
-    """
-
-    def __init__(self):
-        LowEnergyRn220.__init__(self)
-
-        # Replaces Fiducial
-        self.lichen_list[0] = NGFiducial()
-
-
 DAQVeto = sciencerun0.DAQVeto
 
-S2Tails = sciencerun0.S2Tails
+
+class S2Tails(Lichen):
+    """Check if event is in a tail of a previous S2
+    Requires S2Tail minitrees.
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:subgroup:wimphysics:s2_tails_sr0 (SR0)
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:subgroup:20170720_sr1_cut_s2_tail (SR1)
+    Contact: Daniel Coderre <daniel.coderre@physik.uni-freiburg.de>
+             Diego Ramírez <diego.ramirez@physik.uni-freiburg.de>
+    """
+    version = 1
+
+    def _process(self, df):
+        df.loc[:, self.name()] = (df['s2_over_tdiff'] < 0.025)
+        return df
+
+FiducialCylinder1T_TPF2dFDC = sciencerun0.FiducialCylinder1T_TPF2dFDC
 
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
-FiducialFourLeafClover1250kg = sciencerun0.FiducialFourLeafClover1250kg
+FiducialCylinder1p3T = sciencerun0.FiducialCylinder1p3T
 
 
 class AmBeFiducial(StringLichen):
@@ -157,6 +146,8 @@ class NGFiducial(StringLichen):
 
 InteractionExists = sciencerun0.InteractionExists
 
+InteractionPeaksBiggest = sciencerun0.InteractionPeaksBiggest  # See PR #70
+
 S1LowEnergyRange = sciencerun0.S1LowEnergyRange
 
 S1MaxPMT = sciencerun0.S1MaxPMT
@@ -171,7 +162,18 @@ S2SingleScatter = sciencerun0.S2SingleScatter
 
 S2SingleScatterSimple = sciencerun0.S2SingleScatterSimple
 
-S2PatternLikelihood = sciencerun0.S2PatternLikelihood
+
+class S2PatternLikelihood(StringLichen):
+    """Reject poorly reconstructed S2s and multiple scatters.
+    Details of the likelihood can be seen in the following note. Here, 95
+    quantile acceptance line estimated with Rn220 data (pax_v6.8.0) is used.
+       xenon:xenon1t:sim:notes:tzhu:pattern_cut_tuning
+    Requires Extended minitrees.
+    Contact: Bart Pelssers  <bart.pelssers@fysik.su.se> Tianyu Zhu <tz2263@columbia.edu>
+    """
+    version = 3
+    string = "s2_pattern_fit < 0.0404*s2 + 594*s2**0.0737 - 686"
+
 
 S2Threshold = sciencerun0.S2Threshold
 
@@ -187,7 +189,7 @@ class S2Width(ManyLichen):
     xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
     Contact: Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 2
+    version = 3
 
     def __init__(self):
         self.lichen_list = [self.S2WidthHigh(),
@@ -199,7 +201,7 @@ class S2Width(ManyLichen):
         v_drift = 1.335 * (units.um) / units.ns
         GausSigmaToR50 = 1.349
 
-        EffectivePar = 1.16
+        EffectivePar = 0.925
         Sigma_0 = 229.58 * units.ns
         return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar * 2 * diffusion_constant * z / v_drift ** 3)
 
@@ -218,6 +220,7 @@ class S2Width(ManyLichen):
         raise ValueError("kind must be high or low")
 
     class S2WidthHigh(Lichen):
+
         def pre(self, df):
             return S2Width.subpre(self, df)
 
@@ -226,6 +229,7 @@ class S2Width(ManyLichen):
             return df
 
     class S2WidthLow(RangeLichen):
+
         def pre(self, df):
             return S2Width.subpre(self, df)
 

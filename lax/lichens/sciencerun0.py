@@ -9,14 +9,13 @@ import os
 import pytz
 
 import numpy as np
-from pax import units, configuration
+from pax import units
 
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
 from scipy import interpolate
 import json
 
-PAX_CONFIG = configuration.load_configuration('XENON1T')
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax import __version__ as lax_version
 
@@ -34,7 +33,7 @@ class AllEnergy(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [
-            FiducialCylinder1T(),
+            FiducialCylinder1p3T(),
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
@@ -42,7 +41,6 @@ class AllEnergy(ManyLichen):
             S2SingleScatter(),
             DAQVeto(),
             S1SingleScatter(),
-            S1AreaFractionTop(),
             S2PatternLikelihood(),
             S2Tails(),
             MuonVeto()
@@ -70,7 +68,8 @@ class LowEnergyRn220(AllEnergy):
             S1PatternLikelihood(),
             S2Width(),
             S1MaxPMT(),
-            SingleElectronS2s()
+            SingleElectronS2s(),
+            S1AreaFractionTop(),
         ]
 
 
@@ -127,6 +126,7 @@ class DAQVeto(ManyLichen):
     class EndOfRunCheck(Lichen):
         """Check that the event does not come in the last 21 seconds of the run
         """
+
         def _process(self, df):
             import hax          # noqa
             if not len(hax.config):
@@ -149,6 +149,7 @@ class DAQVeto(ManyLichen):
     class BusyTypeCheck(Lichen):
         """Ensure that the last busy type (if any) is OFF
         """
+
         def _process(self, df):
             df.loc[:, self.name()] = ((~(df['previous_busy_on'] < 60e9)) |
                                       (df['previous_busy_off'] <
@@ -158,6 +159,7 @@ class DAQVeto(ManyLichen):
     class BusyCheck(Lichen):
         """Check if the event contains a BUSY veto trigger
         """
+
         def _process(self, df):
             df.loc[:, self.name()] = (abs(df['nearest_busy']) >
                                       df['event_duration'] / 2)
@@ -166,6 +168,7 @@ class DAQVeto(ManyLichen):
     class HEVCheck(Lichen):
         """Check if the event contains a HE veto trigger
         """
+
         def _process(self, df):
             df.loc[:, self.name()] = (abs(df['nearest_hev']) >
                                       df['event_duration'] / 2)
@@ -189,7 +192,7 @@ class S2Tails(Lichen):
         return df
 
 
-class FiducialCylinder1T(StringLichen):
+class FiducialCylinder1T_TPF2dFDC(StringLichen):
     """Fiducial volume cut.
 
     The fidicual volume cut defines the region in depth and radius that we
@@ -199,6 +202,8 @@ class FiducialCylinder1T(StringLichen):
     This version of the cut is based pax v6.4 bg run 0 data. See the
     note first results fiducial volume note for the study of the definition.
 
+    (Used to be "FiducialCylinder1T" version 4.)
+
     Contact: Sander breur <sanderb@nikhef.nl>
 
     """
@@ -207,6 +212,37 @@ class FiducialCylinder1T(StringLichen):
 
     def pre(self, df):
         df.loc[:, 'r'] = np.sqrt(df['x'] * df['x'] + df['y'] * df['y'])
+        return df
+
+
+class FiducialCylinder1T(StringLichen):
+    """Fiducial volume cut using NN 3D FDC instead of TPF 2D FDC above.
+
+    Temporary/under development, for preliminary comparisons to
+    FiducialCylinder1p3T below.
+
+    """
+    version = 5
+    string = "(-92.9 < z_3d_nn) & (z_3d_nn < -9) & (sqrt(x_3d_nn*x_3d_nn + y_3d_nn*y_3d_nn) < 36.94)"
+
+    def pre(self, df):
+        df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn'] * df['x_3d_nn'] + df['y_3d_nn'] * df['y_3d_nn'])
+        return df
+
+
+class FiducialCylinder1p3T(StringLichen):
+    """Larger fiducial volume cut for benchmarking and development.
+
+    Using new 3D FDC positions. Tested in e.g. following note:
+
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:kazama:ambe_ng_comparison:performance_check_ng_ambe
+
+    """
+    version = 0
+    string = "(-92.9 < z_3d_nn) & (z_3d_nn < -9) & (sqrt(x_3d_nn*x_3d_nn + y_3d_nn*y_3d_nn) < 41.26)"
+
+    def pre(self, df):
+        df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn'] * df['x_3d_nn'] + df['y_3d_nn'] * df['y_3d_nn'])
         return df
 
 
@@ -297,11 +333,10 @@ class FiducialFourLeafClover1250kg(StringLichen):
         # Max Rho
         df.loc[:, 'r_max'] = ((radius_scaling_value / average_radius_egg) *
                               coffee_r(df['z'],
-                              r_values[find_nearest(phi_values,
-                                                    cart2pol(df['x'], df['y'])[1])],
-                              radius_offset_value,
-                              max_height,
-                              -max_height / 2 + depth_upper_bound))
+                                       r_values[find_nearest(phi_values, cart2pol(df['x'], df['y'])[1])],
+                                       radius_offset_value,
+                                       max_height,
+                                       -max_height / 2 + depth_upper_bound))
         return df
 
 
@@ -389,9 +424,9 @@ class S1PatternLikelihood(Lichen):
 
     def pre(self, df):
         df.loc[:, 'temp'] = -2.39535 + \
-                            25.5857 * pow(df['s1'], 0.5) + \
-                            1.30652 * df['s1'] - \
-                            0.0638579 * np.power(df['s1'], 1.5)
+            25.5857 * pow(df['s1'], 0.5) + \
+            1.30652 * df['s1'] - \
+            0.0638579 * np.power(df['s1'], 1.5)
         return df
 
     def _process(self, df):
@@ -466,10 +501,10 @@ class S2AreaFractionTop(Lichen):
 
         aft_variable = 's2_area_fraction_top'
         s2_variable = 's2'
-        df.loc[:, self.name()] = ((df[aft_variable]
-                                   < upper_limit_s2_aft(df[s2_variable])) &
-                                  (df[aft_variable]
-                                   > lower_limit_s2_aft(df[s2_variable])))
+        df.loc[:, self.name()] = ((df[aft_variable] <
+                                   upper_limit_s2_aft(df[s2_variable])) &
+                                  (df[aft_variable] >
+                                   lower_limit_s2_aft(df[s2_variable])))
 
         return df
 
@@ -499,7 +534,7 @@ class S2SingleScatter(Lichen):
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
 
-    version = 2
+    version = 4
     allowed_range = (0, np.inf)
     variable = 'temp'
 
@@ -514,7 +549,8 @@ class S2SingleScatter(Lichen):
         return rescaled_s2_0 * another_term_0 + rescaled_s2_1 * another_term_1
 
     def _process(self, df):
-        df.loc[:, self.name()] = df.largest_other_s2 < self.other_s2_bound(df.s2)
+        largest_other_s2_is_nan = np.isnan(df.largest_other_s2)
+        df.loc[:, self.name()] = largest_other_s2_is_nan | (df.largest_other_s2 < self.other_s2_bound(df.s2))
         return df
 
 
@@ -528,8 +564,8 @@ class S2SingleScatterSimple(StringLichen):
 
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
-    version = 0
-    string = 'largest_other_s2 < s2 * 0.00832 + 72.3'
+    version = 2
+    string = '(~ (largest_other_s2 > 0)) | (largest_other_s2 < s2 * 0.00832 + 72.3)'
 
 
 class S2PatternLikelihood(StringLichen):
@@ -542,10 +578,10 @@ class S2PatternLikelihood(StringLichen):
 
     Requires Extended minitrees.
 
-    Contact: Bart Pelssers  <bart.pelssers@fysik.su.se>
+    Contact: Bart Pelssers  <bart.pelssers@fysik.su.se> Tianyu Zhu  <tz2263@columbia.edu>
     """
-    version = 0
-    string = "s2_pattern_fit < 75 + 10 * s2**0.45"
+    version = 1
+    string = "s2_pattern_fit < 0.0390*s2 + 609*s2**0.0602 - 666"
 
 
 class S2Threshold(StringLichen):
@@ -606,6 +642,7 @@ class S2Width(ManyLichen):
         raise ValueError("kind must be high or low")
 
     class S2WidthHigh(Lichen):
+
         def pre(self, df):
             return S2Width.subpre(self, df)
 
@@ -615,6 +652,7 @@ class S2Width(ManyLichen):
             return df
 
     class S2WidthLow(RangeLichen):
+
         def pre(self, df):
             return S2Width.subpre(self, df)
 
@@ -638,8 +676,8 @@ class S1AreaFractionTop(RangeLichen):
 
     Uses a 3D map generated with Kr83m 32 keV line
 
-    note: https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
-    also https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
+    note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
+    also https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
 
     Contact: Darryl Masson, dmasson@purdue.edu
     '''
