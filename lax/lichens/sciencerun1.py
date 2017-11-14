@@ -177,65 +177,45 @@ class S2PatternLikelihood(StringLichen):
 
 S2Threshold = sciencerun0.S2Threshold
 
-
-class S2Width(ManyLichen):
+from scipy.stats import chi2
+class S2Width(Lichen):
     """S2 Width cut based on diffusion model
     The S2 width cut compares the S2 width to what we could expect based on its depth in the detector. The inputs to
     this are the drift velocity and the diffusion constant. The allowed variation in S2 width is greater at low
     energy (since it is fluctuating statistically) Ref: (arXiv:1102.2865)
     It should be applicable to data regardless of if it ER or NR;
     above cS2 = 1e5 pe ERs the acceptance will go down due to track length effects.
-    Tune the diffusion model parameters based on pax v6.4.2 AmBe data according to note:
-    xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
-    Contact: Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
+    around S2 = 1e5 pe there are beta-gamma merged peaks from Pb214 that extends the S2 width
+    Tune the diffusion model parameters based on fax data according to note:
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:width_cut_tuning#toy_fax_simulation
+    Contact: Tianyu <tz2263@columbia.edu>, Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 3
-
-    def __init__(self):
-        self.lichen_list = [self.S2WidthHigh(),
-                            self.S2WidthLow()]
+    version = 5
 
     @staticmethod
     def s2_width_model(z):
-        diffusion_constant = 31.73 * ((units.cm)**2) / units.s
+        diffusion_constant = 29.35 * ((units.cm)**2) / units.s
         v_drift = 1.335 * (units.um) / units.ns
-        GausSigmaToR50 = 1.349
+        return np.sqrt( - 2 * diffusion_constant * z / v_drift ** 3)
 
-        EffectivePar = 0.925
-        Sigma_0 = 229.58 * units.ns
-        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar * 2 * diffusion_constant * z / v_drift ** 3)
-
-    @staticmethod
-    def subpre(self, df):
-        df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(df['z'])
+    def pre(self, df):
+        scg = 21.3 # s2_secondary_sc_gain in pax config
+        scw = 220  # s2_secondary_sc_width median
+        SigmaToR50 = 1.349
+        df.loc[:, 'nElectron'] = np.clip(df['s2'], 0, 5000) / scg
+        df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / SigmaToR50) - np.square(scw))/ \
+        np.square(S2Width.s2_width_model(df['z']))
         return df
-
-    @staticmethod
-    def relative_s2_width_bounds(s2, kind='high'):
-        x = 0.5 * np.log10(np.clip(s2, 150, 4500 if kind == 'high' else 2500))
-        if kind == 'high':
-            return 3 - x
-        elif kind == 'low':
-            return -0.9 + x
-        raise ValueError("kind must be high or low")
-
-    class S2WidthHigh(Lichen):
-
-        def pre(self, df):
-            return S2Width.subpre(self, df)
-
-        def _process(self, df):
-            df.loc[:, self.name()] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2, kind='high'))
-            return df
-
-    class S2WidthLow(RangeLichen):
-
-        def pre(self, df):
-            return S2Width.subpre(self, df)
-
-        def _process(self, df):
-            df.loc[:, self.name()] = (S2Width.relative_s2_width_bounds(df.s2, kind='low') <= df.temp)
-            return df
+ 
+    def _process(self, df):
+        df.loc[:, self.name()] = chi2.logpdf(df['normWidth'] * (df['nElectron'] - 1), df['nElectron']) > - 14
+        return df
+  
+    def post(self, df):
+        for temp_column in ['nElectron', 'normWidth']:
+            if temp_column in df.columns:
+                return df.drop(temp_column, 1)
+        return df
 
 
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
