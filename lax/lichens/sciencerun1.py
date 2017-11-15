@@ -177,7 +177,7 @@ S2Threshold = sciencerun0.S2Threshold
 
 class S2Width(sciencerun0.S2Width):
     from scipy.stats import chi2
-    version = 5
+    version = 4
     diffusion_constant = 29.35 * ((units.cm)**2) / units.s
     v_drift = 1.335 * (units.um) / units.ns
     scg = 21.3 # s2_secondary_sc_gain in pax config
@@ -186,7 +186,7 @@ class S2Width(sciencerun0.S2Width):
 
 class S1SingleScatter(sciencerun0.S1SingleScatter):
     from scipy.stats import chi2
-    version = 3
+    version = 2
     s2width = S2Width
 
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
