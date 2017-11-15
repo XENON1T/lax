@@ -206,7 +206,7 @@ class S2Width(Lichen):
         df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / SigmaToR50) - np.square(scw))/ \
         np.square(S2Width.s2_width_model(df['z']))
         return df
- 
+
     def _process(self, df):
         df.loc[:, self.name()] = chi2.logpdf(df['normWidth'] * (df['nElectron'] - 1), df['nElectron']) > - 14
         return df
