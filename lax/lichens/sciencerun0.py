@@ -433,39 +433,6 @@ class S1PatternLikelihood(Lichen):
         return df
 
 
-class S1SingleScatter(Lichen):
-    from scipy.stats import chi2
-    """Requires only one valid interaction between the largest S2, and any S1 recorded before it.
-
-    The S1 cut checks that any possible secondary S1s recorded in a waveform, could not have also
-    produced a valid interaction with the primary S2. To check whether an interaction between the
-    second largest S1 and the largest S2 is valid, we use the S2Width cut. If the event would pass
-    the S2Width cut, a valid second interaction exists, and we may have mis-identified which S1 to
-    pair with the primary S2. Therefore we cut this event. If it fails the S2Width cut the event is
-    not removed.
-
-    Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
-
-    It should be applicable to data regardless of if it is ER or NR.
-
-    Contact: Jacques <jpienaa@purdue.edu>
-    """
-
-    version = 2
-
-    def _process(self, df):
-
-        alt_n_electron = np.clip(df['s2'], 0, 5000)/ S2Width.scg
-        alt_rel_width = (np.square(df['s2_range_50p_area'] / S2Width.SigmaToR50) - np.square(S2Width.scw))/ \
-        np.square(S2Width.s2_width_model(df['alt_s1_interaction_z']))
-
-        alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 14
-
-        df.loc[:, (self.name())] = True ^ alt_interaction_passes
-        return df
-
-
 class S2AreaFractionTop(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
 
@@ -617,14 +584,13 @@ class S2Width(Lichen):
     scw = 258.41  # s2_secondary_sc_width median
     SigmaToR50 = 1.349
 
-    @staticmethod
-    def s2_width_model(z):
-        return np.sqrt( - 2 * S2Width.diffusion_constant * z / S2Width.v_drift ** 3)
+    def s2_width_model(self, z):
+        return np.sqrt( - 2 * self.diffusion_constant * z / self.v_drift ** 3)
 
     def _process(self, df):
-        df.loc[:, 'nElectron'] = np.clip(df['s2'], 0, 5000) / S2Width.scg
-        df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / S2Width.SigmaToR50) - np.square(S2Width.scw))/ \
-        np.square(S2Width.s2_width_model(df['z']))
+        df.loc[:, 'nElectron'] = np.clip(df['s2'], 0, 5000) / self.scg
+        df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / self.SigmaToR50) - np.square(self.scw))/ \
+        np.square(self.s2_width_model(df['z']))
         df.loc[:, self.name()] = chi2.logpdf(df['normWidth'] * (df['nElectron'] - 1), df['nElectron']) > - 14
         return df
  
@@ -632,6 +598,40 @@ class S2Width(Lichen):
         for temp_column in ['nElectron', 'normWidth']:
             if temp_column in df.columns:
                 return df.drop(temp_column, 1)
+        return df
+
+
+class S1SingleScatter(Lichen):
+    from scipy.stats import chi2
+    """Requires only one valid interaction between the largest S2, and any S1 recorded before it.
+
+    The S1 cut checks that any possible secondary S1s recorded in a waveform, could not have also
+    produced a valid interaction with the primary S2. To check whether an interaction between the
+    second largest S1 and the largest S2 is valid, we use the S2Width cut. If the event would pass
+    the S2Width cut, a valid second interaction exists, and we may have mis-identified which S1 to
+    pair with the primary S2. Therefore we cut this event. If it fails the S2Width cut the event is
+    not removed.
+
+    Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
+
+    It should be applicable to data regardless of if it is ER or NR.
+
+    Contact: Jacques <jpienaa@purdue.edu>
+    """
+
+    version = 2
+    s2width = S2Width
+
+    def _process(self, df):
+
+        alt_n_electron = np.clip(df['s2'], 0, 5000)/ self.s2width.scg
+        alt_rel_width = (np.square(df['s2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw))/ \
+        np.square(self.s2width.s2_width_model(self.s2width, df['alt_s1_interaction_z']))
+
+        alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 14
+
+        df.loc[:, (self.name())] = True ^ alt_interaction_passes
         return df
 
 
