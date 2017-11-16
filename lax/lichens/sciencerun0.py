@@ -580,20 +580,20 @@ class S2Width(Lichen):
 
     diffusion_constant = 25.26 * ((units.cm)**2) / units.s
     v_drift = 1.440 * (units.um) / units.ns
-    scg = 23.0 # s2_secondary_sc_gain in pax config
+    scg = 23.0  # s2_secondary_sc_gain in pax config
     scw = 258.41  # s2_secondary_sc_width median
     SigmaToR50 = 1.349
 
     def s2_width_model(self, z):
-        return np.sqrt( - 2 * self.diffusion_constant * z / self.v_drift ** 3)
+        return np.sqrt(- 2 * self.diffusion_constant * z / self.v_drift ** 3)
 
     def _process(self, df):
         df.loc[:, 'nElectron'] = np.clip(df['s2'], 0, 5000) / self.scg
-        df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / self.SigmaToR50) - np.square(self.scw))/ \
-        np.square(self.s2_width_model(df['z']))
+        df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / self.SigmaToR50) - np.square(self.scw)) / \
+            np.square(self.s2_width_model(df['z']))
         df.loc[:, self.name()] = chi2.logpdf(df['normWidth'] * (df['nElectron'] - 1), df['nElectron']) > - 14
         return df
- 
+
     def post(self, df):
         for temp_column in ['nElectron', 'normWidth']:
             if temp_column in df.columns:
@@ -625,9 +625,9 @@ class S1SingleScatter(Lichen):
 
     def _process(self, df):
 
-        alt_n_electron = np.clip(df['s2'], 0, 5000)/ self.s2width.scg
-        alt_rel_width = (np.square(df['s2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw))/ \
-        np.square(self.s2width.s2_width_model(self.s2width, df['alt_s1_interaction_z']))
+        alt_n_electron = np.clip(df['s2'], 0, 5000) / self.s2width.scg
+        alt_rel_width = (np.square(df['s2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)) / \
+            np.square(self.s2width.s2_width_model(self.s2width, df['alt_s1_interaction_z']))
 
         alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 14
 
