@@ -354,7 +354,7 @@ class AmBeFiducial(StringLichen):
     string = "(distance_to_source < 103.5) & (-92.9 < z) & (z < -9) & (sqrt(x*x + y*y) < 42.00)"
 
     def pre(self, df):
-        source_position = (55.965311731903, 43.724893639103577, -50)
+        source_position = (97, 43.5, -50)
         df.loc[:, 'distance_to_source'] = ((source_position[0] - df['x']) ** 2 +
                                            (source_position[1] - df['y']) ** 2 +
                                            (source_position[2] - df['z']) ** 2) ** 0.5
