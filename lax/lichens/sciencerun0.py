@@ -90,14 +90,11 @@ class LowEnergyBackground(LowEnergyRn220):
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts, except uses an AmBe fiducial.
+    It is the same as the LowEnergyRn220 cuts.
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
-
-        # Replaces Fiducial
-        self.lichen_list[0] = AmBeFiducial()
 
 
 class DAQVeto(ManyLichen):
