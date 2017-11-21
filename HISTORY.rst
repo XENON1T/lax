@@ -2,7 +2,7 @@
 History
 =======
 
-1.1.0 (2017-11-20)
+1.2.0 (2017-11-20)
 ------------------
 Interim	release	for tracking data used in preliminary fits
 (https://github.com/XENON1T/bbf/pull/35)
