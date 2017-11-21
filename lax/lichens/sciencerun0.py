@@ -406,13 +406,11 @@ class S1MaxPMT(StringLichen):
 class S1PatternLikelihood(Lichen):
     """Reject accidendal coicident events from lone s1 and lone s2.
 
-    Details of the likelihood and cut definitions can be seen in the following notes.
-    
+    Details of the likelihood and cut definitions can be seen in the following notes.    
        SR0: xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
        SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1
-       
-    Requires Extended minitrees.
 
+    Requires Extended minitrees.
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
     
