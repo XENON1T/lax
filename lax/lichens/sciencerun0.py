@@ -90,14 +90,11 @@ class LowEnergyBackground(LowEnergyRn220):
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts, except uses an AmBe fiducial.
+    It is the same as the LowEnergyRn220 cuts.
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
-
-        # Replaces Fiducial
-        self.lichen_list[0] = AmBeFiducial()
 
 
 class DAQVeto(ManyLichen):
@@ -354,7 +351,7 @@ class AmBeFiducial(StringLichen):
     string = "(distance_to_source < 103.5) & (-92.9 < z) & (z < -9) & (sqrt(x*x + y*y) < 42.00)"
 
     def pre(self, df):
-        source_position = (55.965311731903, 43.724893639103577, -50)
+        source_position = (97, 43.5, -50)
         df.loc[:, 'distance_to_source'] = ((source_position[0] - df['x']) ** 2 +
                                            (source_position[1] - df['y']) ** 2 +
                                            (source_position[2] - df['z']) ** 2) ** 0.5
@@ -706,6 +703,9 @@ class S1AreaFractionTop(RangeLichen):
 
 class PreS2Junk(StringLichen):
     """Cut events with lot of peak area before main S2
+
+    SR0: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:yuehuan:analysis:0sciencerun_signal_noise
+    SR1: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:julien:analysis:sciencerun1:s1_noise_cut
 
     Contact: Julien Wulf <jwulf@physik.uzh.ch>
     """
