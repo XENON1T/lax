@@ -7,7 +7,7 @@ History
 Interim	release	for tracking data used in preliminary fits
 (https://github.com/XENON1T/bbf/pull/35)
 (https://github.com/XENON1T/SR1Results/pull/2)
-
+ 
 * S1 area fraction top update and relegate to LowE (#56, #83)
 * Update S2WidthCut and parameters for SR1 (#62, #75, #77)
 * Fix LowEnergyRn220 accidentally removing DAQVeto cut (#66)
