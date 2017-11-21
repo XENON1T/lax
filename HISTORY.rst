@@ -2,6 +2,25 @@
 History
 =======
 
+1.1.0 (2017-11-20)
+------------------
+Interim	release	for tracking data used in preliminary fits
+(https://github.com/XENON1T/bbf/pull/35)
+(https://github.com/XENON1T/SR1Results/pull/2)
+
+* S1 area fraction top update and relegate to LowE (#56, #83)
+* Update S2WidthCut and parameters for SR1 (#62, #75, #77)
+* Fix LowEnergyRn220 accidentally removing DAQVeto cut (#66)
+* Fix bug and treatment of 'nan' in S2SingleScatter (#69, #74)
+* Reinstate InteractionPeaksBiggest (#71)
+* Update S2Tail cut for SR1 (#76)
+* S2PatternLikelihood Cut Tuning (#80, #87)
+* Fix AmBe source position (#58, #97)
+* Remove AmBe/NGFiducial cuts (#86, #98)
+* Temporary 1.3T FV (#89, #94)
+* Add Corrections minitree and SR1 switch to laxer (#64)
+* Documentation (#73, #92)
+
 1.0.0 (2017-06-22)
 ------------------
 
