@@ -87,14 +87,14 @@ class LowEnergyAmBe(LowEnergyRn220):
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
- 
- 
+
+
 class LowEnergyNG(LowEnergyRn220):
     """Select NG events with cs1<200 with appropriate cuts
 
     It is the same as the LowEnergyRn220 cuts.
     """
- 
+
     def __init__(self):
         LowEnergyRn220.__init__(self)
 
