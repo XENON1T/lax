@@ -122,7 +122,7 @@ FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
 FiducialCylinder1p3T = sciencerun0.FiducialCylinder1p3T
 
-fv_configs = [
+FvConfigs = [
     # Mass (kg), (z0, vz, p, vr2)
     (1000, (-57.58, 31.25, 4.20, 1932.53)),
     (1025, (-57.29, 31.65, 3.71, 1987.85)),
@@ -153,13 +153,12 @@ fv_configs = [
     (1650, (-50.16, 45.95, 4.67, 2137.15)),
     (1675, (-49.10, 47.05, 4.53, 2128.00)),
     (1700, (-49.54, 46.51, 6.10, 2129.72)),
-    
 ]
 
 class FiducialTestEllips(StringLichen):
     """TESTFiducial volume cut using NN 3D FDC.
-    Temporary/under development, for preliminary 
-    comparisons between the different masses. For every mass 
+    Temporary/under development, for preliminary
+    comparisons between the different masses. For every mass
     in the fv_config keys a FiducialTestEllips<mass> is made.
     For more info on the construction of the FV see:
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:fiducial_volume:optimized_ellips
@@ -168,12 +167,12 @@ class FiducialTestEllips(StringLichen):
     
     version = 1
     parameter_symbols = tuple('z0 vz p vr2'.split())
-    parameter_values = None   # Will be tuple of parameter values 
+    parameter_values = None   # Will be tuple of parameter values
     string = "((( (((z_3d_nn-@z0)**2)**0.5) /@vz)**@p)+ (r_3d_nn**2/@vr2)**@p) < 1"
     
     def _process(self, df):
         bla = dict(zip(self.parameter_symbols, self.parameter_values))
-        df.loc[:, self.name()] = df.eval(self.string, 
+        df.loc[:, self.name()] = df.eval(self.string,
                                          global_dict=bla)
         return df
     
@@ -181,7 +180,7 @@ class FiducialTestEllips(StringLichen):
         df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn']**2 + df['y_3d_nn']**2)
         return df
 
-for mass, params in fv_configs:
+for mass, params in FvConfigs:
     name = 'FiducialTestEllips' + str(int(mass))
     c = type(name, (FiducialTestEllips,), dict())
     c.parameter_values = params
