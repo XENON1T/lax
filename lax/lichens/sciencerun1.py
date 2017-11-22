@@ -238,20 +238,9 @@ class S2Width(ManyLichen):
             df.loc[:, self.name()] = (S2Width.relative_s2_width_bounds(df.s2, kind='low') <= df.temp)
             return df
 
-class MuonVeto(StringLichen):
-    """Remove events in coincidence with Muon Veto triggers.
-    It checks the distance in time (ns) between a reference position inside the waveform
-    and the nearest MV trigger.
-    The event is excluded if the nearest MV trigger falls in a [-2ms,+3ms] time window
-    with respect to the reference position.
-    It requires Proximity minitrees.
-    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:mv_cut_sr1
-    Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
-    """
 
-    version = 1
-    string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"
 
+MuonVeto = sciencerun0.MuonVeto
 
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
