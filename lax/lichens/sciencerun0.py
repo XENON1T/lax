@@ -754,7 +754,8 @@ class SingleElectronS2s(Lichen):
 
         df.loc[:, self.name()] = passes
         return df
-    
+
+
 class MuonVeto(StringLichen):
     """Remove events in coincidence with Muon Veto triggers.
     It checks the distance in time (ns) between a reference position inside the waveform
@@ -767,4 +768,4 @@ class MuonVeto(StringLichen):
     """
 
     version = 1
-    string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"    
+    string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"
