@@ -240,7 +240,7 @@ class FiducialCylinder1p3T(StringLichen):
     def pre(self, df):
         df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn'] * df['x_3d_nn'] + df['y_3d_nn'] * df['y_3d_nn'])
         return df
-      
+
 fvconfigs = [
     # Mass (kg), (z0, vz, p, vr2)
     (1000, (-57.58, 31.25, 4.20, 1932.53)),
