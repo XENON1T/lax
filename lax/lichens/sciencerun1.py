@@ -122,7 +122,7 @@ FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
 FiducialCylinder1p3T = sciencerun0.FiducialCylinder1p3T
 
-FvConfigs = [
+fvconfigs = [
     # Mass (kg), (z0, vz, p, vr2)
     (1000, (-57.58, 31.25, 4.20, 1932.53)),
     (1025, (-57.29, 31.65, 3.71, 1987.85)),
@@ -164,7 +164,6 @@ class FiducialTestEllips(StringLichen):
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:fiducial_volume:optimized_ellips
     sanderb@nikhef.nl
     """
-    
     version = 1
     parameter_symbols = tuple('z0 vz p vr2'.split())
     parameter_values = None   # Will be tuple of parameter values
