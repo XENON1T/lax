@@ -167,7 +167,7 @@ class FiducialTestEllips(StringLichen):
     version = 1
     parameter_symbols = tuple('z0 vz p vr2'.split())
     parameter_values = None   # Will be tuple of parameter values
-    string = "((( (((z_3d_nn-@z0)**2)**0.5) /@vz)**@p)+ (r_3d_nn**2/@vr2)**@p) < 1"
+    string = "((((((z_3d_nn-@z0)**2)**0.5)/@vz)**@p)+(r_3d_nn**2/@vr2)**@p)<1"
     
     def _process(self, df):
         bla = dict(zip(self.parameter_symbols, self.parameter_values))
