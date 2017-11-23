@@ -79,6 +79,7 @@ class LowEnergyBackground(LowEnergyRn220):
             PreS2Junk(),
         ]
 
+
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
@@ -116,13 +117,14 @@ class S2Tails(Lichen):
         df.loc[:, self.name()] = (df['s2_over_tdiff'] < 0.025)
         return df
 
+
 FiducialCylinder1T_TPF2dFDC = sciencerun0.FiducialCylinder1T_TPF2dFDC
 
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
 FiducialCylinder1p3T = sciencerun0.FiducialCylinder1p3T
 
-fvconfigs = [
+FV_CONFIGS = [
     # Mass (kg), (z0, vz, p, vr2)
     (1000, (-57.58, 31.25, 4.20, 1932.53)),
     (1025, (-57.29, 31.65, 3.71, 1987.85)),
@@ -155,6 +157,7 @@ fvconfigs = [
     (1700, (-49.54, 46.51, 6.10, 2129.72)),
 ]
 
+
 class FiducialTestEllips(StringLichen):
     """TESTFiducial volume cut using NN 3D FDC.
     Temporary/under development, for preliminary
@@ -168,24 +171,26 @@ class FiducialTestEllips(StringLichen):
     parameter_symbols = tuple('z0 vz p vr2'.split())
     parameter_values = None   # Will be tuple of parameter values
     string = "((((((z_3d_nn-@z0)**2)**0.5)/@vz)**@p)+(r_3d_nn**2/@vr2)**@p)<1"
-    
+
     def _process(self, df):
         bla = dict(zip(self.parameter_symbols, self.parameter_values))
         df.loc[:, self.name()] = df.eval(self.string,
                                          global_dict=bla)
         return df
-    
+
     def pre(self, df):
         df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn']**2 + df['y_3d_nn']**2)
         return df
 
-for mass, params in FvConfigs:
+
+for mass, params in FV_CONFIGS:
     name = 'FiducialTestEllips' + str(int(mass))
     c = type(name, (FiducialTestEllips,), dict())
     c.parameter_values = params
     locals()[name] = c
 
 AmBeFiducial = sciencerun0.AmBeFiducial
+
 
 class NGFiducial(StringLichen):
     """NG Fiducial volume cut.
