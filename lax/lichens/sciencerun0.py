@@ -472,28 +472,16 @@ class S1MaxPMT(StringLichen):
 class S1PatternLikelihood(Lichen):
     """Reject accidendal coicident events from lone s1 and lone s2.
 
-    Details of the likelihood can be seen in the following note. Here, 97
-    quantile acceptance line estimated with Rn220 data (pax_v6.4.2) is used.
-
-       xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
+    Details of the likelihood and cut definitions can be seen in the following notes.
+       SR0: xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
+       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1
 
     Requires Extended minitrees.
-
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
 
-    version = 0
-
-    def pre(self, df):
-        df.loc[:, 'temp'] = -2.39535 + \
-            25.5857 * pow(df['s1'], 0.5) + \
-            1.30652 * df['s1'] - \
-            0.0638579 * np.power(df['s1'], 1.5)
-        return df
-
-    def _process(self, df):
-        df.loc[:, self.name()] = df['s1_pattern_fit'] < df.temp
-        return df
+    version = 1
+    string = "s1_pattern_fit < -17.384885 + 24.894875*s1**0.5 + 2.794984*s1 -0.237268*s1**1.5 + 0.005549*s1**2.0"
 
 
 class S1SingleScatter(Lichen):
