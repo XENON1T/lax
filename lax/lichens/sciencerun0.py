@@ -470,7 +470,7 @@ class S1MaxPMT(StringLichen):
     string = "s1_largest_hit_area < 0.052 * s1 + 4.15"
 
 
-class S1PatternLikelihood(Lichen):
+class S1PatternLikelihood(StringLichen):
     """Reject accidendal coicident events from lone s1 and lone s2.
 
     Details of the likelihood and cut definitions can be seen in the following notes.
