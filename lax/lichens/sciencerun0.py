@@ -42,7 +42,8 @@ class AllEnergy(ManyLichen):
             DAQVeto(),
             S1SingleScatter(),
             S2PatternLikelihood(),
-            S2Tails()
+            S2Tails(),
+            MuonVeto()
         ]
 
 
@@ -807,3 +808,18 @@ class SingleElectronS2s(Lichen):
 
         df.loc[:, self.name()] = passes
         return df
+
+
+class MuonVeto(StringLichen):
+    """Remove events in coincidence with Muon Veto triggers.
+    It checks the distance in time (ns) between a reference position inside the waveform
+    and the nearest MV trigger.
+    The event is excluded if the nearest MV trigger falls in a [-2ms,+3ms] time window
+    with respect to the reference position.
+    It requires Proximity minitrees.
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:mv_cut_sr1
+    Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
+    """
+
+    version = 1
+    string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"

@@ -36,7 +36,8 @@ class AllEnergy(ManyLichen):
             S1SingleScatter(),
             S2PatternLikelihood(),
             S2Tails(),
-            InteractionPeaksBiggest()
+            InteractionPeaksBiggest(),
+            MuonVeto()
         ]
 
 
@@ -303,6 +304,10 @@ class S2Width(ManyLichen):
             return df
 
 
+
+MuonVeto = sciencerun0.MuonVeto
+
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
 PreS2Junk = sciencerun0.PreS2Junk
+
