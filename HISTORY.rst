@@ -2,6 +2,12 @@
 History
 =======
 
+1.2.1 (2017-11-27)
+------------------
+* Muon Veto cut added (#55)
+* Update on S1 Pattern Likelihood Cut (#99)
+* Add super elliptical fiducial volumes for testing in SR1 (#100)
+
 1.2.0 (2017-11-20)
 ------------------
 Interim	release	for tracking data used in preliminary fits
