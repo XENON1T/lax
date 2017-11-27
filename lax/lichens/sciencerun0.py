@@ -242,6 +242,72 @@ class FiducialCylinder1p3T(StringLichen):
         return df
 
 
+FV_CONFIGS = [
+    # Mass (kg), (z0, vz, p, vr2)
+    (1000, (-57.58, 31.25, 4.20, 1932.53)),
+    (1025, (-57.29, 31.65, 3.71, 1987.85)),
+    (1050, (-62.25, 33.89, 3.08, 1969.68)),
+    (1075, (-59.73, 35.58, 2.97, 1938.27)),
+    (1100, (-58.36, 36.97, 2.67, 1951.06)),
+    (1125, (-58.57, 37.36, 2.78, 1953.64)),
+    (1150, (-58.71, 37.37, 3.25, 1934.94)),
+    (1175, (-57.35, 38.17, 3.14, 1944.21)),
+    (1200, (-56.44, 39.23, 2.88, 1961.09)),
+    (1225, (-55.81, 40.30, 2.80, 1969.58)),
+    (1250, (-55.44, 40.70, 3.21, 1936.89)),
+    (1275, (-54.62, 41.19, 3.29, 1937.40)),
+    (1300, (-54.04, 42.08, 2.56, 2041.03)),
+    (1325, (-53.31, 42.52, 2.85, 2005.24)),
+    (1350, (-51.63, 43.64, 3.15, 1949.59)),
+    (1375, (-51.85, 44.07, 2.87, 2003.40)),
+    (1400, (-52.22, 43.88, 3.88, 1949.48)),
+    (1425, (-50.87, 45.22, 2.75, 2046.11)),
+    (1450, (-51.66, 43.60, 3.58, 2053.80)),
+    (1475, (-51.99, 43.92, 3.88, 2044.43)),
+    (1500, (-52.50, 43.69, 4.31, 2059.53)),
+    (1525, (-51.51, 44.67, 3.68, 2093.78)),
+    (1550, (-51.13, 45.04, 3.98, 2088.21)),
+    (1575, (-49.44, 46.67, 3.43, 2091.66)),
+    (1600, (-50.15, 45.95, 3.77, 2126.11)),
+    (1625, (-50.06, 45.99, 4.32, 2119.37)),
+    (1650, (-50.16, 45.95, 4.67, 2137.15)),
+    (1675, (-49.10, 47.05, 4.53, 2128.00)),
+    (1700, (-49.54, 46.51, 6.10, 2129.72)),
+]
+
+
+class FiducialTestEllips(StringLichen):
+    """TESTFiducial volume cut using NN 3D FDC.
+    Temporary/under development, for preliminary
+    comparisons between the different masses. For every mass
+    in the fv_config keys a FiducialTestEllips<mass> is made.
+    For more info on the construction of the FV see:
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:fiducial_volume:optimized_ellips
+    sanderb@nikhef.nl
+    """
+    version = 1
+    parameter_symbols = tuple('z0 vz p vr2'.split())
+    parameter_values = None   # Will be tuple of parameter values
+    string = "((( (((z_3d_nn-@z0)**2)**0.5) /@vz)**@p)+ (r_3d_nn**2/@vr2)**@p) < 1"
+
+    def _process(self, df):
+        bla = dict(zip(self.parameter_symbols, self.parameter_values))
+        df.loc[:, self.name()] = df.eval(self.string,
+                                         global_dict=bla)
+        return df
+
+    def pre(self, df):
+        df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn']**2 + df['y_3d_nn']**2)
+        return df
+
+
+for mass, params in FV_CONFIGS:
+    name = 'FiducialTestEllips' + str(int(mass))
+    c = type(name, (FiducialTestEllips,), dict())
+    c.parameter_values = params
+    locals()[name] = c
+
+
 class FiducialFourLeafClover1250kg(StringLichen):
     """Fiducial volume cut: Four leaf Clover
 
