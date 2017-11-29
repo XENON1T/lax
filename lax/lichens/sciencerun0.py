@@ -43,7 +43,8 @@ class AllEnergy(ManyLichen):
             S1SingleScatter(),
             S2PatternLikelihood(),
             S2Tails(),
-            MuonVeto()
+            MuonVeto(),
+            KryptonMisIdS1()
         ]
 
 
