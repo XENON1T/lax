@@ -311,3 +311,15 @@ S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
 PreS2Junk = sciencerun0.PreS2Junk
 
+class flash(Lichen):
+    # Cuts events within a flash. This is defined as the width were the BUSY on channel is "high". In addition an extended time-window around the flash is removed as well.
+    # The length of the extended time-window is not finalized yet
+    # Needs FlashIdentification minitree
+    # Information: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:flashercut
+    # Contact: Oliver Wack <oliver.wack@mpi-hd.mpg.de>
+    version = 0
+  
+    def _process(self, df):
+            df.loc[:, self.name()] = ((df['inside_flash']== False)&(abs(df['nearest_flash']) > 120e9))
+            return df
+
