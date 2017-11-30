@@ -37,7 +37,8 @@ class AllEnergy(ManyLichen):
             S2PatternLikelihood(),
             S2Tails(),
             InteractionPeaksBiggest(),
-            MuonVeto()
+            MuonVeto(),
+            Flash()
         ]
 
 
