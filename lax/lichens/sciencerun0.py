@@ -850,7 +850,7 @@ class Flash(Lichen):
 
     version = 0
     def _process(self,df):
-        df.loc[:, self.name()]=((df['inside_flash']== False) & ((df['nearest_flash']==df['nearest_flash'])&
+        df.loc[:, self.name()]=((df['nearest_flash']!=df['nearest_flash'])|((df['inside_flash']== False) &
                                 ((df['nearest_flash']>120e9)|(df['nearest_flash']<(-10e9 - df['flashing_width']*1e9)))))
         return df
     
