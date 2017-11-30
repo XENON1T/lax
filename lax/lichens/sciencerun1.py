@@ -312,4 +312,3 @@ S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 PreS2Junk = sciencerun0.PreS2Junk
 
 Flash = sciencerun0.Flash
-
