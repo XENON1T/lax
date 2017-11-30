@@ -43,7 +43,8 @@ class AllEnergy(ManyLichen):
             S1SingleScatter(),
             S2PatternLikelihood(),
             S2Tails(),
-            MuonVeto()
+            MuonVeto(),
+            Flash()
         ]
 
 
@@ -823,3 +824,19 @@ class MuonVeto(StringLichen):
 
     version = 1
     string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"
+
+class Flash(Lichen):
+    """Cuts events within a flash. This is defined as the width were the BUSY on channel is "high".
+    In addition an extended time-window around the flash is removed as well.
+    The length of the extended time-window is not finalized yet
+    Needs FlashIdentification minitree
+    Information: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:flashercut
+    Contact: Oliver Wack <oliver.wack@mpi-hd.mpg.de>
+    """
+
+    version = 0
+    def _process(self,df):
+        df.loc[:, self.name()]=((df['inside_flash']== False) &
+                                ((df['nearest_flash']>120e9)|(df['nearest_flash']<(-10e9 - df['flashing_width']*1e9))))
+        return df
+    
