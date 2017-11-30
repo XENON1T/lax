@@ -44,6 +44,7 @@ class AllEnergy(ManyLichen):
             S2PatternLikelihood(),
             S2Tails(),
             MuonVeto(),
+            KryptonMisIdS1(),
             Flash()
         ]
 
@@ -825,6 +826,19 @@ class MuonVeto(StringLichen):
     version = 1
     string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"
 
+
+class KryptonMisIdS1(StringLichen):
+    """Remove events where the 32 keV S1 of Kr83m decay is identified as an S2.
+    These events appear above the ER band since the S1 is from the 9 keV decay
+    but the S2 is combined for a 41 keV event.
+    See the note:
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:adam:inelastic:cuts:kr_contamination:mis_ided_s1
+    Contact: Adam Brown <abrown@physik.uzh.ch>
+    """
+    version = 0
+    string = "largest_other_s2 < 100 | largest_other_s2_delay_main_s1 < -3000 | largest_other_s2_delay_main_s1 > 0"
+
+    
 class Flash(Lichen):
     """Cuts events within a flash. This is defined as the width were the BUSY on channel is "high".
     In addition an extended time-window around the flash is removed as well.
@@ -840,3 +854,4 @@ class Flash(Lichen):
                                 ((df['nearest_flash']>120e9)|(df['nearest_flash']<(-10e9 - df['flashing_width']*1e9))))
         return df
     
+

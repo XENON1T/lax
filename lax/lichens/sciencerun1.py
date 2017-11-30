@@ -38,6 +38,7 @@ class AllEnergy(ManyLichen):
             S2Tails(),
             InteractionPeaksBiggest(),
             MuonVeto(),
+            KryptonMisIdS1(),
             Flash()
         ]
 
@@ -311,5 +312,7 @@ MuonVeto = sciencerun0.MuonVeto
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
 PreS2Junk = sciencerun0.PreS2Junk
+
+KryptonMisIdS1 = sciencerun0.KryptonMisIdS1
 
 Flash = sciencerun0.Flash
