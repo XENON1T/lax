@@ -58,6 +58,10 @@ class LowEnergyRn220(AllEnergy):
 
     def __init__(self):
         AllEnergy.__init__(self)
+
+        # Remove S2Tail Cut
+        self.lichen_list.pop(8)
+
         # Replaces Interaction exists
         self.lichen_list[1] = S1LowEnergyRange()
 
@@ -85,6 +89,7 @@ class LowEnergyBackground(LowEnergyRn220):
 
         self.lichen_list += [
             PreS2Junk(),
+            S2Tails()
         ]
         
 class LowEnergyAmBe(LowEnergyRn220):
