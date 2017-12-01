@@ -45,7 +45,8 @@ class AllEnergy(ManyLichen):
             S2Tails(),
             MuonVeto(),
             KryptonMisIdS1(),
-            Flash()
+            Flash(),
+            PosDiff()
         ]
 
 
@@ -75,7 +76,7 @@ class LowEnergyRn220(AllEnergy):
             S2Width(),
             S1MaxPMT(),
             SingleElectronS2s(),
-            S1AreaFractionTop(),
+            S1AreaFractionTop()
         ]
 
 
@@ -874,7 +875,7 @@ class PosDiff(Lichen):
     version = 0
     def _process(self, df):
         df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2 
-                                  + (df['x_observed_nn'] - df['x_observed_tpf'])**2 < 6)
+                                  + (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6)
                                   & (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80)
                                   & (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
 
