@@ -177,6 +177,9 @@ S2Threshold = sciencerun0.S2Threshold
 
 
 class S2Width(sciencerun0.S2Width):
+    """S2 Width cut based on diffusion model with SR1 parameters
+    See sciencerun0.py for full implementation
+    """
     version = 4
     diffusion_constant = 29.35 * ((units.cm)**2) / units.s
     v_drift = 1.335 * (units.um) / units.ns
@@ -186,6 +189,9 @@ class S2Width(sciencerun0.S2Width):
 
 
 class S1SingleScatter(sciencerun0.S1SingleScatter):
+    """S1 Single Scatter cut based on SR1 width model
+    See sciencerun0.py for full implementation
+    """
     version = 2
     s2width = S2Width
 

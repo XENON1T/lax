@@ -584,8 +584,10 @@ class S2Width(Lichen):
     scw = 258.41  # s2_secondary_sc_width median
     SigmaToR50 = 1.349
 
-    def s2_width_model(self, z):
-        return np.sqrt(- 2 * self.diffusion_constant * z / self.v_drift ** 3)
+    def s2_width_model(self, z_height):
+    """Diffusion model
+    """
+        return np.sqrt(- 2 * self.diffusion_constant * z_height / self.v_drift ** 3)
 
     def _process(self, df):
         df.loc[:, 'nElectron'] = np.clip(df['s2'], 0, 5000) / self.scg
