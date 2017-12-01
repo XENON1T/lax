@@ -6,11 +6,9 @@ This includes all current definitions of the cuts for the second science run
 # -*- coding: utf-8 -*-
 import inspect
 import os
-import numpy as np
 from pax import units
 
-from scipy.stats import chi2
-from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
+from lax.lichen import Lichen, ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
 
@@ -98,6 +96,7 @@ class S2Tails(Lichen):
         df.loc[:, self.name()] = (df['s2_over_tdiff'] < 0.025)
         return df
 
+
 FiducialCylinder1T_TPF2dFDC = sciencerun0.FiducialCylinder1T_TPF2dFDC
 
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
@@ -176,17 +175,20 @@ class S2PatternLikelihood(StringLichen):
 
 S2Threshold = sciencerun0.S2Threshold
 
+
 class S2Width(sciencerun0.S2Width):
     version = 4
     diffusion_constant = 29.35 * ((units.cm)**2) / units.s
     v_drift = 1.335 * (units.um) / units.ns
-    scg = 21.3 # s2_secondary_sc_gain in pax config
+    scg = 21.3  # s2_secondary_sc_gain in pax config
     scw = 229.58  # s2_secondary_sc_width median
     SigmaToR50 = 1.349
+
 
 class S1SingleScatter(sciencerun0.S1SingleScatter):
     version = 2
     s2width = S2Width
+
 
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
