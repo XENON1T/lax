@@ -9,6 +9,7 @@ import os
 import numpy as np
 from pax import units
 
+from scipy.stats import chi2
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
@@ -176,7 +177,6 @@ class S2PatternLikelihood(StringLichen):
 S2Threshold = sciencerun0.S2Threshold
 
 class S2Width(sciencerun0.S2Width):
-    from scipy.stats import chi2
     version = 4
     diffusion_constant = 29.35 * ((units.cm)**2) / units.s
     v_drift = 1.335 * (units.um) / units.ns
@@ -185,7 +185,6 @@ class S2Width(sciencerun0.S2Width):
     SigmaToR50 = 1.349
 
 class S1SingleScatter(sciencerun0.S1SingleScatter):
-    from scipy.stats import chi2
     version = 2
     s2width = S2Width
 

@@ -11,6 +11,7 @@ import pytz
 import numpy as np
 from pax import units
 
+from scipy.stats import chi2
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
 from scipy import interpolate
@@ -564,7 +565,6 @@ class S2Threshold(StringLichen):
 
 
 class S2Width(Lichen):
-    from scipy.stats import chi2
     """S2 Width cut based on diffusion model
     The S2 width cut compares the S2 width to what we could expect based on its depth in the detector. The inputs to
     this are the drift velocity and the diffusion constant. The allowed variation in S2 width is greater at low
@@ -602,7 +602,6 @@ class S2Width(Lichen):
 
 
 class S1SingleScatter(Lichen):
-    from scipy.stats import chi2
     """Requires only one valid interaction between the largest S2, and any S1 recorded before it.
 
     The S1 cut checks that any possible secondary S1s recorded in a waveform, could not have also
