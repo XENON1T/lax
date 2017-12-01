@@ -868,7 +868,7 @@ class Flash(Lichen):
 class PosDiff(Lichen):
     """
     Note:https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sr1:pos_cut_v0
-    This cut is defined for removeing the events with large position difference between NN and TPF alogrithm,
+    This cut is defined for removing the events with large position difference between NN and TPF alogrithm,
     which can partly remove wall leakage events due to the small size of S2.
     Contact: Yuehuan Wei <ywei@physics.ucsd.edu>
     """
