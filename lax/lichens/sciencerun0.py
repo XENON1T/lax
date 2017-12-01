@@ -11,6 +11,7 @@ import pytz
 import numpy as np
 from pax import units
 
+from scipy.stats import chi2
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
 from scipy import interpolate
@@ -492,37 +493,6 @@ class S1PatternLikelihood(StringLichen):
     string = "s1_pattern_fit < -17.384885 + 24.894875*s1**0.5 + 2.794984*s1 -0.237268*s1**1.5 + 0.005549*s1**2.0"
 
 
-class S1SingleScatter(Lichen):
-    """Requires only one valid interaction between the largest S2, and any S1 recorded before it.
-
-    The S1 cut checks that any possible secondary S1s recorded in a waveform, could not have also
-    produced a valid interaction with the primary S2. To check whether an interaction between the
-    second largest S1 and the largest S2 is valid, we use the S2Width cut. If the event would pass
-    the S2Width cut, a valid second interaction exists, and we may have mis-identified which S1 to
-    pair with the primary S2. Therefore we cut this event. If it fails the S2Width cut the event is
-    not removed.
-
-    Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
-
-    It should be applicable to data regardless of if it is ER or NR.
-
-    Contact: Jacques <jpienaa@purdue.edu>
-    """
-
-    version = 1
-
-    def _process(self, df):
-        s2width = S2Width
-
-        alt_rel_width = df['s2_range_50p_area'] / s2width.s2_width_model(df['alt_s1_interaction_z'])
-        alt_interaction_passes = alt_rel_width < s2width.relative_s2_width_bounds(df.s2.values, kind='high')
-        alt_interaction_passes &= alt_rel_width > s2width.relative_s2_width_bounds(df.s2.values, kind='low')
-
-        df.loc[:, (self.name())] = True ^ alt_interaction_passes
-        return df
-
-
 class S2AreaFractionTop(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
 
@@ -653,71 +623,76 @@ class S2Threshold(StringLichen):
     string = "200 < s2"
 
 
-class S2Width(ManyLichen):
+class S2Width(Lichen):
     """S2 Width cut based on diffusion model
-
     The S2 width cut compares the S2 width to what we could expect based on its depth in the detector. The inputs to
     this are the drift velocity and the diffusion constant. The allowed variation in S2 width is greater at low
     energy (since it is fluctuating statistically) Ref: (arXiv:1102.2865)
-
     It should be applicable to data regardless of if it ER or NR;
     above cS2 = 1e5 pe ERs the acceptance will go down due to track length effects.
-
-    Tune the diffusion model parameters based on pax v6.4.2 AmBe data according to note:
-
-    xenon:xenon1t:yuehuan:analysis:0sciencerun_s2width_update0#comparison_with_diffusion_model_cut_by_jelle_pax_v642
-
-    Contact: Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
+    around S2 = 1e5 pe there are beta-gamma merged peaks from Pb214 that extends the S2 width
+    Tune the diffusion model parameters based on fax data according to note:
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:width_cut_tuning#toy_fax_simulation
+    Contact: Tianyu <tz2263@columbia.edu>, Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 2
+    version = 4
 
-    def __init__(self):
-        self.lichen_list = [self.S2WidthHigh(),
-                            self.S2WidthLow()]
+    diffusion_constant = 25.26 * ((units.cm)**2) / units.s
+    v_drift = 1.440 * (units.um) / units.ns
+    scg = 23.0  # s2_secondary_sc_gain in pax config
+    scw = 258.41  # s2_secondary_sc_width median
+    SigmaToR50 = 1.349
 
-    @staticmethod
-    def s2_width_model(z):
-        diffusion_constant = 22.8 * ((units.cm)**2) / units.s
-        v_drift = 1.44 * (units.um) / units.ns
-        GausSigmaToR50 = 1.349
+    def s2_width_model(self, z_height):
+    """Diffusion model
+    """
+        return np.sqrt(- 2 * self.diffusion_constant * z_height / self.v_drift ** 3)
 
-        EffectivePar = 1.10795
-        Sigma_0 = 258.41 * units.ns
-        return GausSigmaToR50 * np.sqrt(Sigma_0 ** 2 - EffectivePar * 2 * diffusion_constant * z / v_drift ** 3)
-
-    def subpre(self, df):
-        # relative_s2_width
-        df.loc[:, 'temp'] = df['s2_range_50p_area'] / S2Width.s2_width_model(df['z'])
+    def _process(self, df):
+        df.loc[:, 'nElectron'] = np.clip(df['s2'], 0, 5000) / self.scg
+        df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / self.SigmaToR50) - np.square(self.scw)) / \
+            np.square(self.s2_width_model(df['z']))
+        df.loc[:, self.name()] = chi2.logpdf(df['normWidth'] * (df['nElectron'] - 1), df['nElectron']) > - 14
         return df
 
-    @staticmethod
-    def relative_s2_width_bounds(s2, kind='high'):
-        x = 0.5 * np.log10(np.clip(s2, 150, 4500 if kind == 'high' else 2500))
-        if kind == 'high':
-            return 3 - x
-        elif kind == 'low':
-            return -0.9 + x
-        raise ValueError("kind must be high or low")
+    def post(self, df):
+        for temp_column in ['nElectron', 'normWidth']:
+            if temp_column in df.columns:
+                return df.drop(temp_column, 1)
+        return df
 
-    class S2WidthHigh(Lichen):
 
-        def pre(self, df):
-            return S2Width.subpre(self, df)
+class S1SingleScatter(Lichen):
+    """Requires only one valid interaction between the largest S2, and any S1 recorded before it.
 
-        def _process(self, df):
-            df.loc[:, self.name()] = (df.temp <= S2Width.relative_s2_width_bounds(df.s2,
-                                                                                  kind='high'))
-            return df
+    The S1 cut checks that any possible secondary S1s recorded in a waveform, could not have also
+    produced a valid interaction with the primary S2. To check whether an interaction between the
+    second largest S1 and the largest S2 is valid, we use the S2Width cut. If the event would pass
+    the S2Width cut, a valid second interaction exists, and we may have mis-identified which S1 to
+    pair with the primary S2. Therefore we cut this event. If it fails the S2Width cut the event is
+    not removed.
 
-    class S2WidthLow(RangeLichen):
+    Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
 
-        def pre(self, df):
-            return S2Width.subpre(self, df)
+    It should be applicable to data regardless of if it is ER or NR.
 
-        def _process(self, df):
-            df.loc[:, self.name()] = (S2Width.relative_s2_width_bounds(df.s2,
-                                                                       kind='low') <= df.temp)
-            return df
+    Contact: Jacques <jpienaa@purdue.edu>
+    """
+
+    version = 2
+    s2width = S2Width
+
+    def _process(self, df):
+
+        alt_n_electron = np.clip(df['s2'], 0, 5000) / self.s2width.scg
+        alt_rel_width = (np.square(df['s2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)) / \
+            np.square(self.s2width.s2_width_model(self.s2width, df['alt_s1_interaction_z']))
+
+        alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 14
+
+        df.loc[:, (self.name())] = True ^ alt_interaction_passes
+        return df
 
 
 class S1AreaFractionTop(RangeLichen):
