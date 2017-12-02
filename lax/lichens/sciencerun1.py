@@ -277,3 +277,5 @@ PreS2Junk = sciencerun0.PreS2Junk
 KryptonMisIdS1 = sciencerun0.KryptonMisIdS1
 
 Flash = sciencerun0.Flash
+
+PosDiff = sciencerun0.PosDiff
