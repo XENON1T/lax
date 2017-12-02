@@ -322,4 +322,4 @@ KryptonMisIdS1 = sciencerun0.KryptonMisIdS1
 
 Flash = sciencerun0.Flash
 
-PosDiff = = sciencerun0.PosDiff
+PosDiff = sciencerun0.PosDiff
