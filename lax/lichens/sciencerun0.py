@@ -46,7 +46,8 @@ class AllEnergy(ManyLichen):
             S2Tails(),
             MuonVeto(),
             KryptonMisIdS1(),
-            Flash()
+            Flash(),
+            PosDiff()
         ]
 
 
@@ -76,7 +77,7 @@ class LowEnergyRn220(AllEnergy):
             S2Width(),
             S1MaxPMT(),
             SingleElectronS2s(),
-            S1AreaFractionTop(),
+            S1AreaFractionTop()
         ]
 
 
@@ -683,7 +684,7 @@ class S1SingleScatter(Lichen):
     Contact: Jacques <jpienaa@purdue.edu>
     """
 
-    version = 2
+    version = 3
     s2width = S2Width
 
     def _process(self, df):
@@ -696,6 +697,7 @@ class S1SingleScatter(Lichen):
         alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
 
         df.loc[mask, (self.name())] = True ^ alt_interaction_passes
+
         return df
 
 
@@ -841,4 +843,20 @@ class Flash(Lichen):
                                    (df['nearest_flash'] < (-10e9 - df['flashing_width'] * 1e9))
                                    )
                                   )
+
+
+class PosDiff(Lichen):
+    """
+    Note:https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sr1:pos_cut_v0
+    This cut is defined for removing the events with large position difference between NN and TPF alogrithm,
+    which can partly remove wall leakage events due to the small size of S2.
+    Contact: Yuehuan Wei <ywei@physics.ucsd.edu>
+    """
+    version = 0
+    def _process(self, df):
+        df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2
+                                  + (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6)
+                                  & (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80)
+                                  & (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
+
         return df

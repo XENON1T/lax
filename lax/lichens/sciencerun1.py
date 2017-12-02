@@ -265,7 +265,7 @@ class S1SingleScatter(sciencerun0.S1SingleScatter):
     """S1 Single Scatter cut based on SR1 width model
     See sciencerun0.py for full implementation
     """
-    version = 2
+    version = 3
     s2width = S2Width
 
 
@@ -278,3 +278,5 @@ PreS2Junk = sciencerun0.PreS2Junk
 KryptonMisIdS1 = sciencerun0.KryptonMisIdS1
 
 Flash = sciencerun0.Flash
+
+PosDiff = sciencerun0.PosDiff
