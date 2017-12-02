@@ -853,10 +853,11 @@ class PosDiff(Lichen):
     Contact: Yuehuan Wei <ywei@physics.ucsd.edu>
     """
     version = 0
+
     def _process(self, df):
-        df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2
-                                  + (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6)
-                                  & (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80)
-                                  & (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
+        df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
+                                  (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6) &
+                                  (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80) &
+                                  (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
 
         return df
