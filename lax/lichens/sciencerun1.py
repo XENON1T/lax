@@ -268,7 +268,6 @@ class S1SingleScatter(sciencerun0.S1SingleScatter):
     s2width = S2Width
 
 
-
 MuonVeto = sciencerun0.MuonVeto
 
 S1AreaFractionTop = sciencerun0.S1AreaFractionTop
