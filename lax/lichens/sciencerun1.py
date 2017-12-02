@@ -264,9 +264,8 @@ class S1SingleScatter(sciencerun0.S1SingleScatter):
     """S1 Single Scatter cut based on SR1 width model
     See sciencerun0.py for full implementation
     """
-    version = 2
+    version = 3
     s2width = S2Width
-
 
 
 MuonVeto = sciencerun0.MuonVeto
