@@ -689,7 +689,7 @@ class S1SingleScatter(Lichen):
         alt_rel_width = (np.square(df['s2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)) / \
             np.square(self.s2width.s2_width_model(self.s2width, df['alt_s1_interaction_z']))
 
-        alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 14
+        alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
 
         df.loc[:, (self.name())] = True ^ alt_interaction_passes
         return df
