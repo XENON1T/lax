@@ -252,7 +252,7 @@ class S2Width(sciencerun0.S2Width):
     """S2 Width cut based on diffusion model with SR1 parameters
     See sciencerun0.py for full implementation
     """
-    version = 4
+    version = 5
     diffusion_constant = 29.35 * ((units.cm)**2) / units.s
     v_drift = 1.335 * (units.um) / units.ns
     scg = 21.3  # s2_secondary_sc_gain in pax config
