@@ -687,14 +687,15 @@ class S1SingleScatter(Lichen):
     s2width = S2Width
 
     def _process(self, df):
+        df.loc[:, self.name()] = True  # Default is True
+        mask = df.eval('alt_s1_interaction_z < 0')
+        alt_n_electron = np.clip(df.loc[mask,'s2'], 0, 5000) / self.s2width.scg
+        alt_rel_width = (np.square(df.loc[mask, 's2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)) / \
+            np.square(self.s2width.s2_width_model(self.s2width, df.loc[mask, 'alt_s1_interaction_z']))
 
-        alt_n_electron = np.clip(df['s2'], 0, 5000) / self.s2width.scg
-        alt_rel_width = (np.square(df['s2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)) / \
-            np.square(self.s2width.s2_width_model(self.s2width, df['alt_s1_interaction_z']))
+        alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
 
-        alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 14
-
-        df.loc[:, (self.name())] = True ^ alt_interaction_passes
+        df.loc[mask, (self.name())] = True ^ alt_interaction_passes
         return df
 
 
