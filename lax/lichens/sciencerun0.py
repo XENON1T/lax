@@ -644,8 +644,8 @@ class S2Width(Lichen):
     SigmaToR50 = 1.349
 
     def s2_width_model(self, z_height):
-    """Diffusion model
-    """
+        """Diffusion model
+        """
         return np.sqrt(- 2 * self.diffusion_constant * z_height / self.v_drift ** 3)
 
     def _process(self, df):
