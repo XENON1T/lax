@@ -847,6 +847,7 @@ class Flash(Lichen):
                                    (df['nearest_flash'] < (-10e9 - df['flashing_width'] * 1e9))
                                    )
                                   )
+        return df
 
 
 class PosDiff(Lichen):
