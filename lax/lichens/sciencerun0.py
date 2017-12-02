@@ -636,7 +636,7 @@ class S2Width(Lichen):
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:width_cut_tuning#toy_fax_simulation
     Contact: Tianyu <tz2263@columbia.edu>, Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 4
+    version = 5
 
     diffusion_constant = 25.26 * ((units.cm)**2) / units.s
     v_drift = 1.440 * (units.um) / units.ns
@@ -650,16 +650,19 @@ class S2Width(Lichen):
         return np.sqrt(- 2 * self.diffusion_constant * z_height / self.v_drift ** 3)
 
     def _process(self, df):
-        df.loc[:, 'nElectron'] = np.clip(df['s2'], 0, 5000) / self.scg
-        df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / self.SigmaToR50) - np.square(self.scw)) / \
-            np.square(self.s2_width_model(df['z']))
-        df.loc[:, self.name()] = chi2.logpdf(df['normWidth'] * (df['nElectron'] - 1), df['nElectron']) > - 14
+        df.loc[:, self.name()] = True  # Default is True
+        mask = df.eval('z < 0')
+        df.loc[mask, 'nElectron'] = np.clip(df.loc[mask, 's2'], 0, 5000) / self.scg
+        df.loc[mask, 'normWidth'] = (np.square(df.loc[mask, 's2_range_50p_area'] / self.SigmaToR50) -
+                                     np.square(self.scw)) / np.square(self.s2_width_model(df.loc[mask, 'z']))
+        df.loc[mask, self.name()] = chi2.logpdf(df.loc[mask, 'normWidth'] * (df.loc[mask, 'nElectron'] - 1),
+                                                df.loc[mask, 'nElectron']) > - 14
         return df
 
     def post(self, df):
         for temp_column in ['nElectron', 'normWidth']:
             if temp_column in df.columns:
-                return df.drop(temp_column, 1)
+                df.drop(temp_column, 1, inplace=True)
         return df
 
 
@@ -685,14 +688,20 @@ class S1SingleScatter(Lichen):
     s2width = S2Width
 
     def _process(self, df):
+        df.loc[:, self.name()] = True  # Default is True
+        mask = df.eval('alt_s1_interaction_z < 0')
+        alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / self.s2width.scg
 
-        alt_n_electron = np.clip(df['s2'], 0, 5000) / self.s2width.scg
-        alt_rel_width = (np.square(df['s2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)) / \
-            np.square(self.s2width.s2_width_model(self.s2width, df['alt_s1_interaction_z']))
+        # Alternate S1 relative width
+        alt_rel_width = np.square(df.loc[mask,
+                                         's2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)
+        alt_rel_width /= np.square(self.s2width.s2_width_model(self.s2width,
+                                                               df.loc[mask, 'alt_s1_interaction_z']))
 
         alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
 
-        df.loc[:, (self.name())] = True ^ alt_interaction_passes
+        df.loc[mask, (self.name())] = True ^ alt_interaction_passes
+
         return df
 
 
@@ -819,7 +828,7 @@ class KryptonMisIdS1(StringLichen):
     version = 0
     string = "largest_other_s2 < 100 | largest_other_s2_delay_main_s1 < -3000 | largest_other_s2_delay_main_s1 > 0"
 
-    
+
 class Flash(Lichen):
     """Cuts events within a flash. This is defined as the width were the BUSY on channel is "high".
     In addition an extended time-window around the flash is removed as well.
@@ -830,15 +839,15 @@ class Flash(Lichen):
     """
 
     version = 0
-    def _process(self,df):
-        df.loc[:, self.name()]= ((df['inside_flash']== False) &
-                                 ((df.nearest_flash != df.nearest_flash) |
-                                  (df['nearest_flash'] > 120e9) |
-                                  (df['nearest_flash'] < (-10e9 - df['flashing_width']*1e9))
-                                 )
-                                )
-        return df
-    
+
+    def _process(self, df):
+        df.loc[:, self.name()] = ((df['inside_flash'] is False) &
+                                  ((df.nearest_flash != df.nearest_flash) |
+                                   (df['nearest_flash'] > 120e9) |
+                                   (df['nearest_flash'] < (-10e9 - df['flashing_width'] * 1e9))
+                                   )
+                                  )
+
 
 class PosDiff(Lichen):
     """
@@ -848,10 +857,11 @@ class PosDiff(Lichen):
     Contact: Yuehuan Wei <ywei@physics.ucsd.edu>
     """
     version = 0
+
     def _process(self, df):
-        df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2
-                                  + (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6)
-                                  & (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80)
-                                  & (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
+        df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
+                                  (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6) &
+                                  (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80) &
+                                  (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
 
         return df
