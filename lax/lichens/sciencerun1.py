@@ -39,7 +39,8 @@ class AllEnergy(ManyLichen):
             InteractionPeaksBiggest(),
             MuonVeto(),
             KryptonMisIdS1(),
-            Flash()
+            Flash(),
+            PosDiff()
         ]
 
 
@@ -84,7 +85,6 @@ class LowEnergyBackground(LowEnergyRn220):
 
         self.lichen_list += [
             PreS2Junk(),
-            S2Tails()
         ]
 
 
