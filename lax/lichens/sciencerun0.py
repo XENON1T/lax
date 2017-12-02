@@ -635,7 +635,7 @@ class S2Width(Lichen):
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:width_cut_tuning#toy_fax_simulation
     Contact: Tianyu <tz2263@columbia.edu>, Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 4
+    version = 5
 
     diffusion_constant = 25.26 * ((units.cm)**2) / units.s
     v_drift = 1.440 * (units.um) / units.ns
@@ -649,16 +649,19 @@ class S2Width(Lichen):
         return np.sqrt(- 2 * self.diffusion_constant * z_height / self.v_drift ** 3)
 
     def _process(self, df):
-        df.loc[:, 'nElectron'] = np.clip(df['s2'], 0, 5000) / self.scg
-        df.loc[:, 'normWidth'] = (np.square(df['s2_range_50p_area'] / self.SigmaToR50) - np.square(self.scw)) / \
-            np.square(self.s2_width_model(df['z']))
-        df.loc[:, self.name()] = chi2.logpdf(df['normWidth'] * (df['nElectron'] - 1), df['nElectron']) > - 14
+        df.loc[:, self.name()] = True  # Default is True
+        mask = df.eval('z < 0')
+        df.loc[mask, 'nElectron'] = np.clip(df.loc[mask, 's2'], 0, 5000) / self.scg
+        df.loc[mask, 'normWidth'] = (np.square(df.loc[mask, 's2_range_50p_area'] / self.SigmaToR50) - \
+                                     np.square(self.scw)) / np.square(self.s2_width_model(df.loc[mask, 'z']))
+        df.loc[mask, self.name()] = chi2.logpdf(df.loc[mask, 'normWidth'] * (df.loc[mask, 'nElectron'] - 1), 
+                                                df.loc[mask, 'nElectron']) > - 14
         return df
 
     def post(self, df):
         for temp_column in ['nElectron', 'normWidth']:
             if temp_column in df.columns:
-                return df.drop(temp_column, 1)
+                df.drop(temp_column, 1, inplace = True)
         return df
 
 
