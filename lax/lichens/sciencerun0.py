@@ -652,16 +652,16 @@ class S2Width(Lichen):
         df.loc[:, self.name()] = True  # Default is True
         mask = df.eval('z < 0')
         df.loc[mask, 'nElectron'] = np.clip(df.loc[mask, 's2'], 0, 5000) / self.scg
-        df.loc[mask, 'normWidth'] = (np.square(df.loc[mask, 's2_range_50p_area'] / self.SigmaToR50) - \
+        df.loc[mask, 'normWidth'] = (np.square(df.loc[mask, 's2_range_50p_area'] / self.SigmaToR50) -
                                      np.square(self.scw)) / np.square(self.s2_width_model(df.loc[mask, 'z']))
-        df.loc[mask, self.name()] = chi2.logpdf(df.loc[mask, 'normWidth'] * (df.loc[mask, 'nElectron'] - 1), 
+        df.loc[mask, self.name()] = chi2.logpdf(df.loc[mask, 'normWidth'] * (df.loc[mask, 'nElectron'] - 1),
                                                 df.loc[mask, 'nElectron']) > - 14
         return df
 
     def post(self, df):
         for temp_column in ['nElectron', 'normWidth']:
             if temp_column in df.columns:
-                df.drop(temp_column, 1, inplace = True)
+                df.drop(temp_column, 1, inplace=True)
         return df
 
 
@@ -689,7 +689,7 @@ class S1SingleScatter(Lichen):
     def _process(self, df):
         df.loc[:, self.name()] = True  # Default is True
         mask = df.eval('alt_s1_interaction_z < 0')
-        alt_n_electron = np.clip(df.loc[mask,'s2'], 0, 5000) / self.s2width.scg
+        alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / self.s2width.scg
         alt_rel_width = (np.square(df.loc[mask, 's2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)) / \
             np.square(self.s2width.s2_width_model(self.s2width, df.loc[mask, 'alt_s1_interaction_z']))
 
@@ -822,7 +822,7 @@ class KryptonMisIdS1(StringLichen):
     version = 0
     string = "largest_other_s2 < 100 | largest_other_s2_delay_main_s1 < -3000 | largest_other_s2_delay_main_s1 > 0"
 
-    
+
 class Flash(Lichen):
     """Cuts events within a flash. This is defined as the width were the BUSY on channel is "high".
     In addition an extended time-window around the flash is removed as well.
@@ -833,13 +833,12 @@ class Flash(Lichen):
     """
 
     version = 0
-    def _process(self,df):
-        df.loc[:, self.name()]= ((df['inside_flash']== False) &
-                                 ((df.nearest_flash != df.nearest_flash) |
-                                  (df['nearest_flash'] > 120e9) |
-                                  (df['nearest_flash'] < (-10e9 - df['flashing_width']*1e9))
-                                 )
-                                )
-        return df
-    
 
+    def _process(self, df):
+        df.loc[:, self.name()] = ((df['inside_flash'] is False) &
+                                  ((df.nearest_flash != df.nearest_flash) |
+                                   (df['nearest_flash'] > 120e9) |
+                                   (df['nearest_flash'] < (-10e9 - df['flashing_width'] * 1e9))
+                                   )
+                                  )
+        return df

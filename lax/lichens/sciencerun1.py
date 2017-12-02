@@ -6,6 +6,7 @@ This includes all current definitions of the cuts for the second science run
 # -*- coding: utf-8 -*-
 import inspect
 import os
+import numpy as np
 from pax import units
 
 from lax.lichen import Lichen, ManyLichen, StringLichen
