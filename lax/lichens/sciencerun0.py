@@ -680,7 +680,7 @@ class S1SingleScatter(Lichen):
     Contact: Jacques <jpienaa@purdue.edu>
     """
 
-    version = 2
+    version = 3
     s2width = S2Width
 
     def _process(self, df):
