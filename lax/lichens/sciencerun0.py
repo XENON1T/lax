@@ -40,10 +40,10 @@ class AllEnergy(ManyLichen):
             InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
+            S2Width(),
             DAQVeto(),
             S1SingleScatter(),
             S2PatternLikelihood(),
-            S2Tails(),
             MuonVeto(),
             KryptonMisIdS1(),
             Flash(),
@@ -56,27 +56,26 @@ class LowEnergyRn220(AllEnergy):
 
     This is the list that we use for the Rn220 data to calibrate ER in the
     region of interest.
-
-    It doesn't contain the PreS2Junk cut
     """
 
     def __init__(self):
         AllEnergy.__init__(self)
 
-        # Remove S2Tail Cut
-        self.lichen_list.pop(8)
+        # Customize cuts for calibration data
+        for idx, lichen in enumerate(self.lichen_list):
 
-        # Replaces Interaction exists
-        self.lichen_list[1] = S1LowEnergyRange()
+            # Replaces InteractionExists with energy cut (tighter)
+            if lichen.name() == "CutInteractionExists":
+                self.lichen_list[idx] = S1LowEnergyRange()
 
-        # Use a simpler single scatter cut
-        self.lichen_list[5] = S2SingleScatterSimple()
+            # Use a simpler single scatter cut for LowE
+            if lichen.name() == "CutS2SingleScatter":
+                self.lichen_list[idx] = S2SingleScatterSimple()
 
+        # Add additional LowE cuts (that may not be tuned at HighE yet)
         self.lichen_list += [
             S1PatternLikelihood(),
-            S2Width(),
             S1MaxPMT(),
-            SingleElectronS2s(),
             S1AreaFractionTop()
         ]
 
@@ -92,7 +91,8 @@ class LowEnergyBackground(LowEnergyRn220):
         LowEnergyRn220.__init__(self)
 
         self.lichen_list += [
-            PreS2Junk()
+            PreS2Junk(),
+            S2Tails()  # Only for LowE background (#88)
         ]
 
 
@@ -757,48 +757,6 @@ class PreS2Junk(StringLichen):
     """
     version = 1
     string = "area_before_main_s2 - s1 < 300"
-
-
-class SingleElectronS2s(Lichen):
-    """Remove mis-identified single electron S2s classified as S1s
-
-    Details of the definition can be seen in the following note:
-
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:exploring_se_cut
-
-    This was done by redrawing and improving the classification bounds for S1s at low energies by
-    building up from Jelles low-energy classification work at a peaks level.
-    To do this Rn220 data processed in pax.v6.4.2 was used.
-
-    Requires: TotalProperties, LowEnergyS1Candidates minitrees.
-
-    Contact: Miguel Angel Vargas <m_varg03@uni-muenster.de>
-    """
-    version = 3
-    allowed_range_area = (10, 200)
-    allowed_range_rt = (11, 450)
-    area_variable = 's1'
-    rt_variable = 's1_rise_time'
-    aft_variable = 's1_area_fraction_top'
-
-    bound = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60, 1.0], [70, 70, 61, 61, 35, 0, 0], kind='linear')
-
-    def _process(self, df):
-        # Is the event inside the area box considered for this study?
-        cond1 = ((df[self.area_variable] > self.allowed_range_area[0]) &
-                 (df[self.area_variable] < self.allowed_range_area[1]) &
-                 (df[self.rt_variable] > self.allowed_range_rt[0]) &
-                 (df[self.rt_variable] < self.allowed_range_rt[1]))
-        cond2 = (df[self.rt_variable] < SingleElectronS2s.bound(df[self.aft_variable]))
-
-        # Pass events by default
-        passes = np.ones(len(df), dtype=np.bool)
-
-        # Reject events inside the box that don't pass the bound
-        passes = (True ^ (cond1)) | (cond1 & cond2)
-
-        df.loc[:, self.name()] = passes
-        return df
 
 
 class MuonVeto(StringLichen):

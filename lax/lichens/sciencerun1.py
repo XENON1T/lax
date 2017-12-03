@@ -30,13 +30,13 @@ class AllEnergy(ManyLichen):
             FiducialCylinder1p3T(),
             InteractionExists(),
             S2Threshold(),
+            InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
+            S2Width(),
             DAQVeto(),
             S1SingleScatter(),
             S2PatternLikelihood(),
-            S2Tails(),
-            InteractionPeaksBiggest(),
             MuonVeto(),
             KryptonMisIdS1(),
             Flash(),
@@ -56,20 +56,22 @@ class LowEnergyRn220(AllEnergy):
     def __init__(self):
         AllEnergy.__init__(self)
 
-        # S2Tails not used in calibration modes
-        self.lichen_list.pop(8)
+        # Customize cuts for LowE data
+        for idx, lichen in enumerate(self.lichen_list):
 
-        # Replaces Interaction exists
-        self.lichen_list[1] = S1LowEnergyRange()
+            # Replaces InteractionExists with energy cut (tighter)
+            if lichen.name() == "CutInteractionExists":
+                self.lichen_list[idx] = S1LowEnergyRange()
 
-        # Use a simpler single scatter cut
-        self.lichen_list[4] = S2SingleScatterSimple()
+            # Use a simpler single scatter cut for LowE
+            if lichen.name() == "CutS2SingleScatter":
+                self.lichen_list[idx] = S2SingleScatterSimple()
 
+        # Add additional LowE cuts (that may not be tuned at HighE yet)
         self.lichen_list += [
             S1PatternLikelihood(),
-            S2Width(),
             S1MaxPMT(),
-            S1AreaFractionTop(),
+            S1AreaFractionTop()
         ]
 
 
@@ -84,7 +86,8 @@ class LowEnergyBackground(LowEnergyRn220):
         LowEnergyRn220.__init__(self)
 
         self.lichen_list += [
-            PreS2Junk()
+            PreS2Junk(),
+            S2Tails()  # Only for LowE background (#88)
         ]
 
 
