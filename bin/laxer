@@ -58,8 +58,9 @@ def main():
 
     PAX_VERSION_POLICY = args.PAX_VERSION
     RUN_NUMBER = args.RUN_NUMBER
-    MINITREE_NAMES = ['Fundamentals', 'Corrections', 'Basics', 'TotalProperties',
-                      'Extended', 'TailCut', 'Proximity']
+    MINITREE_NAMES = ['Corrections', 'Basics', 'Fundamentals', 'Proximity',
+                      'Extended', 'TotalProperties', 'TailCut',
+                      'LargestPeakProperties', 'FlashIdentification']
     OUTPUT_PATH = args.OUTPUT_PATH
 
     # Harcode warning: This should be more flexible, allowing
@@ -98,7 +99,7 @@ def main():
                 print ("Pruning cuts for MC:", cuts)
 
             for idx, lichen in enumerate(cuts.lichen_list):
-                if lichen.name() == "CutDAQVeto" or lichen.name() == "CutS2Tails" or lichen.name() == "CutMuonVeto":
+                if lichen.name() == "CutDAQVeto" or lichen.name() == "CutS2Tails" or lichen.name() == "CutMuonVeto" or lichen.name() == "CutFlash":
                     if args.verbose:
                         print ("Removing", cuts.lichen_list[idx].name())
                     cuts.lichen_list.pop(idx)
