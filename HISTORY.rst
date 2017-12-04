@@ -2,6 +2,27 @@
 History
 =======
 
+1.2.2 (2017-12-04)
+------------------
+
+* Update S1PatternLikelihood Definition (#101)
+* Add Flash cut to SR0 (#104)
+* Add flash cut variable to SR1 (#102)
+* Add cut for Misidentified krypton S1 (#103)
+* Add check that nearest flash isn't nan (#106)
+* Add parentheses (#107)
+* Try again with flasher cut (#108)
+* Remove S2 tail cut from calibration modes (#88)
+* Try again Flash cut (#109)
+* Update S2Width Cut (#96)
+* Change bounds on S1SingleScatter Cut (#113)
+* PosDiff Cut Definition (#111)
+* S2Width Warnings Fix (#114)
+* Add PosDiff; Remove S2Tails (duplicate); SR1 (#115)
+* Remove S2Tails (duplicate); SR0 (#116)
+* Fix S2Tails bug in cut lists (#117)
+
+
 1.2.1 (2017-11-27)
 ------------------
 
