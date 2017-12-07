@@ -765,13 +765,15 @@ class MuonVeto(StringLichen):
     and the nearest MV trigger.
     The event is excluded if the nearest MV trigger falls in a [-2ms,+3ms] time window
     with respect to the reference position.
+    It also excludes events when MV was not working (abs(nearest_muon_veto_trigger)>20 s).
     It requires Proximity minitrees.
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:mv_cut_sr1
     Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
     """
 
     version = 1
-    string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"
+    string = "(nearest_muon_veto_trigger < -2e6 & nearest_muon_veto_trigger > -2e10) | 
+                (nearest_muon_veto_trigger > 3e6 & nearest_muon_veto_trigger < 2e10)"
 
 
 class KryptonMisIdS1(StringLichen):
