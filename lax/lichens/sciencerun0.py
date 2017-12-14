@@ -14,7 +14,6 @@ from pax import units
 from scipy.stats import chi2
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
-from scipy import interpolate
 import json
 
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
@@ -771,9 +770,10 @@ class MuonVeto(StringLichen):
     Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
     """
 
-    version = 1
-    string = "(nearest_muon_veto_trigger < -2e6 & nearest_muon_veto_trigger > -2e10) | 
-                (nearest_muon_veto_trigger > 3e6 & nearest_muon_veto_trigger < 2e10)"
+    version = 2
+    string = ("(nearest_muon_veto_trigger < -2e6 & nearest_muon_veto_trigger > -2e10) | "
+              "(nearest_muon_veto_trigger > 3e6 & nearest_muon_veto_trigger < 2e10)"
+              )
 
 
 class KryptonMisIdS1(StringLichen):
@@ -820,7 +820,7 @@ class PosDiff(Lichen):
 
     def _process(self, df):
         df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
-                                  (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6) &
+                                   (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6) &
                                   (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80) &
                                   (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
 
