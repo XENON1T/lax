@@ -43,7 +43,6 @@ class AllEnergy(ManyLichen):
             DAQVeto(),
             S1SingleScatter(),
             S2PatternLikelihood(),
-            MuonVeto(),
             KryptonMisIdS1(),
             Flash(),
             PosDiff()
@@ -91,7 +90,8 @@ class LowEnergyBackground(LowEnergyRn220):
 
         self.lichen_list += [
             PreS2Junk(),
-            S2Tails()  # Only for LowE background (#88)
+            S2Tails(),  # Only for LowE background (#88)
+            MuonVeto()
         ]
 
 
@@ -758,22 +758,31 @@ class PreS2Junk(StringLichen):
     string = "area_before_main_s2 - s1 < 300"
 
 
-class MuonVeto(StringLichen):
-    """Remove events in coincidence with Muon Veto triggers.
-    It checks the distance in time (ns) between a reference position inside the waveform
-    and the nearest MV trigger.
-    The event is excluded if the nearest MV trigger falls in a [-2ms,+3ms] time window
-    with respect to the reference position.
-    It also excludes events when MV was not working (abs(nearest_muon_veto_trigger)>20 s).
-    It requires Proximity minitrees.
+class MuonVeto(ManyLichen):
+    """Remove events in coincidence with Muon Veto triggers and when MV off.
+
+    Requires Proximity minitrees.
+
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:mv_cut_sr1
+
     Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
     """
-
     version = 2
-    string = ("(nearest_muon_veto_trigger < -2e6 & nearest_muon_veto_trigger > -2e10) | "
-              "(nearest_muon_veto_trigger > 3e6 & nearest_muon_veto_trigger < 2e10)"
-              )
+
+    class MuonVetoCoincidence(StringLichen):
+        """Checks the distance in time (ns) between a reference position inside the waveform
+        and the nearest MV trigger.
+        The event is excluded if the nearest MV trigger falls in a [-2ms,+3ms] time window
+        with respect to the reference position.
+        """
+
+        string = ("nearest_muon_veto_trigger < -2e6 | nearest_muon_veto_trigger > 3e6")
+
+    class MuonVetoOn(StringLichen):
+        """Remove events when MV was not working (abs(nearest_muon_veto_trigger)>20 s).
+        """
+
+        string = ("nearest_muon_veto_trigger > -2e10 & nearest_muon_veto_trigger < 2e10)")
 
 
 class KryptonMisIdS1(StringLichen):
