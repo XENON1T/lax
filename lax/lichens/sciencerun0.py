@@ -14,7 +14,6 @@ from pax import units
 from scipy.stats import chi2
 from scipy.interpolate import RectBivariateSpline
 from scipy.stats import binom_test
-from scipy import interpolate
 import json
 
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
@@ -765,13 +764,16 @@ class MuonVeto(StringLichen):
     and the nearest MV trigger.
     The event is excluded if the nearest MV trigger falls in a [-2ms,+3ms] time window
     with respect to the reference position.
+    It also excludes events when MV was not working (abs(nearest_muon_veto_trigger)>20 s).
     It requires Proximity minitrees.
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:mv_cut_sr1
     Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
     """
 
-    version = 1
-    string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"
+    version = 2
+    string = ("(nearest_muon_veto_trigger < -2e6 & nearest_muon_veto_trigger > -2e10) | "
+              "(nearest_muon_veto_trigger > 3e6 & nearest_muon_veto_trigger < 2e10)"
+              )
 
 
 class KryptonMisIdS1(StringLichen):
@@ -825,4 +827,5 @@ class PosDiff(Lichen):
                               - 2 * (r_observed_nn - r_observed_tpf) * temp + temp**2) ** 0.5'
         df.loc[mask, self.name()] = df.eval('{cdist} < 3.215 * exp(- s2 / 155) + 1.24 * exp( - s2 / 842) + 1.16' \
                                          .format(cdist = corrected_distance))
+
         return df
