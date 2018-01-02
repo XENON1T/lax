@@ -820,17 +820,21 @@ class Flash(Lichen):
 
 class PosDiff(Lichen):
     """
-    Note:https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sr1:pos_cut_v0
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sr1:pos_cut_v1
     This cut is defined for removing the events with large position difference between NN and TPF alogrithm,
     which can partly remove wall leakage events due to the small size of S2.
-    Contact: Yuehuan Wei <ywei@physics.ucsd.edu>
+    Contact: Yuehuan Wei <ywei@physics.ucsd.edu>, Tianyu Zhu <tz2263@columbia.edu>
     """
-    version = 0
+    version = 1
 
     def _process(self, df):
-        df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
-                                   (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6) &
-                                  (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80) &
-                                  (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
+        df.loc[:, self.name()] = True
+        mask = df.eval('s2 > 0')
+        df.loc[mask, 'temp'] = 0.152 * np.sin((df['r_observed_nn'] + 4.10) / 7.99 * 2 * np.pi) \
+                            + 0.633 - 0.00768 * df['r_observed_nn']
+        corrected_distance = '(((x_observed_nn - x_observed_tpf) ** 2 + (y_observed_nn - y_observed_tpf) ** 2) \
+                              - 2 * (r_observed_nn - r_observed_tpf) * temp + temp**2) ** 0.5'
+        df.loc[mask, self.name()] = df.eval('{cdist} < 3.215 * exp(- s2 / 155) + 1.24 * exp( - s2 / 842) + 1.16' \
+                                         .format(cdist = corrected_distance))
 
         return df
