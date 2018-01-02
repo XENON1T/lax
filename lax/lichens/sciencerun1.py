@@ -37,7 +37,6 @@ class AllEnergy(ManyLichen):
             DAQVeto(),
             S1SingleScatter(),
             S2PatternLikelihood(),
-            MuonVeto(),
             KryptonMisIdS1(),
             Flash(),
             PosDiff()
@@ -87,7 +86,8 @@ class LowEnergyBackground(LowEnergyRn220):
 
         self.lichen_list += [
             PreS2Junk(),
-            S2Tails()  # Only for LowE background (#88)
+            S2Tails(),  # Only for LowE background (#88)
+            MuonVeto()
         ]
 
 
