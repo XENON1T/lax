@@ -674,12 +674,12 @@ class S1SingleScatter(Lichen):
     pair with the primary S2. Therefore we cut this event. If it fails the S2Width cut the event is
     not removed.
 
-    Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
+    Current version is developed on calibration data (pax v6.8.0). It is described in this note:
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut_sr1
 
-    It should be applicable to data regardless of if it is ER or NR.
+    It should be applicable to data regardless whether it is ER or NR.
 
-    Contact: Jacques <jpienaa@purdue.edu>
+    Contact: Jacques Pienaar, <jpienaar@uchicago.edu>
     """
 
     version = 3
