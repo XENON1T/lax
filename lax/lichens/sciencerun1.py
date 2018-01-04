@@ -73,8 +73,30 @@ class LowEnergyRn220(AllEnergy):
             S1AreaFractionTop()
         ]
 
+        # Add cuts specific to Rn220 only
+        self.lichen_list += [
+            S1AreaUpperInjectionFraction(),
+            S1AreaLowerInjectionFraction()
+        ]
 
-class LowEnergyBackground(LowEnergyRn220):
+
+class LowEnergyAmBe(LowEnergyRn220):
+    """Select AmBe events with cs1<200 with appropriate cuts
+
+    It is the same as the LowEnergyRn220 cuts, except injection-related cuts
+    """
+
+    def __init__(self):
+        LowEnergyRn220.__init__(self)
+
+        # Remove cuts specific to Rn220
+        for idx, lichen in enumerate(self.lichen_list):
+            if "InjectionFraction" in lichen.name():
+                self.lichen_list.pop(idx)
+                idx -= 1
+
+
+class LowEnergyBackground(LowEnergyAmBe):
     """Select background events with cs1<200
 
     This is the list that we'll use for the actual DM search. In addition to the
@@ -82,23 +104,13 @@ class LowEnergyBackground(LowEnergyRn220):
     """
 
     def __init__(self):
-        LowEnergyRn220.__init__(self)
+        LowEnergyAmBe.__init__(self)
 
         self.lichen_list += [
             PreS2Junk(),
             S2Tails(),  # Only for LowE background (#88)
             MuonVeto()
         ]
-
-
-class LowEnergyAmBe(LowEnergyRn220):
-    """Select AmBe events with cs1<200 with appropriate cuts
-
-    It is the same as the LowEnergyRn220 cuts.
-    """
-
-    def __init__(self):
-        LowEnergyRn220.__init__(self)
 
 
 class LowEnergyNG(LowEnergyRn220):
@@ -283,3 +295,7 @@ KryptonMisIdS1 = sciencerun0.KryptonMisIdS1
 Flash = sciencerun0.Flash
 
 PosDiff = sciencerun0.PosDiff
+
+S1AreaUpperInjectionFraction = sciencerun0.S1AreaUpperInjectionFraction
+
+S1AreaLowerInjectionFraction = sciencerun0.S1AreaLowerInjectionFraction
