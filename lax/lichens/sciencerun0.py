@@ -490,7 +490,7 @@ class S1PatternLikelihood(StringLichen):
 
     version = 2
     string = "s1_pattern_fit_hax < -23.288612 + 28.928316*s1**0.5 + 1.942163*s1 -0.173226*s1**1.5 + 0.003968*s1**2.0"
-    
+
 
 class S2AreaFractionTop(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
