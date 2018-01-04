@@ -59,7 +59,7 @@ def main():
     PAX_VERSION_POLICY = args.PAX_VERSION
     RUN_NUMBER = args.RUN_NUMBER
     MINITREE_NAMES = ['Fundamentals', 'Corrections', 'Basics', 'TotalProperties',
-                      'Extended', 'TailCut', 'Proximity']
+                      'Extended', 'TailCut', 'Proximity', 'PositionReconstruction']
     OUTPUT_PATH = args.OUTPUT_PATH
 
     # Harcode warning: This should be more flexible, allowing
