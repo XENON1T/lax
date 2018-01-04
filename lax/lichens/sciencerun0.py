@@ -492,7 +492,7 @@ class S1PatternLikelihood(StringLichen):
     version = 1
     string = "s1_pattern_fit < -17.384885 + 24.894875*s1**0.5 + 2.794984*s1 -0.237268*s1**1.5 + 0.005549*s1**2.0"
 
-    
+
 class S1Width(StringLichen):
     """Reject accidendal coicidence events from lone s1 and lone s2.
     This cut is optimized to remove anomalous leakage (probably AC) candidates found in Rn220 SR1 data.
