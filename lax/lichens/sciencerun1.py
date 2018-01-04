@@ -90,10 +90,8 @@ class LowEnergyAmBe(LowEnergyRn220):
         LowEnergyRn220.__init__(self)
 
         # Remove cuts specific to Rn220
-        for idx, lichen in enumerate(self.lichen_list):
-            if "InjectionFraction" in lichen.name():
-                self.lichen_list.pop(idx)
-                idx -= 1
+        self.lichen_list = [lichen for lichen in self.lichen_list
+                            if "InjectionFraction" not in lichen.name()]
 
 
 class LowEnergyBackground(LowEnergyAmBe):
@@ -113,14 +111,14 @@ class LowEnergyBackground(LowEnergyAmBe):
         ]
 
 
-class LowEnergyNG(LowEnergyRn220):
+class LowEnergyNG(LowEnergyAmBe):
     """Select NG events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts.
+    It is the same as the LowEnergyAmBe cuts.
     """
 
     def __init__(self):
-        LowEnergyRn220.__init__(self)
+        LowEnergyAmBe.__init__(self)
 
 
 DAQVeto = sciencerun0.DAQVeto

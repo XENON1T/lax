@@ -94,10 +94,8 @@ class LowEnergyAmBe(LowEnergyRn220):
         LowEnergyRn220.__init__(self)
 
         # Remove cuts specific to Rn220
-        for idx, lichen in enumerate(self.lichen_list):
-            if "InjectionFraction" in lichen.name():
-                self.lichen_list.pop(idx)
-                idx -= 1
+        self.lichen_list = [lichen for lichen in self.lichen_list
+                            if "InjectionFraction" not in lichen.name()]
 
 
 class LowEnergyBackground(LowEnergyAmBe):
