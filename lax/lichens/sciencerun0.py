@@ -492,6 +492,34 @@ class S1PatternLikelihood(StringLichen):
     string = "s1_pattern_fit < -17.384885 + 24.894875*s1**0.5 + 2.794984*s1 -0.237268*s1**1.5 + 0.005549*s1**2.0"
 
 
+class S1AreaUpperInjectionFraction(StringLichen):
+    """Reject accidendal coicidence events happened near the upper Rn220 injection point (near PMT 131)
+    
+    Details of the cut definition and acceptance can be seen in the following notes.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
+    
+    Requires PositionReconstruction minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_area_upper_injection_fraction < 0.0865 + 1.25/(s1**0.83367)"
+
+
+class S1AreaLowerInjectionFraction(StringLichen):
+    """Reject accidendal coicidence events happened near the lower Rn220 injection point (near PMT 243)
+    
+    Details of the cut definition and acceptance can be seen in the following notes.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
+    
+    Requires PositionReconstruction minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_area_lower_injection_fraction < 0.0550 + 1.56/(s1**0.87000)"
+
+
 class S2AreaFractionTop(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
 
