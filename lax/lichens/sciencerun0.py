@@ -482,7 +482,7 @@ class S1PatternLikelihood(StringLichen):
 
     Details of the likelihood and cut definitions can be seen in the following notes.
        SR0: xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
-       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1, 
+       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1,
             xenon:xenon1t:kazama:s1_pattern_cut_sr1#update_2018_jan_4th
 
     Requires PositionReconstruction minitrees (hax#174).
