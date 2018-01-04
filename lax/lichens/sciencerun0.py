@@ -74,7 +74,8 @@ class LowEnergyRn220(AllEnergy):
         self.lichen_list += [
             S1PatternLikelihood(),
             S1MaxPMT(),
-            S1AreaFractionTop()
+            S1AreaFractionTop(),
+            S1Width()
         ]
 
 
@@ -490,6 +491,20 @@ class S1PatternLikelihood(StringLichen):
 
     version = 1
     string = "s1_pattern_fit < -17.384885 + 24.894875*s1**0.5 + 2.794984*s1 -0.237268*s1**1.5 + 0.005549*s1**2.0"
+
+    
+class S1Width(StringLichen):
+    """Reject accidendal coicidence events from lone s1 and lone s2.
+    This cut is optimized to remove anomalous leakage (probably AC) candidates found in Rn220 SR1 data.
+    Details of the cut definition and acceptance can be seen in the following note.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#s1_width_cut_for_removing_remaining_ac_events
+
+    Requires Extended minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_range_90p_area < 450."
 
 
 class S2AreaFractionTop(Lichen):
