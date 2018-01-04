@@ -501,7 +501,7 @@ class S1AreaUpperInjectionFraction(StringLichen):
     Requires PositionReconstruction minitrees.
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
-
+    
     version = 0
     string = "s1_area_upper_injection_fraction < 0.0865 + 1.25/(s1**0.83367)"
 
@@ -515,7 +515,7 @@ class S1AreaLowerInjectionFraction(StringLichen):
     Requires PositionReconstruction minitrees.
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
-
+    
     version = 0
     string = "s1_area_lower_injection_fraction < 0.0550 + 1.56/(s1**0.87000)"
 
