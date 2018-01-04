@@ -493,7 +493,7 @@ class S1PatternLikelihood(StringLichen):
 
 
 class S1AreaUpperInjectionFraction(StringLichen):
-    """Reject accidendal coicidence events happened near the upper Rn220 injection point (near PMT 131)
+  """Reject accidendal coicidence events happened near the upper Rn220 injection point (near PMT 131)
     
     Details of the cut definition and acceptance can be seen in the following notes.
     xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
@@ -507,7 +507,7 @@ class S1AreaUpperInjectionFraction(StringLichen):
 
 
 class S1AreaLowerInjectionFraction(StringLichen):
-    """Reject accidendal coicidence events happened near the lower Rn220 injection point (near PMT 243)
+  """Reject accidendal coicidence events happened near the lower Rn220 injection point (near PMT 243)
     
     Details of the cut definition and acceptance can be seen in the following notes.
     xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
