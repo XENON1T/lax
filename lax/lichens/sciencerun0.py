@@ -77,10 +77,28 @@ class LowEnergyRn220(AllEnergy):
             S1AreaFractionTop()
         ]
 
-        # Add cuts specific to Rn220 only
+        # Add injection-position cuts (not for AmBe)
         self.lichen_list += [
             S1AreaUpperInjectionFraction(),
             S1AreaLowerInjectionFraction()
+        ]
+
+
+class LowEnergyBackground(LowEnergyRn220):
+    """Select background events with cs1<200
+
+    This is the list that we'll use for the actual DM search. Additionally to the
+    LowEnergyAmBe list it contains the PreS2Junk, S2Tails, and MuonVeto
+    """
+
+    def __init__(self):
+        LowEnergyRn220.__init__(self)
+
+        # Add cuts specific to background only
+        self.lichen_list += [
+            PreS2Junk(),
+            S2Tails(),  # Only for LowE background (#88)
+            MuonVeto()
         ]
 
 
@@ -93,27 +111,9 @@ class LowEnergyAmBe(LowEnergyRn220):
     def __init__(self):
         LowEnergyRn220.__init__(self)
 
-        # Remove cuts specific to Rn220
+        # Remove cuts not applicable to AmBe
         self.lichen_list = [lichen for lichen in self.lichen_list
                             if "InjectionFraction" not in lichen.name()]
-
-
-class LowEnergyBackground(LowEnergyAmBe):
-    """Select background events with cs1<200
-
-    This is the list that we'll use for the actual DM search. Additionally to the
-    LowEnergyAmBe list it contains the PreS2Junk, S2Tails, and MuonVeto
-    """
-
-    def __init__(self):
-        LowEnergyAmBe.__init__(self)
-
-        # Add cuts specific to background only
-        self.lichen_list += [
-            PreS2Junk(),
-            S2Tails(),  # Only for LowE background (#88)
-            MuonVeto()
-        ]
 
 
 class DAQVeto(ManyLichen):
