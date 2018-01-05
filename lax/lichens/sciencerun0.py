@@ -12,9 +12,6 @@ import numpy as np
 from pax import units
 
 from scipy.stats import chi2
-from scipy.interpolate import RectBivariateSpline
-from scipy.stats import binom_test
-import json
 
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax import __version__ as lax_version
@@ -74,7 +71,14 @@ class LowEnergyRn220(AllEnergy):
         self.lichen_list += [
             S1PatternLikelihood(),
             S1MaxPMT(),
-            S1AreaFractionTop()
+            S1AreaFractionTop(),
+            S1Width()
+        ]
+
+        # Add injection-position cuts (not for AmBe)
+        self.lichen_list += [
+            S1AreaUpperInjectionFraction(),
+            S1AreaLowerInjectionFraction()
         ]
 
 
@@ -82,12 +86,13 @@ class LowEnergyBackground(LowEnergyRn220):
     """Select background events with cs1<200
 
     This is the list that we'll use for the actual DM search. Additionally to the
-    LowEnergyRn220 list it contains the PreS2Junk
+    LowEnergyAmBe list it contains the PreS2Junk, S2Tails, and MuonVeto
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
 
+        # Add cuts specific to background only
         self.lichen_list += [
             PreS2Junk(),
             S2Tails(),  # Only for LowE background (#88)
@@ -98,11 +103,15 @@ class LowEnergyBackground(LowEnergyRn220):
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts.
+    It is the same as the LowEnergyRn220 cuts, except injection-related cuts
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
+
+        # Remove cuts not applicable to AmBe
+        self.lichen_list = [lichen for lichen in self.lichen_list
+                            if "InjectionFraction" not in lichen.name()]
 
 
 class DAQVeto(ManyLichen):
@@ -482,14 +491,57 @@ class S1PatternLikelihood(StringLichen):
 
     Details of the likelihood and cut definitions can be seen in the following notes.
        SR0: xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
-       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1
+       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1,
+            xenon:xenon1t:kazama:s1_pattern_cut_sr1#update_2018_jan_4th
+
+    Requires PositionReconstruction minitrees (hax#174).
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 2
+    string = "s1_pattern_fit_hax < -23.288612 + 28.928316*s1**0.5 + 1.942163*s1 -0.173226*s1**1.5 + 0.003968*s1**2.0"
+
+
+class S1Width(StringLichen):
+    """Reject accidendal coicidence events from lone s1 and lone s2.
+    This cut is optimized to remove anomalous leakage (probably AC) candidates found in Rn220 SR1 data.
+    Details of the cut definition and acceptance can be seen in the following note.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#s1_width_cut_for_removing_remaining_ac_events
 
     Requires Extended minitrees.
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
 
-    version = 1
-    string = "s1_pattern_fit < -17.384885 + 24.894875*s1**0.5 + 2.794984*s1 -0.237268*s1**1.5 + 0.005549*s1**2.0"
+    version = 0
+    string = "s1_range_90p_area < 450."
+
+
+class S1AreaUpperInjectionFraction(StringLichen):
+    """Reject accidendal coicidence events happened near the upper Rn220 injection point (near PMT 131)
+
+    Details of the cut definition and acceptance can be seen in the following notes.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
+
+    Requires PositionReconstruction minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_area_upper_injection_fraction < 0.0865 + 1.25/(s1**0.83367)"
+
+
+class S1AreaLowerInjectionFraction(StringLichen):
+    """Reject accidendal coicidence events happened near the lower Rn220 injection point (near PMT 243)
+
+    Details of the cut definition and acceptance can be seen in the following notes.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
+
+    Requires PositionReconstruction minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_area_lower_injection_fraction < 0.0550 + 1.56/(s1**0.87000)"
 
 
 class S2AreaFractionTop(Lichen):
@@ -703,47 +755,26 @@ class S1SingleScatter(Lichen):
         return df
 
 
-class S1AreaFractionTop(RangeLichen):
+class S1AreaFractionTop(StringLichen):
     '''S1 area fraction top cut
 
     Uses a modified version of scipy.stats.binom_test to compute a p-value based on the
-    observed number of s1 photons in the top array, given the expected
-    probability that a photon at the event's (x,y,z) makes it to the top array.
+    observed number of s1 photons in the top array, given the expected probability (derived
+    from Kr83m 32 keV line) that a photon at the event's (x,y,z) makes it to the top array.
     Modifications made to original algorithm implemented in pax increase sensitivity for small s1s.
-    For pax < v6.6.0 computes p-value live, otherwise loads it from disk. Computation done here is
-    not as accurate as in pax > v6.6.5
+    Algorithm imported in PositionReconstruction treemaker using corrected positions to calculate
+    p-value.
 
-    Ideally requires Extended minitrees >= v0.0.4
-
-    Uses a 3D map generated with Kr83m 32 keV line
+    Requires PositionReconstruction minitrees.
 
     note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
     also https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
 
     Contact: Darryl Masson, dmasson@purdue.edu
+             Shingo Kazama, kazama@physik.uzh.ch
     '''
-
-    variable = 's1_area_fraction_top_probability'
-    allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
-    version = 2
-
-    def __init__(self):
-        aftmap_filename = os.path.join(DATA_DIR, 's1_aft_rz_02Mar2017.json')
-        with open(aftmap_filename) as data_file:
-            data = json.load(data_file)
-        r_pts = np.array(data['r_pts'])
-        z_pts = np.array(data['z_pts'])
-        aft_vals = np.array(data['map']).reshape(len(r_pts), len(z_pts))
-        self.aft_map = RectBivariateSpline(r_pts, z_pts, aft_vals)
-
-    def pre(self, df):
-        if self.variable not in df:
-            df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
-                                                                       np.round(row['s1']),
-                                                                       self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
-                                                                                    row['z'])[0, 0]),
-                                                axis=1)
-        return df
+    version = 4
+    string = "s1_area_fraction_top_probability_hax > 0.001"
 
 
 class PreS2Junk(StringLichen):

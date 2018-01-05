@@ -35,7 +35,7 @@ def main():
                         help='Run number to process (-1 for MC)')
 
     parser.add_argument('-s', '--sciencerun', dest='SCIENCERUN',
-                        action='store', required=True, type=int, choices=range(0,2),
+                        action='store', required=True, type=int, choices=range(0, 2),
                         help='lax science run cuts to use')
 
     parser.add_argument('-p', '--pax_version', dest='PAX_VERSION',
@@ -59,7 +59,7 @@ def main():
     PAX_VERSION_POLICY = args.PAX_VERSION
     RUN_NUMBER = args.RUN_NUMBER
     MINITREE_NAMES = ['Fundamentals', 'Corrections', 'Basics', 'TotalProperties',
-                      'Extended', 'TailCut', 'Proximity']
+                      'Extended', 'TailCut', 'Proximity', 'PositionReconstruction']
     OUTPUT_PATH = args.OUTPUT_PATH
 
     # Harcode warning: This should be more flexible, allowing
@@ -92,25 +92,23 @@ def main():
         MINITREE_NAMES.remove('TailCut')
         MINITREE_NAMES.remove('Proximity')
 
-        # Remove meaningless cuts (DAQVeto, S2Tails)
+        # Remove meaningless cuts for MC
         for cuts in LAX_LICHENS:
             if args.verbose:
-                print ("Pruning cuts for MC:", cuts)
+                print("Pruning cuts for MC:", cuts)
 
-            for idx, lichen in enumerate(cuts.lichen_list):
-                if lichen.name() == "CutDAQVeto" or lichen.name() == "CutS2Tails" or lichen.name() == "CutMuonVeto":
-                    if args.verbose:
-                        print ("Removing", cuts.lichen_list[idx].name())
-                    cuts.lichen_list.pop(idx)
-                    idx -= 1
+            cuts.lichen_list = [lichen for lichen in cuts.lichen_list
+                                if "DAQVeto" not in lichen.name() and
+                                   "S2Tails" not in lichen.name() and
+                                   "MuonVeto" not in lichen.name()]
 
             if args.verbose:
-                print (cuts.lichen_list, "\n")
+                print(cuts.lichen_list, "\n")
 
         TREENAME += 'mc'
 
         if OUTPUT_PATH is '':
-            OUTPUT_PATH = args.FILENAME+"_lax"
+            OUTPUT_PATH = args.FILENAME + "_lax"
 
     if OUTPUT_PATH is '':
         OUTPUT_PATH = "%d_lax" % RUN_NUMBER
@@ -121,7 +119,7 @@ def main():
     HAX_KWARGS = {'experiment': 'XENON1T',
                   'pax_version_policy': PAX_VERSION_POLICY,
                   'minitree_paths': ['.', args.MINITREE_PATH]
-                 }
+                  }
 
     # Be careful what you're doing here
     if args.RUN_NUMBER < 0:
@@ -131,17 +129,18 @@ def main():
 
     DF_ALL = hax.minitrees.load(RUN_NUMBER, MINITREE_NAMES)
 
-    print ("hax initialized with", HAX_KWARGS, "\nRUN_NUMBER = ", RUN_NUMBER,
-           "\nMINITREE_NAMES = ", MINITREE_NAMES)
+    print("hax initialized with", HAX_KWARGS, "\nRUN_NUMBER = ", RUN_NUMBER,
+          "\nMINITREE_NAMES = ", MINITREE_NAMES)
 
     for cuts in LAX_LICHENS:
 
         DF_ALL = cuts.process(DF_ALL)
 
-    OUTPUT_FILE = OUTPUT_PATH+'.root' 
+    OUTPUT_FILE = OUTPUT_PATH + '.root'
     DF_ALL.to_root(OUTPUT_FILE, TREENAME)
 
-    print ("Output file written to: ", OUTPUT_FILE)
+    print("Output file written to: ", OUTPUT_FILE)
+
 
 if __name__ == "__main__":
     main()

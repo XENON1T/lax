@@ -70,7 +70,14 @@ class LowEnergyRn220(AllEnergy):
         self.lichen_list += [
             S1PatternLikelihood(),
             S1MaxPMT(),
-            S1AreaFractionTop()
+            S1AreaFractionTop(),
+            S1Width()
+        ]
+
+        # Add injection-position cuts (not for AmBe/NG)
+        self.lichen_list += [
+            S1AreaUpperInjectionFraction(),
+            S1AreaLowerInjectionFraction()
         ]
 
 
@@ -94,21 +101,25 @@ class LowEnergyBackground(LowEnergyRn220):
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts.
+    It is the same as the LowEnergyRn220 cuts, except injection-related cuts
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
 
+        # Remove cuts not applicable to AmBe/NG
+        self.lichen_list = [lichen for lichen in self.lichen_list
+                            if "InjectionFraction" not in lichen.name()]
 
-class LowEnergyNG(LowEnergyRn220):
+
+class LowEnergyNG(LowEnergyAmBe):
     """Select NG events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts.
+    It is the same as the LowEnergyAmBe cuts.
     """
 
     def __init__(self):
-        LowEnergyRn220.__init__(self)
+        LowEnergyAmBe.__init__(self)
 
 
 DAQVeto = sciencerun0.DAQVeto
@@ -230,6 +241,8 @@ S1MaxPMT = sciencerun0.S1MaxPMT
 
 S1PatternLikelihood = sciencerun0.S1PatternLikelihood
 
+S1Width = sciencerun0.S1Width
+
 S2AreaFractionTop = sciencerun0.S2AreaFractionTop
 
 S2SingleScatter = sciencerun0.S2SingleScatter
@@ -283,3 +296,7 @@ KryptonMisIdS1 = sciencerun0.KryptonMisIdS1
 Flash = sciencerun0.Flash
 
 PosDiff = sciencerun0.PosDiff
+
+S1AreaUpperInjectionFraction = sciencerun0.S1AreaUpperInjectionFraction
+
+S1AreaLowerInjectionFraction = sciencerun0.S1AreaLowerInjectionFraction
