@@ -2,6 +2,18 @@
 History
 =======
 
+1.3.0 (2018-01-05)
+------------------
+
+* MV cut to account for the coverage (#119)
+* Remove MV cut from calibration data (#121)
+* Use correct position for S1PatternLikelihood cut (#123)
+* New S1 width cut to remove AC candidates (#124)
+* New cut on area fraction near Rn220 injection points (#125)
+* Tune S1 AFT cut based on bug fix and correct position (#126)
+* Revert to SR0 version of S2 tail cut (#128)
+* Optimise the PosDiff Cut (#127), interim update (#120)
+
 1.2.2 (2017-12-04)
 ------------------
 
