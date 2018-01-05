@@ -74,7 +74,8 @@ class LowEnergyRn220(AllEnergy):
         self.lichen_list += [
             S1PatternLikelihood(),
             S1MaxPMT(),
-            S1AreaFractionTop()
+            S1AreaFractionTop(),
+            S1Width()
         ]
 
 
@@ -493,6 +494,20 @@ class S1PatternLikelihood(StringLichen):
     string = "s1_pattern_fit_hax < -23.288612 + 28.928316*s1**0.5 + 1.942163*s1 -0.173226*s1**1.5 + 0.003968*s1**2.0"
 
 
+class S1Width(StringLichen):
+    """Reject accidendal coicidence events from lone s1 and lone s2.
+    This cut is optimized to remove anomalous leakage (probably AC) candidates found in Rn220 SR1 data.
+    Details of the cut definition and acceptance can be seen in the following note.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#s1_width_cut_for_removing_remaining_ac_events
+
+    Requires Extended minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_range_90p_area < 450."
+
+
 class S2AreaFractionTop(Lichen):
     """Cuts events with an unusual fraction of S2 on top array.
 
@@ -832,10 +847,10 @@ class PosDiff(Lichen):
         df.loc[:, self.name()] = True
         mask = df.eval('s2 > 0')
         df.loc[mask, 'temp'] = 0.152 * np.sin((df['r_observed_nn'] + 4.10) / 7.99 * 2 * np.pi) \
-                            + 0.633 - 0.00768 * df['r_observed_nn']
+            + 0.633 - 0.00768 * df['r_observed_nn']
         corrected_distance = '(((x_observed_nn - x_observed_tpf) ** 2 + (y_observed_nn - y_observed_tpf) ** 2) \
                               - 2 * (r_observed_nn - r_observed_tpf) * temp + temp**2) ** 0.5'
-        df.loc[mask, self.name()] = df.eval('{cdist} < 3.215 * exp(- s2 / 155) + 1.24 * exp( - s2 / 842) + 1.16' \
-                                         .format(cdist = corrected_distance))
+        df.loc[mask, self.name()] = df.eval('{cdist} < 3.215 * exp(- s2 / 155) + 1.24 * exp( - s2 / 842) + 1.16'
+                                            .format(cdist=corrected_distance))
 
         return df
