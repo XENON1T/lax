@@ -78,17 +78,24 @@ class LowEnergyRn220(AllEnergy):
             S1Width()
         ]
 
+        # Add injection-position cuts (not for AmBe)
+        self.lichen_list += [
+            S1AreaUpperInjectionFraction(),
+            S1AreaLowerInjectionFraction()
+        ]
+
 
 class LowEnergyBackground(LowEnergyRn220):
     """Select background events with cs1<200
 
     This is the list that we'll use for the actual DM search. Additionally to the
-    LowEnergyRn220 list it contains the PreS2Junk
+    LowEnergyAmBe list it contains the PreS2Junk, S2Tails, and MuonVeto
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
 
+        # Add cuts specific to background only
         self.lichen_list += [
             PreS2Junk(),
             S2Tails(),  # Only for LowE background (#88)
@@ -99,11 +106,15 @@ class LowEnergyBackground(LowEnergyRn220):
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts.
+    It is the same as the LowEnergyRn220 cuts, except injection-related cuts
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
+
+        # Remove cuts not applicable to AmBe
+        self.lichen_list = [lichen for lichen in self.lichen_list
+                            if "InjectionFraction" not in lichen.name()]
 
 
 class DAQVeto(ManyLichen):
@@ -506,6 +517,34 @@ class S1Width(StringLichen):
 
     version = 0
     string = "s1_range_90p_area < 450."
+
+
+class S1AreaUpperInjectionFraction(StringLichen):
+    """Reject accidendal coicidence events happened near the upper Rn220 injection point (near PMT 131)
+
+    Details of the cut definition and acceptance can be seen in the following notes.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
+
+    Requires PositionReconstruction minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_area_upper_injection_fraction < 0.0865 + 1.25/(s1**0.83367)"
+
+
+class S1AreaLowerInjectionFraction(StringLichen):
+    """Reject accidendal coicidence events happened near the lower Rn220 injection point (near PMT 243)
+
+    Details of the cut definition and acceptance can be seen in the following notes.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
+
+    Requires PositionReconstruction minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_area_lower_injection_fraction < 0.0550 + 1.56/(s1**0.87000)"
 
 
 class S2AreaFractionTop(Lichen):
