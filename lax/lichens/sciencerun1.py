@@ -9,7 +9,7 @@ import os
 import numpy as np
 from pax import units
 
-from lax.lichen import Lichen, ManyLichen, StringLichen
+from lax.lichen import ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
 
