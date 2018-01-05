@@ -482,14 +482,15 @@ class S1PatternLikelihood(StringLichen):
 
     Details of the likelihood and cut definitions can be seen in the following notes.
        SR0: xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
-       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1
+       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1,
+            xenon:xenon1t:kazama:s1_pattern_cut_sr1#update_2018_jan_4th
 
-    Requires Extended minitrees.
+    Requires PositionReconstruction minitrees (hax#174).
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
 
-    version = 1
-    string = "s1_pattern_fit < -17.384885 + 24.894875*s1**0.5 + 2.794984*s1 -0.237268*s1**1.5 + 0.005549*s1**2.0"
+    version = 2
+    string = "s1_pattern_fit_hax < -23.288612 + 28.928316*s1**0.5 + 1.942163*s1 -0.173226*s1**1.5 + 0.003968*s1**2.0"
 
 
 class S2AreaFractionTop(Lichen):
