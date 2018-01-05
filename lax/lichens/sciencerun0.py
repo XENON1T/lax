@@ -825,7 +825,7 @@ class PosDiff(Lichen):
     which can partly remove wall leakage events due to the small size of S2.
     Contact: Yuehuan Wei <ywei@physics.ucsd.edu>, Tianyu Zhu <tz2263@columbia.edu>
     """
-    version = 2
+    version = 3
 
     def _process(self, df):
         df.loc[:, self.name()] = ((df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -100) &
