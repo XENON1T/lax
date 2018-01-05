@@ -718,8 +718,8 @@ class S1AreaFractionTop(StringLichen):
     Contact: Darryl Masson, dmasson@purdue.edu
              Shingo Kazama, kazama@physik.uzh.ch
     '''
-    version = 3
-    string = "s1_area_fraction_top_probability_hax > 0.0005"
+    version = 4
+    string = "s1_area_fraction_top_probability_hax > 0.001"
 
 
 class PreS2Junk(StringLichen):
