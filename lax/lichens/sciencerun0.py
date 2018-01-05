@@ -12,9 +12,6 @@ import numpy as np
 from pax import units
 
 from scipy.stats import chi2
-from scipy.interpolate import RectBivariateSpline
-from scipy.stats import binom_test
-import json
 
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax import __version__ as lax_version
@@ -758,47 +755,26 @@ class S1SingleScatter(Lichen):
         return df
 
 
-class S1AreaFractionTop(RangeLichen):
+class S1AreaFractionTop(StringLichen):
     '''S1 area fraction top cut
 
     Uses a modified version of scipy.stats.binom_test to compute a p-value based on the
-    observed number of s1 photons in the top array, given the expected
-    probability that a photon at the event's (x,y,z) makes it to the top array.
+    observed number of s1 photons in the top array, given the expected probability (derived
+    from Kr83m 32 keV line) that a photon at the event's (x,y,z) makes it to the top array.
     Modifications made to original algorithm implemented in pax increase sensitivity for small s1s.
-    For pax < v6.6.0 computes p-value live, otherwise loads it from disk. Computation done here is
-    not as accurate as in pax > v6.6.5
+    Algorithm imported in PositionReconstruction treemaker using corrected positions to calculate
+    p-value.
 
-    Ideally requires Extended minitrees >= v0.0.4
-
-    Uses a 3D map generated with Kr83m 32 keV line
+    Requires PositionReconstruction minitrees.
 
     note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
     also https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
 
     Contact: Darryl Masson, dmasson@purdue.edu
+             Shingo Kazama, kazama@physik.uzh.ch
     '''
-
-    variable = 's1_area_fraction_top_probability'
-    allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
-    version = 2
-
-    def __init__(self):
-        aftmap_filename = os.path.join(DATA_DIR, 's1_aft_rz_02Mar2017.json')
-        with open(aftmap_filename) as data_file:
-            data = json.load(data_file)
-        r_pts = np.array(data['r_pts'])
-        z_pts = np.array(data['z_pts'])
-        aft_vals = np.array(data['map']).reshape(len(r_pts), len(z_pts))
-        self.aft_map = RectBivariateSpline(r_pts, z_pts, aft_vals)
-
-    def pre(self, df):
-        if self.variable not in df:
-            df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
-                                                                       np.round(row['s1']),
-                                                                       self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
-                                                                                    row['z'])[0, 0]),
-                                                axis=1)
-        return df
+    version = 4
+    string = "s1_area_fraction_top_probability_hax > 0.001"
 
 
 class PreS2Junk(StringLichen):
