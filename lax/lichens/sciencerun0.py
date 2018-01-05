@@ -830,8 +830,8 @@ class PosDiff(Lichen):
     def _process(self, df):
         df.loc[:, self.name()] = ((df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -100) &
                                   (((np.sqrt((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
-                                  (df['y_observed_nn'] - df['y_observed_tpf'])**2) <3.076)&(df['s2'] > 300)) |
+                                             (df['y_observed_nn'] - df['y_observed_tpf'])**2) < 3.076) & (df['s2'] > 300)) |
                                    ((np.sqrt((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
                                              (df['y_observed_nn'] - df['y_observed_tpf'])**2) <
-                                    (13.719*np.exp(-df['s2']/55.511) + 3.014))&(df['s2'] < 300))))
+                                     (13.719 * np.exp(-df['s2'] / 55.511) + 3.014)) & (df['s2'] <= 300))))
         return df
