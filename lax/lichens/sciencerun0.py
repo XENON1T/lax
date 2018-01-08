@@ -798,7 +798,7 @@ class MuonVeto(ManyLichen):
 
     Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
     """
-    version = 2
+    version = 3
 
     class MuonVetoCoincidence(StringLichen):
         """Checks the distance in time (ns) between a reference position inside the waveform
