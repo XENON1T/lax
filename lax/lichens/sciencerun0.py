@@ -807,13 +807,13 @@ class MuonVeto(ManyLichen):
         with respect to the reference position.
         """
 
-        string = ("nearest_muon_veto_trigger < -2e6 | nearest_muon_veto_trigger > 3e6")
+        string = "nearest_muon_veto_trigger < -2e6 | nearest_muon_veto_trigger > 3e6"
 
     class MuonVetoOn(StringLichen):
         """Remove events when MV was not working (abs(nearest_muon_veto_trigger)>20 s).
         """
 
-        string = ("nearest_muon_veto_trigger > -2e10 & nearest_muon_veto_trigger < 2e10)")
+        string = "nearest_muon_veto_trigger > -2e10 & nearest_muon_veto_trigger < 2e10"
 
 
 class KryptonMisIdS1(StringLichen):
