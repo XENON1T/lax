@@ -800,6 +800,10 @@ class MuonVeto(ManyLichen):
     """
     version = 3
 
+    def __init__(self):
+        self.lichen_list = [self.MuonVetoOn(),
+                            self.MuonVetoCoincidence()]
+
     class MuonVetoCoincidence(StringLichen):
         """Checks the distance in time (ns) between a reference position inside the waveform
         and the nearest MV trigger.
