@@ -92,6 +92,7 @@ def main():
         # Remove meaningless variables
         MINITREE_NAMES.remove('TailCut')
         MINITREE_NAMES.remove('Proximity')
+        MINITREE_NAMES.remove('FlashIdentification')
 
         # Remove meaningless cuts (DAQVeto, S2Tails)
         for cuts in LAX_LICHENS:
