@@ -526,8 +526,8 @@ class S1AreaUpperInjectionFraction(StringLichen):
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
 
-    version = 0
-    string = "s1_area_upper_injection_fraction < 0.0865 + 1.25/(s1**0.83367)"
+    version = 1
+    string = "s1_area_upper_injection_fraction < 0.0865 + 1.205/(s1**0.83367)"
 
 
 class S1AreaLowerInjectionFraction(StringLichen):
