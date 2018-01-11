@@ -512,8 +512,8 @@ class S1Width(StringLichen):
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
 
-    version = 0
-    string = "s1_range_90p_area < 450."
+    version = 1
+    string = "s1_range_90p_area < 251.528247 + 11.50*s1**1.171407*exp(-0.057395*s1)"
 
 
 class S1AreaUpperInjectionFraction(StringLichen):
