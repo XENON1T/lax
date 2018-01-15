@@ -740,7 +740,7 @@ class S1SingleScatter(Lichen):
 
     def _process(self, df):
         df.loc[:, self.name()] = True  # Default is True
-        mask = df.eval('alt_s1_interaction_drift_time > self.s2width.DriftTimeFromGate')
+        mask = df.alt_s1_interaction_drift_time > self.s2width.DriftTimeFromGate
         alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / self.s2width.scg
 
         # Alternate S1 relative width
