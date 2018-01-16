@@ -59,7 +59,8 @@ def main():
     PAX_VERSION_POLICY = args.PAX_VERSION
     RUN_NUMBER = args.RUN_NUMBER
     MINITREE_NAMES = ['Fundamentals', 'Corrections', 'Basics', 'TotalProperties',
-                      'Extended', 'TailCut', 'Proximity', 'PositionReconstruction']
+                      'Extended', 'TailCut', 'Proximity', 'PositionReconstruction',
+                      'FlashIdentification']
     OUTPUT_PATH = args.OUTPUT_PATH
 
     # Harcode warning: This should be more flexible, allowing
@@ -91,6 +92,7 @@ def main():
         # Remove meaningless variables
         MINITREE_NAMES.remove('TailCut')
         MINITREE_NAMES.remove('Proximity')
+        MINITREE_NAMES.remove('FlashIdentification')
 
         # Remove meaningless cuts for MC
         for cuts in LAX_LICHENS:
@@ -100,6 +102,7 @@ def main():
             cuts.lichen_list = [lichen for lichen in cuts.lichen_list
                                 if "DAQVeto" not in lichen.name() and
                                    "S2Tails" not in lichen.name() and
+                                   "Flash" not in lichen.name() and
                                    "MuonVeto" not in lichen.name()]
 
             if args.verbose:
