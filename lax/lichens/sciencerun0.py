@@ -12,10 +12,6 @@ import numpy as np
 from pax import units
 
 from scipy.stats import chi2
-from scipy.interpolate import RectBivariateSpline
-from scipy.stats import binom_test
-from scipy import interpolate
-import json
 
 from lax.lichen import Lichen, RangeLichen, ManyLichen, StringLichen
 from lax import __version__ as lax_version
@@ -40,11 +36,10 @@ class AllEnergy(ManyLichen):
             InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
+            S2Width(),
             DAQVeto(),
             S1SingleScatter(),
             S2PatternLikelihood(),
-            S2Tails(),
-            MuonVeto(),
             KryptonMisIdS1(),
             Flash(),
             PosDiff()
@@ -56,28 +51,34 @@ class LowEnergyRn220(AllEnergy):
 
     This is the list that we use for the Rn220 data to calibrate ER in the
     region of interest.
-
-    It doesn't contain the PreS2Junk cut
     """
 
     def __init__(self):
         AllEnergy.__init__(self)
 
-        # Remove S2Tail Cut
-        self.lichen_list.pop(8)
+        # Customize cuts for calibration data
+        for idx, lichen in enumerate(self.lichen_list):
 
-        # Replaces Interaction exists
-        self.lichen_list[1] = S1LowEnergyRange()
+            # Replaces InteractionExists with energy cut (tighter)
+            if lichen.name() == "CutInteractionExists":
+                self.lichen_list[idx] = S1LowEnergyRange()
 
-        # Use a simpler single scatter cut
-        self.lichen_list[5] = S2SingleScatterSimple()
+            # Use a simpler single scatter cut for LowE
+            if lichen.name() == "CutS2SingleScatter":
+                self.lichen_list[idx] = S2SingleScatterSimple()
 
+        # Add additional LowE cuts (that may not be tuned at HighE yet)
         self.lichen_list += [
             S1PatternLikelihood(),
-            S2Width(),
             S1MaxPMT(),
-            SingleElectronS2s(),
-            S1AreaFractionTop()
+            S1AreaFractionTop(),
+            S1Width()
+        ]
+
+        # Add injection-position cuts (not for AmBe)
+        self.lichen_list += [
+            S1AreaUpperInjectionFraction(),
+            S1AreaLowerInjectionFraction()
         ]
 
 
@@ -85,25 +86,32 @@ class LowEnergyBackground(LowEnergyRn220):
     """Select background events with cs1<200
 
     This is the list that we'll use for the actual DM search. Additionally to the
-    LowEnergyRn220 list it contains the PreS2Junk
+    LowEnergyAmBe list it contains the PreS2Junk, S2Tails, and MuonVeto
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
 
+        # Add cuts specific to background only
         self.lichen_list += [
-            PreS2Junk()
+            PreS2Junk(),
+            S2Tails(),  # Only for LowE background (#88)
+            MuonVeto()
         ]
 
 
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts.
+    It is the same as the LowEnergyRn220 cuts, except injection-related cuts
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
+
+        # Remove cuts not applicable to AmBe
+        self.lichen_list = [lichen for lichen in self.lichen_list
+                            if "InjectionFraction" not in lichen.name()]
 
 
 class DAQVeto(ManyLichen):
@@ -483,14 +491,57 @@ class S1PatternLikelihood(StringLichen):
 
     Details of the likelihood and cut definitions can be seen in the following notes.
        SR0: xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
-       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1
+       SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1,
+            xenon:xenon1t:kazama:s1_pattern_cut_sr1#update_2018_jan_4th
+
+    Requires PositionReconstruction minitrees (hax#174).
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 2
+    string = "s1_pattern_fit_hax < -23.288612 + 28.928316*s1**0.5 + 1.942163*s1 -0.173226*s1**1.5 + 0.003968*s1**2.0"
+
+
+class S1Width(StringLichen):
+    """Reject accidendal coicidence events from lone s1 and lone s2.
+    This cut is optimized to remove anomalous leakage (probably AC) candidates found in Rn220 SR1 data.
+    Details of the cut definition and acceptance can be seen in the following note.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#s1_width_cut_for_removing_remaining_ac_events
 
     Requires Extended minitrees.
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
 
     version = 1
-    string = "s1_pattern_fit < -17.384885 + 24.894875*s1**0.5 + 2.794984*s1 -0.237268*s1**1.5 + 0.005549*s1**2.0"
+    string = "s1_range_90p_area < 251.528247 + 11.50*s1**1.171407*exp(-0.057395*s1)"
+
+
+class S1AreaUpperInjectionFraction(StringLichen):
+    """Reject accidendal coicidence events happened near the upper Rn220 injection point (near PMT 131)
+
+    Details of the cut definition and acceptance can be seen in the following notes.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
+
+    Requires PositionReconstruction minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 1
+    string = "s1_area_upper_injection_fraction < 0.0865 + 1.205/(s1**0.83367)"
+
+
+class S1AreaLowerInjectionFraction(StringLichen):
+    """Reject accidendal coicidence events happened near the lower Rn220 injection point (near PMT 243)
+
+    Details of the cut definition and acceptance can be seen in the following notes.
+    xenon:xenon1t:analysis:sciencerun1:anomalous_background#signal_area_fraction_near_rn220_injection_points
+
+    Requires PositionReconstruction minitrees.
+    Contact: Shingo Kazama <kazama@physik.uzh.ch>
+    """
+
+    version = 0
+    string = "s1_area_lower_injection_fraction < 0.0550 + 1.56/(s1**0.87000)"
 
 
 class S2AreaFractionTop(Lichen):
@@ -635,25 +686,26 @@ class S2Width(Lichen):
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:width_cut_tuning#toy_fax_simulation
     Contact: Tianyu <tz2263@columbia.edu>, Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 5
+    version = 6
 
     diffusion_constant = 25.26 * ((units.cm)**2) / units.s
     v_drift = 1.440 * (units.um) / units.ns
     scg = 23.0  # s2_secondary_sc_gain in pax config
     scw = 258.41  # s2_secondary_sc_width median
     SigmaToR50 = 1.349
+    DriftTimeFromGate = 1.6 * units.us
 
-    def s2_width_model(self, z_height):
+    def s2_width_model(self, drift_time):
         """Diffusion model
         """
-        return np.sqrt(- 2 * self.diffusion_constant * z_height / self.v_drift ** 3)
+        return np.sqrt(2 * self.diffusion_constant * (drift_time - self.DriftTimeFromGate) / self.v_drift ** 2)
 
     def _process(self, df):
         df.loc[:, self.name()] = True  # Default is True
-        mask = df.eval('z < 0')
+        mask = df.drift_time > self.DriftTimeFromGate
         df.loc[mask, 'nElectron'] = np.clip(df.loc[mask, 's2'], 0, 5000) / self.scg
         df.loc[mask, 'normWidth'] = (np.square(df.loc[mask, 's2_range_50p_area'] / self.SigmaToR50) -
-                                     np.square(self.scw)) / np.square(self.s2_width_model(df.loc[mask, 'z']))
+                                     np.square(self.scw)) / np.square(self.s2_width_model(df.loc[mask, 'drift_time']))
         df.loc[mask, self.name()] = chi2.logpdf(df.loc[mask, 'normWidth'] * (df.loc[mask, 'nElectron'] - 1),
                                                 df.loc[mask, 'nElectron']) > - 14
         return df
@@ -675,27 +727,27 @@ class S1SingleScatter(Lichen):
     pair with the primary S2. Therefore we cut this event. If it fails the S2Width cut the event is
     not removed.
 
-    Current version is developed on unblinded Bkg data (paxv6.4.2). It is described in this note:
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut
+    Current version is developed on calibration data (pax v6.8.0). It is described in this note:
+    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:jacques:s1_single_scatter_cut_sr1
 
-    It should be applicable to data regardless of if it is ER or NR.
+    It should be applicable to data regardless whether it is ER or NR.
 
-    Contact: Jacques <jpienaa@purdue.edu>
+    Contact: Jacques Pienaar, <jpienaar@uchicago.edu>
     """
 
-    version = 3
+    version = 4
     s2width = S2Width
 
     def _process(self, df):
         df.loc[:, self.name()] = True  # Default is True
-        mask = df.eval('alt_s1_interaction_z < 0')
+        mask = df.alt_s1_interaction_drift_time > self.s2width.DriftTimeFromGate
         alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / self.s2width.scg
 
         # Alternate S1 relative width
         alt_rel_width = np.square(df.loc[mask,
                                          's2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)
         alt_rel_width /= np.square(self.s2width.s2_width_model(self.s2width,
-                                                               df.loc[mask, 'alt_s1_interaction_z']))
+                                                               df.loc[mask, 'alt_s1_interaction_drift_time']))
 
         alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
 
@@ -704,47 +756,26 @@ class S1SingleScatter(Lichen):
         return df
 
 
-class S1AreaFractionTop(RangeLichen):
+class S1AreaFractionTop(StringLichen):
     '''S1 area fraction top cut
 
     Uses a modified version of scipy.stats.binom_test to compute a p-value based on the
-    observed number of s1 photons in the top array, given the expected
-    probability that a photon at the event's (x,y,z) makes it to the top array.
+    observed number of s1 photons in the top array, given the expected probability (derived
+    from Kr83m 32 keV line) that a photon at the event's (x,y,z) makes it to the top array.
     Modifications made to original algorithm implemented in pax increase sensitivity for small s1s.
-    For pax < v6.6.0 computes p-value live, otherwise loads it from disk. Computation done here is
-    not as accurate as in pax > v6.6.5
+    Algorithm imported in PositionReconstruction treemaker using corrected positions to calculate
+    p-value.
 
-    Ideally requires Extended minitrees >= v0.0.4
-
-    Uses a 3D map generated with Kr83m 32 keV line
+    Requires PositionReconstruction minitrees.
 
     note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:xe1t_s1_aft_map
     also https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:darryl:s1_aft_update
 
     Contact: Darryl Masson, dmasson@purdue.edu
+             Shingo Kazama, kazama@physik.uzh.ch
     '''
-
-    variable = 's1_area_fraction_top_probability'
-    allowed_range = (1e-4, 1 + 1e-7)  # must accept p-value = 1.0 with a < comparison
-    version = 2
-
-    def __init__(self):
-        aftmap_filename = os.path.join(DATA_DIR, 's1_aft_rz_02Mar2017.json')
-        with open(aftmap_filename) as data_file:
-            data = json.load(data_file)
-        r_pts = np.array(data['r_pts'])
-        z_pts = np.array(data['z_pts'])
-        aft_vals = np.array(data['map']).reshape(len(r_pts), len(z_pts))
-        self.aft_map = RectBivariateSpline(r_pts, z_pts, aft_vals)
-
-    def pre(self, df):
-        if self.variable not in df:
-            df.loc[:, self.variable] = df.apply(lambda row: binom_test(np.round(row['s1_area_fraction_top'] * row['s1']),
-                                                                       np.round(row['s1']),
-                                                                       self.aft_map(np.sqrt(row['x']**2 + row['y']**2),
-                                                                                    row['z'])[0, 0]),
-                                                axis=1)
-        return df
+    version = 4
+    string = "s1_area_fraction_top_probability_hax > 0.001"
 
 
 class PreS2Junk(StringLichen):
@@ -759,61 +790,35 @@ class PreS2Junk(StringLichen):
     string = "area_before_main_s2 - s1 < 300"
 
 
-class SingleElectronS2s(Lichen):
-    """Remove mis-identified single electron S2s classified as S1s
+class MuonVeto(ManyLichen):
+    """Remove events in coincidence with Muon Veto triggers and when MV off.
 
-    Details of the definition can be seen in the following note:
+    Requires Proximity minitrees.
 
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:firstresults:exploring_se_cut
-
-    This was done by redrawing and improving the classification bounds for S1s at low energies by
-    building up from Jelles low-energy classification work at a peaks level.
-    To do this Rn220 data processed in pax.v6.4.2 was used.
-
-    Requires: TotalProperties, LowEnergyS1Candidates minitrees.
-
-    Contact: Miguel Angel Vargas <m_varg03@uni-muenster.de>
-    """
-    version = 3
-    allowed_range_area = (10, 200)
-    allowed_range_rt = (11, 450)
-    area_variable = 's1'
-    rt_variable = 's1_rise_time'
-    aft_variable = 's1_area_fraction_top'
-
-    bound = interpolate.interp1d([0, 0.3, 0.4, 0.5, 0.60, 0.60, 1.0], [70, 70, 61, 61, 35, 0, 0], kind='linear')
-
-    def _process(self, df):
-        # Is the event inside the area box considered for this study?
-        cond1 = ((df[self.area_variable] > self.allowed_range_area[0]) &
-                 (df[self.area_variable] < self.allowed_range_area[1]) &
-                 (df[self.rt_variable] > self.allowed_range_rt[0]) &
-                 (df[self.rt_variable] < self.allowed_range_rt[1]))
-        cond2 = (df[self.rt_variable] < SingleElectronS2s.bound(df[self.aft_variable]))
-
-        # Pass events by default
-        passes = np.ones(len(df), dtype=np.bool)
-
-        # Reject events inside the box that don't pass the bound
-        passes = (True ^ (cond1)) | (cond1 & cond2)
-
-        df.loc[:, self.name()] = passes
-        return df
-
-
-class MuonVeto(StringLichen):
-    """Remove events in coincidence with Muon Veto triggers.
-    It checks the distance in time (ns) between a reference position inside the waveform
-    and the nearest MV trigger.
-    The event is excluded if the nearest MV trigger falls in a [-2ms,+3ms] time window
-    with respect to the reference position.
-    It requires Proximity minitrees.
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:mv_cut_sr1
+
     Contact: Andrea Molinario <andrea.molinario@lngs.infn.it>
     """
+    version = 3
 
-    version = 1
-    string = "nearest_muon_veto_trigger < -2000000 | nearest_muon_veto_trigger > 3000000"
+    def __init__(self):
+        self.lichen_list = [self.MuonVetoOn(),
+                            self.MuonVetoCoincidence()]
+
+    class MuonVetoCoincidence(StringLichen):
+        """Checks the distance in time (ns) between a reference position inside the waveform
+        and the nearest MV trigger.
+        The event is excluded if the nearest MV trigger falls in a [-2ms,+3ms] time window
+        with respect to the reference position.
+        """
+
+        string = "nearest_muon_veto_trigger < -2e6 | nearest_muon_veto_trigger > 3e6"
+
+    class MuonVetoOn(StringLichen):
+        """Remove events when MV was not working (abs(nearest_muon_veto_trigger)>20 s).
+        """
+
+        string = "nearest_muon_veto_trigger > -2e10 & nearest_muon_veto_trigger < 2e10"
 
 
 class KryptonMisIdS1(StringLichen):
@@ -851,17 +856,20 @@ class Flash(Lichen):
 
 class PosDiff(Lichen):
     """
-    Note:https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sr1:pos_cut_v0
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sr1:pos_cut_v3
     This cut is defined for removing the events with large position difference between NN and TPF alogrithm,
     which can partly remove wall leakage events due to the small size of S2.
-    Contact: Yuehuan Wei <ywei@physics.ucsd.edu>
+    Contact: Yuehuan Wei <ywei@physics.ucsd.edu>, Tianyu Zhu <tz2263@columbia.edu>
     """
-    version = 0
+    version = 3
 
     def _process(self, df):
-        df.loc[:, self.name()] = (((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
-                                  (df['y_observed_nn'] - df['y_observed_tpf'])**2 < 6) &
-                                  (df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -80) &
-                                  (df['r_observed_nn']**2 - df['r_observed_tpf']**2 < 140))
-
+        df.loc[:, self.name()] = ((df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -100) &
+                                  (((np.sqrt((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
+                                             (df['y_observed_nn'] - df['y_observed_tpf'])**2) < 3.076) &
+                                    (df['s2'] > 300)) |
+                                   ((np.sqrt((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
+                                             (df['y_observed_nn'] - df['y_observed_tpf'])**2) <
+                                     (13.719 * np.exp(-df['s2'] / 55.511) + 3.014)) &
+                                    (df['s2'] <= 300))))
         return df

@@ -9,7 +9,7 @@ import os
 import numpy as np
 from pax import units
 
-from lax.lichen import Lichen, ManyLichen, StringLichen
+from lax.lichen import ManyLichen, StringLichen
 from lax.lichens import sciencerun0
 from lax import __version__ as lax_version
 
@@ -30,14 +30,13 @@ class AllEnergy(ManyLichen):
             FiducialCylinder1p3T(),
             InteractionExists(),
             S2Threshold(),
+            InteractionPeaksBiggest(),
             S2AreaFractionTop(),
             S2SingleScatter(),
+            S2Width(),
             DAQVeto(),
             S1SingleScatter(),
             S2PatternLikelihood(),
-            S2Tails(),
-            InteractionPeaksBiggest(),
-            MuonVeto(),
             KryptonMisIdS1(),
             Flash(),
             PosDiff()
@@ -56,20 +55,29 @@ class LowEnergyRn220(AllEnergy):
     def __init__(self):
         AllEnergy.__init__(self)
 
-        # S2Tails not used in calibration modes
-        self.lichen_list.pop(8)
+        # Customize cuts for LowE data
+        for idx, lichen in enumerate(self.lichen_list):
 
-        # Replaces Interaction exists
-        self.lichen_list[1] = S1LowEnergyRange()
+            # Replaces InteractionExists with energy cut (tighter)
+            if lichen.name() == "CutInteractionExists":
+                self.lichen_list[idx] = S1LowEnergyRange()
 
-        # Use a simpler single scatter cut
-        self.lichen_list[4] = S2SingleScatterSimple()
+            # Use a simpler single scatter cut for LowE
+            if lichen.name() == "CutS2SingleScatter":
+                self.lichen_list[idx] = S2SingleScatterSimple()
 
+        # Add additional LowE cuts (that may not be tuned at HighE yet)
         self.lichen_list += [
             S1PatternLikelihood(),
-            S2Width(),
             S1MaxPMT(),
             S1AreaFractionTop(),
+            S1Width()
+        ]
+
+        # Add injection-position cuts (not for AmBe/NG)
+        self.lichen_list += [
+            S1AreaUpperInjectionFraction(),
+            S1AreaLowerInjectionFraction()
         ]
 
 
@@ -84,47 +92,39 @@ class LowEnergyBackground(LowEnergyRn220):
         LowEnergyRn220.__init__(self)
 
         self.lichen_list += [
-            PreS2Junk()
+            PreS2Junk(),
+            S2Tails(),  # Only for LowE background (#88)
+            MuonVeto()
         ]
 
 
 class LowEnergyAmBe(LowEnergyRn220):
     """Select AmBe events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts.
+    It is the same as the LowEnergyRn220 cuts, except injection-related cuts
     """
 
     def __init__(self):
         LowEnergyRn220.__init__(self)
 
+        # Remove cuts not applicable to AmBe/NG
+        self.lichen_list = [lichen for lichen in self.lichen_list
+                            if "InjectionFraction" not in lichen.name()]
 
-class LowEnergyNG(LowEnergyRn220):
+
+class LowEnergyNG(LowEnergyAmBe):
     """Select NG events with cs1<200 with appropriate cuts
 
-    It is the same as the LowEnergyRn220 cuts.
+    It is the same as the LowEnergyAmBe cuts.
     """
 
     def __init__(self):
-        LowEnergyRn220.__init__(self)
+        LowEnergyAmBe.__init__(self)
 
 
 DAQVeto = sciencerun0.DAQVeto
 
-
-class S2Tails(Lichen):
-    """Check if event is in a tail of a previous S2
-    Requires S2Tail minitrees.
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:subgroup:wimphysics:s2_tails_sr0 (SR0)
-    https://xecluster.lngs.infn.it/dokuwiki/doku.php?id=xenon:xenon1t:analysis:subgroup:20170720_sr1_cut_s2_tail (SR1)
-    Contact: Daniel Coderre <daniel.coderre@physik.uni-freiburg.de>
-             Diego Ramírez <diego.ramirez@physik.uni-freiburg.de>
-    """
-    version = 1
-
-    def _process(self, df):
-        df.loc[:, self.name()] = (df['s2_over_tdiff'] < 0.025)
-        return df
-
+S2Tails = sciencerun0.S2Tails
 
 FiducialCylinder1T_TPF2dFDC = sciencerun0.FiducialCylinder1T_TPF2dFDC
 
@@ -227,6 +227,8 @@ S1MaxPMT = sciencerun0.S1MaxPMT
 
 S1PatternLikelihood = sciencerun0.S1PatternLikelihood
 
+S1Width = sciencerun0.S1Width
+
 S2AreaFractionTop = sciencerun0.S2AreaFractionTop
 
 S2SingleScatter = sciencerun0.S2SingleScatter
@@ -253,12 +255,11 @@ class S2Width(sciencerun0.S2Width):
     """S2 Width cut based on diffusion model with SR1 parameters
     See sciencerun0.py for full implementation
     """
-    version = 5
+    version = 6
     diffusion_constant = 29.35 * ((units.cm)**2) / units.s
     v_drift = 1.335 * (units.um) / units.ns
     scg = 21.3  # s2_secondary_sc_gain in pax config
     scw = 229.58  # s2_secondary_sc_width median
-    SigmaToR50 = 1.349
 
 
 class S1SingleScatter(sciencerun0.S1SingleScatter):
@@ -280,3 +281,7 @@ KryptonMisIdS1 = sciencerun0.KryptonMisIdS1
 Flash = sciencerun0.Flash
 
 PosDiff = sciencerun0.PosDiff
+
+S1AreaUpperInjectionFraction = sciencerun0.S1AreaUpperInjectionFraction
+
+S1AreaLowerInjectionFraction = sciencerun0.S1AreaLowerInjectionFraction
