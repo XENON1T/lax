@@ -686,7 +686,7 @@ class S2Width(Lichen):
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:width_cut_tuning#toy_fax_simulation
     Contact: Tianyu <tz2263@columbia.edu>, Yuehuan <weiyh@physik.uzh.ch>, Jelle <jaalbers@nikhef.nl>
     """
-    version = 5
+    version = 6
 
     diffusion_constant = 25.26 * ((units.cm)**2) / units.s
     v_drift = 1.440 * (units.um) / units.ns
