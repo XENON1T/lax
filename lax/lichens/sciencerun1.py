@@ -260,7 +260,6 @@ class S2Width(sciencerun0.S2Width):
     v_drift = 1.335 * (units.um) / units.ns
     scg = 21.3  # s2_secondary_sc_gain in pax config
     scw = 229.58  # s2_secondary_sc_width median
-    SigmaToR50 = 1.349
 
 
 class S1SingleScatter(sciencerun0.S1SingleScatter):

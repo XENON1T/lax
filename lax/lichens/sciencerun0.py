@@ -693,18 +693,19 @@ class S2Width(Lichen):
     scg = 23.0  # s2_secondary_sc_gain in pax config
     scw = 258.41  # s2_secondary_sc_width median
     SigmaToR50 = 1.349
+    DriftTimeFromGate = 1.6 * units.us
 
-    def s2_width_model(self, z_height):
+    def s2_width_model(self, drift_time):
         """Diffusion model
         """
-        return np.sqrt(- 2 * self.diffusion_constant * z_height / self.v_drift ** 3)
+        return np.sqrt(2 * self.diffusion_constant * (drift_time - self.DriftTimeFromGate) / self.v_drift ** 2)
 
     def _process(self, df):
         df.loc[:, self.name()] = True  # Default is True
-        mask = df.eval('z < 0')
+        mask = df.drift_time > self.DriftTimeFromGate
         df.loc[mask, 'nElectron'] = np.clip(df.loc[mask, 's2'], 0, 5000) / self.scg
         df.loc[mask, 'normWidth'] = (np.square(df.loc[mask, 's2_range_50p_area'] / self.SigmaToR50) -
-                                     np.square(self.scw)) / np.square(self.s2_width_model(df.loc[mask, 'z']))
+                                     np.square(self.scw)) / np.square(self.s2_width_model(df.loc[mask, 'drift_time']))
         df.loc[mask, self.name()] = chi2.logpdf(df.loc[mask, 'normWidth'] * (df.loc[mask, 'nElectron'] - 1),
                                                 df.loc[mask, 'nElectron']) > - 14
         return df
@@ -734,19 +735,19 @@ class S1SingleScatter(Lichen):
     Contact: Jacques Pienaar, <jpienaar@uchicago.edu>
     """
 
-    version = 3
+    version = 4
     s2width = S2Width
 
     def _process(self, df):
         df.loc[:, self.name()] = True  # Default is True
-        mask = df.eval('alt_s1_interaction_z < 0')
+        mask = df.alt_s1_interaction_drift_time > self.s2width.DriftTimeFromGate
         alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / self.s2width.scg
 
         # Alternate S1 relative width
         alt_rel_width = np.square(df.loc[mask,
                                          's2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)
         alt_rel_width /= np.square(self.s2width.s2_width_model(self.s2width,
-                                                               df.loc[mask, 'alt_s1_interaction_z']))
+                                                               df.loc[mask, 'alt_s1_interaction_drift_time']))
 
         alt_interaction_passes = chi2.logpdf(alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
 
