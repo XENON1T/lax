@@ -499,15 +499,14 @@ class S1PatternLikelihood(Lichen):
     """
     version = 3
     def _process(self, df):
+        s1t = df['s1']*df['s1_area_fraction_top']
+        s1b = df['s1']*(1.-df['s1_area_fraction_top'])
       
-      s1t = df['s1']*df['s1_area_fraction_top']
-      s1b = df['s1']*(1.-df['s1_area_fraction_top'])
-      
-      df.loc[:, self.name()] = ((df['s1_pattern_fit_hax']-df['s1_pattern_fit_bottom_hax']
-                                 < 13.0 + 2.3*s1t**0.5 + 8.0*s1t - 1.0*s1t**1.5 + 0.04*s1t**2.0) &
-                                (df['s1_pattern_fit_bottom_hax']
-                                 < -10.5 + 21.9*s1b**0.5 + 1.44*s1b - 0.21*s1b**1.5 + 0.0064*s1b**2.0))
-      return df
+        df.loc[:, self.name()] = ((df['s1_pattern_fit_hax']-df['s1_pattern_fit_bottom_hax']
+                                   < 13.0 + 2.3*s1t**0.5 + 8.0*s1t - 1.0*s1t**1.5 + 0.04*s1t**2.0) &
+                                  (df['s1_pattern_fit_bottom_hax']
+                                   < -10.5 + 21.9*s1b**0.5 + 1.44*s1b - 0.21*s1b**1.5 + 0.0064*s1b**2.0))
+        return df
 
 
 class S1Width(StringLichen):
