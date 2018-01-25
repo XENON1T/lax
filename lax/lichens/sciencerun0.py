@@ -856,20 +856,15 @@ class Flash(Lichen):
 
 class PosDiff(Lichen):
     """
-    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sr1:pos_cut_v3
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sr1:pos_cut_v4#final_cut_definition
     This cut is defined for removing the events with large position difference between NN and TPF alogrithm,
     which can partly remove wall leakage events due to the small size of S2.
     Contact: Yuehuan Wei <ywei@physics.ucsd.edu>, Tianyu Zhu <tz2263@columbia.edu>
     """
-    version = 3
+    version = 4
 
     def _process(self, df):
-        df.loc[:, self.name()] = ((df['r_observed_nn']**2 - df['r_observed_tpf']**2 > -100) &
-                                  (((np.sqrt((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
-                                             (df['y_observed_nn'] - df['y_observed_tpf'])**2) < 3.076) &
-                                    (df['s2'] > 300)) |
-                                   ((np.sqrt((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
-                                             (df['y_observed_nn'] - df['y_observed_tpf'])**2) <
-                                     (13.719 * np.exp(-df['s2'] / 55.511) + 3.014)) &
-                                    (df['s2'] <= 300))))
+        df.loc[:, self.name()] = ((df['r_observed_nn'] - df['r_observed_tpf'] > -1.25) &
+                                 ((np.sqrt((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
+                                             (df['y_observed_nn'] - df['y_observed_tpf'])**2) < 3.18)))
         return df
