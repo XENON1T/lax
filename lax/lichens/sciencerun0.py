@@ -504,7 +504,8 @@ class S1PatternLikelihood(ManyLichen):
                             self.S1BottomPatternLikelihood()]
 
     class S1TopPatternLikelihood(Lichen):
-
+        """S1PatternLikelihood cut based on the top PMT array
+        """
         def _process(self, df):
             s1t = df['s1'] * df['s1_area_fraction_top']
             df.loc[:, self.name()] = (df['s1_pattern_fit_hax'] - df['s1_pattern_fit_bottom_hax'] <
@@ -512,7 +513,8 @@ class S1PatternLikelihood(ManyLichen):
             return df
 
     class S1BottomPatternLikelihood(Lichen):
-
+        """S1PatternLikelihood cut based on the bottom PMT array
+        """
         def _process(self, df):
             s1b = df['s1'] * (1. - df['s1_area_fraction_top'])
             df.loc[:, self.name()] = (df['s1_pattern_fit_bottom_hax'] < - 10.5 + 21.9 * s1b**0.5 +
