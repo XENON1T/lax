@@ -7,7 +7,7 @@ This includes all current definitions of the cuts for the first science run
 import inspect
 import os
 import pytz
-import pickle
+import pickle  # noqa
 
 import numpy as np
 from pax import units
@@ -877,7 +877,7 @@ class PosDiff(Lichen):
         return df
 
 
-class SingleElectronS2s(Lichen):
+class SingleElectronS2s(Lichen):  # noqa
     """To classify S1s from single electron S2s.
     Information: https://xe1t-wiki.lngs.infn.it/lib/exe/fetch.php?media=xenon:xenon1t:analysis:subgroup:cuts:meetings:
     se_classification.html
@@ -889,11 +889,11 @@ class SingleElectronS2s(Lichen):
     def _process(self, df):
         # Random forest classifier
         forest_filename = os.path.join(DATA_DIR, 'XENON1T_random_forest_peak_classifier_01262018.pkl')
-        forest_load = pickle.load(open(forest_filename, 'rb'))
+        forest_load = pickle.load(open(forest_filename, 'rb'))  # noqa
 
         # Gradient Boosted Decesion Tree classifier
         gbdt_filename = os.path.join(DATA_DIR, 'XENON1T_gradient_bdt_peak_classifier_01262018.pkl')
-        gbdt_load = pickle.load(open(gbdt_filename, 'rb'))
+        gbdt_load = pickle.load(open(gbdt_filename, 'rb'))  # noqa
 
         def _classifier_soft(X):
             return 0.5 * forest_load.predict_proba(X) + 0.5 * gbdt_load.predict_proba(X)
