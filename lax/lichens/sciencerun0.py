@@ -7,6 +7,7 @@ This includes all current definitions of the cuts for the first science run
 import inspect
 import os
 import pytz
+import pickle
 
 import numpy as np
 from pax import units
@@ -42,7 +43,8 @@ class AllEnergy(ManyLichen):
             S2PatternLikelihood(),
             KryptonMisIdS1(),
             Flash(),
-            PosDiff()
+            PosDiff(),
+            SingleElectronS2s()
         ]
 
 
@@ -872,4 +874,34 @@ class PosDiff(Lichen):
                                              (df['y_observed_nn'] - df['y_observed_tpf'])**2) <
                                      (13.719 * np.exp(-df['s2'] / 55.511) + 3.014)) &
                                     (df['s2'] <= 300))))
+        return df
+
+
+class SingleElectronS2s(Lichen):
+    """To classify S1s from single electron S2s.
+    Information: https://xe1t-wiki.lngs.infn.it/lib/exe/fetch.php?media=xenon:xenon1t:analysis:subgroup:cuts:meetings:
+    se_classification.html
+    Contact: Fei Gao <feigao.ge@gmail.com>
+    """
+
+    version = 0
+
+    # Random forest classifier
+    forest_filename = os.path.join(DATA_DIR, 'XENON1T_random_forest_peak_classifier_01262018.pkl')
+    forest_load = pickle.load(open(forest_filename, 'rb'))
+
+    # Gradient Boosted Decesion Tree classifier
+    gbdt_filename = os.path.join(DATA_DIR, 'XENON1T_gradient_bdt_peak_classifier_01262018.pkl')
+    gbdt_load = pickle.load(open(gbdt_filename, 'rb'))
+
+    def _classifier_soft(X):
+        return 0.5 * forest_load.predict_proba(X) + 0.5 * gbdt_load.predict_proba(X)
+
+    def _process(self, df):
+        df['ses2prob'] = classifier_soft(df_s1_cl[['s1','s1_area_fraction_top','s1_rise_time', 's1_range_90p_area']])[:,1]
+        cut_threshold = 0.7
+        # current model is trained by data with S1 < 70PE and S1 width < 450PE
+        df.loc[:, self.name()] = (((df['ses2prob'] <= cut_threshold)) |
+                                   (df['s1_range_90p_area'] < 450) |
+                                   (df['s1'] > 70))
         return df
