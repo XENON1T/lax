@@ -884,7 +884,7 @@ class SingleElectronS2s(Lichen):  # noqa
     Contact: Fei Gao <feigao.ge@gmail.com>
     """
 
-    version = 0
+    version = 4
 
     def _process(self, df):
         # Random forest classifier
@@ -898,7 +898,7 @@ class SingleElectronS2s(Lichen):  # noqa
         def _classifier_soft(X):
             return 0.5 * forest_load.predict_proba(X) + 0.5 * gbdt_load.predict_proba(X)
 
-        df['ses2prob'] = _classifier_soft(df[['s1','s1_area_fraction_top','s1_rise_time', 's1_range_90p_area']])[:,1]
+        df['ses2prob'] = _classifier_soft(df[['s1', 's1_area_fraction_top', 's1_rise_time', 's1_range_90p_area']])[:, 1]
         cut_threshold = 0.7
         # current model is trained by data with S1 < 70PE and S1 width < 450PE
         df.loc[:, self.name()] = (((df['ses2prob'] <= cut_threshold) & (df['s1_range_90p_area'] < 450)) | (df['s1'] > 70))
