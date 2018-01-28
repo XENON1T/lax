@@ -486,20 +486,40 @@ class S1MaxPMT(StringLichen):
     string = "s1_largest_hit_area < 0.052 * s1 + 4.15"
 
 
-class S1PatternLikelihood(StringLichen):
+class S1PatternLikelihood(ManyLichen):
     """Reject accidendal coicident events from lone s1 and lone s2.
 
     Details of the likelihood and cut definitions can be seen in the following notes.
        SR0: xenon:xenon1t:analysis:summary_note:s1_pattern_likelihood_cut
        SR1: xenon:xenon1t:kazama:s1_pattern_cut_sr1,
-            xenon:xenon1t:kazama:s1_pattern_cut_sr1#update_2018_jan_4th
+            xenon:xenon1t:kazama:s1_pattern_cut_sr1#update_2018_jan_24th
 
     Requires PositionReconstruction minitrees (hax#174).
     Contact: Shingo Kazama <kazama@physik.uzh.ch>
     """
+    version = 3
 
-    version = 2
-    string = "s1_pattern_fit_hax < -23.288612 + 28.928316*s1**0.5 + 1.942163*s1 -0.173226*s1**1.5 + 0.003968*s1**2.0"
+    def __init__(self):
+        self.lichen_list = [self.S1TopPatternLikelihood(),
+                            self.S1BottomPatternLikelihood()]
+
+    class S1TopPatternLikelihood(Lichen):
+        """S1PatternLikelihood cut based on the top PMT array
+        """
+        def _process(self, df):
+            s1t = df['s1'] * df['s1_area_fraction_top']
+            df.loc[:, self.name()] = (df['s1_pattern_fit_hax'] - df['s1_pattern_fit_bottom_hax'] <
+                                      13.0 + 2.3 * s1t**0.5 + 8.0 * s1t - 1.0 * s1t**1.5 + 0.04 * s1t**2.0)
+            return df
+
+    class S1BottomPatternLikelihood(Lichen):
+        """S1PatternLikelihood cut based on the bottom PMT array
+        """
+        def _process(self, df):
+            s1b = df['s1'] * (1. - df['s1_area_fraction_top'])
+            df.loc[:, self.name()] = (df['s1_pattern_fit_bottom_hax'] < - 10.5 + 21.9 * s1b**0.5 +
+                                      1.44 * s1b - 0.21 * s1b**1.5 + 0.0064 * s1b**2.0)
+            return df
 
 
 class S1Width(StringLichen):
