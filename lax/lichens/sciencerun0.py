@@ -879,8 +879,7 @@ class PosDiff(Lichen):
 
 class SingleElectronS2s(Lichen):  # noqa
     """To classify S1s from single electron S2s.
-    Information: https://xe1t-wiki.lngs.infn.it/lib/exe/fetch.php?media=xenon:xenon1t:analysis:subgroup:cuts:meetings:
-    se_classification.html
+    Information: xenon:xenon1t:analysis:subgroup:cuts:meetings:20180126:se_classification
     Contact: Fei Gao <feigao.ge@gmail.com>
     """
 
