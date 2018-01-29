@@ -878,7 +878,9 @@ class PosDiff(Lichen):
 
 
 class SingleElectronS2s(Lichen):  # noqa
-    """To classify S1s from single electron S2s.
+    """To classify S1s from single electron S2s. Features (area, area_fraction_top, rise_time, range_90p_area) from
+    S1 and single electron S2s samples are used to train a Gradient-BDT and Random-Forest classifier. A weight average
+    voting was then used to distinguish the two samples and cut is defined in this new parameter space.
     Information: xenon:xenon1t:analysis:subgroup:cuts:meetings:20180126:se_classification
     Contact: Fei Gao <feigao.ge@gmail.com>
     """
