@@ -39,7 +39,8 @@ class AllEnergy(ManyLichen):
             S2PatternLikelihood(),
             KryptonMisIdS1(),
             Flash(),
-            PosDiff()
+            PosDiff(),
+            SingleElectronS2s()
         ]
 
 
@@ -285,3 +286,5 @@ PosDiff = sciencerun0.PosDiff
 S1AreaUpperInjectionFraction = sciencerun0.S1AreaUpperInjectionFraction
 
 S1AreaLowerInjectionFraction = sciencerun0.S1AreaLowerInjectionFraction
+
+SingleElectronS2s = sciencerun0.SingleElectronS2s

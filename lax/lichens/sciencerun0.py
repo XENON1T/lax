@@ -7,6 +7,7 @@ This includes all current definitions of the cuts for the first science run
 import inspect
 import os
 import pytz
+import pickle  # noqa
 
 import numpy as np
 from pax import units
@@ -42,7 +43,8 @@ class AllEnergy(ManyLichen):
             S2PatternLikelihood(),
             KryptonMisIdS1(),
             Flash(),
-            PosDiff()
+            PosDiff(),
+            SingleElectronS2s()
         ]
 
 
@@ -892,4 +894,38 @@ class PosDiff(Lichen):
                                              (df['y_observed_nn'] - df['y_observed_tpf'])**2) <
                                      (13.719 * np.exp(-df['s2'] / 55.511) + 3.014)) &
                                     (df['s2'] <= 300))))
+        return df
+
+
+class SingleElectronS2s(Lichen):  # noqa
+    """To classify S1s from single electron S2s. Features (area, area_fraction_top, rise_time, range_90p_area) from
+    S1 and single electron S2s samples are used to train a Gradient-BDT and Random-Forest classifier. A weight average
+    voting was then used to distinguish the two samples and cut is defined in this new parameter space.
+    Information: xenon:xenon1t:analysis:subgroup:cuts:meetings:20180126:se_classification
+    Contact: Fei Gao <feigao.ge@gmail.com>
+    """
+
+    version = 4
+
+    def _process(self, df):
+
+        # Random forest classifier
+        forest_filename = os.path.join(DATA_DIR, 'XENON1T_random_forest_peak_classifier_01262018.pkl')
+        forest_load = pickle.load(open(forest_filename, 'rb'))  # noqa
+
+        # Gradient Boosted Decesion Tree classifier
+        gbdt_filename = os.path.join(DATA_DIR, 'XENON1T_gradient_bdt_peak_classifier_01262018.pkl')
+        gbdt_load = pickle.load(open(gbdt_filename, 'rb'))  # noqa
+
+        def _classifier_soft(features):
+            return 0.5 * forest_load.predict_proba(features) + 0.5 * gbdt_load.predict_proba(features)
+
+        df['ses2prob'] = _classifier_soft(df[['s1', 's1_area_fraction_top', 's1_rise_time', 's1_range_90p_area']])[:, 1]
+
+        cut_threshold = 0.7
+
+        # current model is trained by data with S1 < 70PE and S1 width < 450PE
+        df.loc[:, self.name()] = (((df['ses2prob'] <= cut_threshold) & (df['s1_range_90p_area'] < 450)) |
+                                  (df['s1'] > 70))
+
         return df
