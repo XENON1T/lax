@@ -60,7 +60,8 @@ def main():
     RUN_NUMBER = args.RUN_NUMBER
     MINITREE_NAMES = ['Fundamentals', 'Corrections', 'Basics', 'TotalProperties',
                       'Extended', 'TailCut', 'Proximity', 'PositionReconstruction',
-                      'FlashIdentification']
+                      'LargestPeakProperties', 'FlashIdentification']
+
     OUTPUT_PATH = args.OUTPUT_PATH
 
     # Harcode warning: This should be more flexible, allowing
