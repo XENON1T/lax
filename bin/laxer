@@ -125,10 +125,6 @@ def main():
                   'minitree_paths': ['.', args.MINITREE_PATH]
                   }
 
-    # Be careful what you're doing here
-    if args.RUN_NUMBER < 0:
-        HAX_KWARGS['blinding_cut'] = 'run_number<=0'
-
     hax.init(**HAX_KWARGS)
 
     DF_ALL = hax.minitrees.load(RUN_NUMBER, MINITREE_NAMES)
