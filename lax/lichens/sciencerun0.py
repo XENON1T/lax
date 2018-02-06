@@ -922,7 +922,7 @@ class SingleElectronS2s(Lichen):  # noqa
 
         df.loc[:, 'ses2prob'] = _classifier_soft(df[['s1', 's1_area_fraction_top', 's1_rise_time', 's1_range_90p_area']])[:, 1]
 
-        cut_threshold = 0.8
+        cut_threshold = 0.9
 
         # current model is trained by data with S1 < 70PE and S1 width < 450PE
         df.loc[:, self.name()] = (((df['ses2prob'] <= cut_threshold) & (df['s1_range_90p_area'] < 450)) |
