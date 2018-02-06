@@ -537,7 +537,7 @@ class S1Width(StringLichen):
     """
 
     version = 1
-    string = "s1_range_90p_area < 251.528247 + 11.50*s1**1.171407*exp(-0.057395*s1)"
+    string = "s1_range_90p_area < 251.528247 + 11.50 * s1**1.171407 * exp(-0.057395 * s1)"
 
 
 class S1AreaUpperInjectionFraction(StringLichen):
@@ -551,7 +551,7 @@ class S1AreaUpperInjectionFraction(StringLichen):
     """
 
     version = 1
-    string = "s1_area_upper_injection_fraction < 0.0865 + 1.205/(s1**0.83367)"
+    string = "s1_area_upper_injection_fraction < 0.0865 + 1.205 / (s1**0.83367)"
 
 
 class S1AreaLowerInjectionFraction(StringLichen):
@@ -565,7 +565,7 @@ class S1AreaLowerInjectionFraction(StringLichen):
     """
 
     version = 0
-    string = "s1_area_lower_injection_fraction < 0.0550 + 1.56/(s1**0.87000)"
+    string = "s1_area_lower_injection_fraction < 0.0550 + 1.56 / (s1**0.87000)"
 
 
 class S2AreaFractionTop(Lichen):
@@ -639,12 +639,12 @@ class CS2AreaFractionTop(ManyLichen):
     class CS2AreaFractionTopUpper(StringLichen):
         """cS2 AFT upper bound
         """
-        string = 'cs2_aft<0.63756073+1.42873942/sqrt(s2)'
+        string = 'cs2_aft < 0.63756073 + 1.42873942 / sqrt(s2)'
 
     class CS2AreaFractionTopLower(StringLichen):
         """cS2 AFT lower bound
         """
-        string = 'cs2_aft>0.62752992-1.79928264/sqrt(s2)'
+        string = 'cs2_aft > 0.62752992 - 1.79928264 / sqrt(s2)'
 
     lichen_list = [
         CS2AreaFractionTopUpper(),
@@ -664,7 +664,7 @@ class CS2AreaFractionTop96p(StringLichen):
 
     See the note at xenon:xenon1t:adam:s2aft:sr1_cs2_cut
     """
-    string = 'cs2_aft<0.63594139+0.912103/sqrt(s2)|z<-9'
+    string = 'cs2_aft < 0.63594139 + 0.912103 / sqrt(s2) | z < -9'
 
 
 class S2SingleScatter(Lichen):
@@ -726,7 +726,7 @@ class S2PatternLikelihood(StringLichen):
     Contact: Bart Pelssers  <bart.pelssers@fysik.su.se> Tianyu Zhu  <tz2263@columbia.edu>
     """
     version = 1
-    string = "s2_pattern_fit < 0.0390*s2 + 609*s2**0.0602 - 666"
+    string = "s2_pattern_fit < 0.0390 * s2 + 609 * s2**0.0602 - 666"
 
 
 class S2Threshold(StringLichen):
