@@ -635,9 +635,13 @@ class CS2AreaFractionTop(ManyLichen):
     version = 0
 
     class CS2AreaFractionTopUpper(StringLichen):
+        """cS2 AFT upper bound
+        """
         string = 'cs2_aft<0.63756073+1.42873942/sqrt(s2)'
 
     class CS2AreaFractionTopLower(StringLichen):
+        """cS2 AFT lower bound
+        """
         string = 'cs2_aft>0.62752992-1.79928264/sqrt(s2)'
 
     lichen_list = [
