@@ -905,24 +905,24 @@ class SingleElectronS2s(Lichen):  # noqa
     Contact: Fei Gao <feigao.ge@gmail.com>
     """
 
-    version = 4
+    version = 5
 
     def _process(self, df):
 
         # Random forest classifier
-        forest_filename = os.path.join(DATA_DIR, 'XENON1T_random_forest_peak_classifier_01262018.pkl')
+        forest_filename = os.path.join(DATA_DIR, 'XENON1T_random_forest_peak_classifier_02052018.pkl')
         forest_load = pickle.load(open(forest_filename, 'rb'))  # noqa
 
         # Gradient Boosted Decesion Tree classifier
-        gbdt_filename = os.path.join(DATA_DIR, 'XENON1T_gradient_bdt_peak_classifier_01262018.pkl')
+        gbdt_filename = os.path.join(DATA_DIR, 'XENON1T_gradient_bdt_peak_classifier_02052018.pkl')
         gbdt_load = pickle.load(open(gbdt_filename, 'rb'))  # noqa
 
         def _classifier_soft(features):
             return 0.5 * forest_load.predict_proba(features) + 0.5 * gbdt_load.predict_proba(features)
 
-        df['ses2prob'] = _classifier_soft(df[['s1', 's1_area_fraction_top', 's1_rise_time', 's1_range_90p_area']])[:, 1]
+        df.loc[:, 'ses2prob'] = _classifier_soft(df[['s1', 's1_area_fraction_top', 's1_rise_time', 's1_range_90p_area']])[:, 1]
 
-        cut_threshold = 0.7
+        cut_threshold = 0.8
 
         # current model is trained by data with S1 < 70PE and S1 width < 450PE
         df.loc[:, self.name()] = (((df['ses2prob'] <= cut_threshold) & (df['s1_range_90p_area'] < 450)) |
