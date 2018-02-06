@@ -35,7 +35,7 @@ class AllEnergy(ManyLichen):
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
-            S2AreaFractionTop(),
+            CS2AreaFractionTop(),
             S2SingleScatter(),
             S2Width(),
             DAQVeto(),
@@ -622,6 +622,42 @@ class S2AreaFractionTop(Lichen):
         else:
             raise ValueError('Only versions 2 and 3 are implemented')
 
+
+class CS2AreaFractionTop(ManyLichen):
+    """cS2 area fraction top cut
+
+    Designed to target gas events.
+    The acceptance is 99% by design.
+    Valid in S2 range 0-10000
+
+    See the note at xenon:xenon1t:adam:s2aft:sr1_cs2_cut
+    """
+    version = 0
+
+    class CS2AreaFractionTopUpper(StringLichen):
+        string = 'cs2_aft<0.63756073+1.42873942/sqrt(s2)'
+
+    class CS2AreaFractionTopLower(StringLichen):
+        string = 'cs2_aft>0.62752992-1.79928264/sqrt(s2)'
+
+    lichen_list = [
+        CS2AreaFractionTopUpper(),
+        CS2AreaFractionTopLower()
+    ]
+
+    def pre(self, df):
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / df['cs2']
+        return df
+
+class CS2AreaFractionTop96p(StringLichen):
+    """cS2 area fraction top cut with 96% acceptance
+
+    Designed to strongly target gas events, removing all
+    those found in calibration samples at the top of the TPC.
+
+    See the note at xenon:xenon1t:adam:s2aft:sr1_cs2_cut
+    """
+    string = 'cs2_aft<0.63594139+0.912103/sqrt(s2)|z<-9'
 
 class S2SingleScatter(Lichen):
     """Check that largest other S2 area is smaller than some bound.
