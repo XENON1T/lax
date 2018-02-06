@@ -920,7 +920,8 @@ class SingleElectronS2s(Lichen):  # noqa
         def _classifier_soft(features):
             return 0.5 * forest_load.predict_proba(features) + 0.5 * gbdt_load.predict_proba(features)
 
-        df.loc[:, 'ses2prob'] = _classifier_soft(df[['s1', 's1_area_fraction_top', 's1_rise_time', 's1_range_90p_area']])[:, 1]
+        df.loc[:, 'ses2prob'] = _classifier_soft(df[['s1', 's1_area_fraction_top', 's1_rise_time', 
+                                                     's1_range_90p_area']])[:, 1]
 
         cut_threshold = 0.9
 
