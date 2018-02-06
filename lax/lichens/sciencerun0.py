@@ -508,6 +508,7 @@ class S1PatternLikelihood(ManyLichen):
     class S1TopPatternLikelihood(Lichen):
         """S1PatternLikelihood cut based on the top PMT array
         """
+
         def _process(self, df):
             s1t = df['s1'] * df['s1_area_fraction_top']
             df.loc[:, self.name()] = (df['s1_pattern_fit_hax'] - df['s1_pattern_fit_bottom_hax'] <
@@ -517,6 +518,7 @@ class S1PatternLikelihood(ManyLichen):
     class S1BottomPatternLikelihood(Lichen):
         """S1PatternLikelihood cut based on the bottom PMT array
         """
+
         def _process(self, df):
             s1b = df['s1'] * (1. - df['s1_area_fraction_top'])
             df.loc[:, self.name()] = (df['s1_pattern_fit_bottom_hax'] < - 10.5 + 21.9 * s1b**0.5 +
@@ -653,6 +655,7 @@ class CS2AreaFractionTop(ManyLichen):
         df.loc[:, 'cs2_aft'] = df['cs2_top'] / df['cs2']
         return df
 
+
 class CS2AreaFractionTop96p(StringLichen):
     """cS2 area fraction top cut with 96% acceptance
 
@@ -662,6 +665,7 @@ class CS2AreaFractionTop96p(StringLichen):
     See the note at xenon:xenon1t:adam:s2aft:sr1_cs2_cut
     """
     string = 'cs2_aft<0.63594139+0.912103/sqrt(s2)|z<-9'
+
 
 class S2SingleScatter(Lichen):
     """Check that largest other S2 area is smaller than some bound.
