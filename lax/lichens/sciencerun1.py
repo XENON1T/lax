@@ -31,7 +31,7 @@ class AllEnergy(ManyLichen):
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
-            S2AreaFractionTop(),
+            CS2AreaFractionTop(),
             S2SingleScatter(),
             S2Width(),
             DAQVeto(),
@@ -231,6 +231,8 @@ S1PatternLikelihood = sciencerun0.S1PatternLikelihood
 S1Width = sciencerun0.S1Width
 
 S2AreaFractionTop = sciencerun0.S2AreaFractionTop
+
+CS2AreaFractionTop = sciencerun0.CS2AreaFractionTop
 
 S2SingleScatter = sciencerun0.S2SingleScatter
 

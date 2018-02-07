@@ -35,7 +35,7 @@ class AllEnergy(ManyLichen):
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
-            S2AreaFractionTop(),
+            CS2AreaFractionTop(),
             S2SingleScatter(),
             S2Width(),
             DAQVeto(),
@@ -508,6 +508,7 @@ class S1PatternLikelihood(ManyLichen):
     class S1TopPatternLikelihood(Lichen):
         """S1PatternLikelihood cut based on the top PMT array
         """
+
         def _process(self, df):
             s1t = df['s1'] * df['s1_area_fraction_top']
             df.loc[:, self.name()] = (df['s1_pattern_fit_hax'] - df['s1_pattern_fit_bottom_hax'] <
@@ -517,6 +518,7 @@ class S1PatternLikelihood(ManyLichen):
     class S1BottomPatternLikelihood(Lichen):
         """S1PatternLikelihood cut based on the bottom PMT array
         """
+
         def _process(self, df):
             s1b = df['s1'] * (1. - df['s1_area_fraction_top'])
             df.loc[:, self.name()] = (df['s1_pattern_fit_bottom_hax'] < - 10.5 + 21.9 * s1b**0.5 +
@@ -535,7 +537,7 @@ class S1Width(StringLichen):
     """
 
     version = 1
-    string = "s1_range_90p_area < 251.528247 + 11.50*s1**1.171407*exp(-0.057395*s1)"
+    string = "s1_range_90p_area < 251.528247 + 11.50 * s1**1.171407 * exp(-0.057395 * s1)"
 
 
 class S1AreaUpperInjectionFraction(StringLichen):
@@ -549,7 +551,7 @@ class S1AreaUpperInjectionFraction(StringLichen):
     """
 
     version = 1
-    string = "s1_area_upper_injection_fraction < 0.0865 + 1.205/(s1**0.83367)"
+    string = "s1_area_upper_injection_fraction < 0.0865 + 1.205 / (s1**0.83367)"
 
 
 class S1AreaLowerInjectionFraction(StringLichen):
@@ -563,7 +565,7 @@ class S1AreaLowerInjectionFraction(StringLichen):
     """
 
     version = 0
-    string = "s1_area_lower_injection_fraction < 0.0550 + 1.56/(s1**0.87000)"
+    string = "s1_area_lower_injection_fraction < 0.0550 + 1.56 / (s1**0.87000)"
 
 
 class S2AreaFractionTop(Lichen):
@@ -621,6 +623,48 @@ class S2AreaFractionTop(Lichen):
             return self._process_v3(df)
         else:
             raise ValueError('Only versions 2 and 3 are implemented')
+
+
+class CS2AreaFractionTop(ManyLichen):
+    """cS2 area fraction top cut
+
+    Designed to target gas events.
+    The acceptance is 99% by design.
+    Valid in S2 range 0-10000
+
+    See the note at xenon:xenon1t:adam:s2aft:sr1_cs2_cut
+    """
+    version = 0
+
+    class CS2AreaFractionTopUpper(StringLichen):
+        """cS2 AFT upper bound
+        """
+        string = 'cs2_aft < 0.63756073 + 1.42873942 / sqrt(s2)'
+
+    class CS2AreaFractionTopLower(StringLichen):
+        """cS2 AFT lower bound
+        """
+        string = 'cs2_aft > 0.62752992 - 1.79928264 / sqrt(s2)'
+
+    lichen_list = [
+        CS2AreaFractionTopUpper(),
+        CS2AreaFractionTopLower()
+    ]
+
+    def pre(self, df):
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / df['cs2']
+        return df
+
+
+class CS2AreaFractionTop96p(StringLichen):
+    """cS2 area fraction top cut with 96% acceptance
+
+    Designed to strongly target gas events, removing all
+    those found in calibration samples at the top of the TPC.
+
+    See the note at xenon:xenon1t:adam:s2aft:sr1_cs2_cut
+    """
+    string = 'cs2_aft < 0.63594139 + 0.912103 / sqrt(s2) | z < -9'
 
 
 class S2SingleScatter(Lichen):
@@ -682,7 +726,7 @@ class S2PatternLikelihood(StringLichen):
     Contact: Bart Pelssers  <bart.pelssers@fysik.su.se> Tianyu Zhu  <tz2263@columbia.edu>
     """
     version = 1
-    string = "s2_pattern_fit < 0.0390*s2 + 609*s2**0.0602 - 666"
+    string = "s2_pattern_fit < 0.0390 * s2 + 609 * s2**0.0602 - 666"
 
 
 class S2Threshold(StringLichen):
