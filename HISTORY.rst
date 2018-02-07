@@ -2,6 +2,18 @@
 History
 =======
 
+1.4.0 (2018-02-07)
+------------------
+
+* Fix MV cut; was not applied before (#129, #130)
+* Small fix S1AreaUpperInjectionFraction line (#132)
+* Tighten S1 width cut (#131)
+* Use drift time instead of Z for S2 width cut (#134) 
+* Ignore dead PMTs and split top/bottom for S1PatternLikelihood (#137) 
+* New SingleElectronS2 cut (#139, #143)
+* Use signal quantile of distance distribution only for PosDiff (#138)
+* Switch to tighter corrected S2 AFT variable and use fitted quantile (#142)
+
 1.3.0 (2018-01-05)
 ------------------
 
