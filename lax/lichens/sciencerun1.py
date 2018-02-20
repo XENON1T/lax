@@ -27,7 +27,7 @@ class AllEnergy(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [
-            FiducialCylinder1p3T(),
+            FiducialZOptimized(),
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
@@ -132,6 +132,8 @@ FiducialCylinder1T_TPF2dFDC = sciencerun0.FiducialCylinder1T_TPF2dFDC
 FiducialCylinder1T = sciencerun0.FiducialCylinder1T
 
 FiducialCylinder1p3T = sciencerun0.FiducialCylinder1p3T
+
+FiducialZOptimized = sciencerun0.FiducialZOptimized
 
 FV_CONFIGS = [
     # Mass (kg), (z0, vz, p, vr2)
