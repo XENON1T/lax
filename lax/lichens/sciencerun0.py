@@ -263,7 +263,7 @@ class FiducialZOptimized(StringLichen):
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:summary_fiducial_volume
     """
     version = 0
-    string = "(r_3d_nn < 44) & (-95 < z_3d_nn) & ( ((r_3d_nn <= 35.22) & (z_3d_nn < -7)) | \
+    string = "(-95 < z_3d_nn) & ( ((r_3d_nn <= 35.22) & (z_3d_nn < -7)) | \
               ((r_3d_nn > 35.22) & (z_3d_nn < 27.2929 - 0.0276385*r_3d_nn*r_3d_nn)) )"
 
 
