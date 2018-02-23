@@ -31,7 +31,7 @@ class AllEnergy(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [
-            FiducialCylinder1p3T(),
+            FiducialZOptimized(),
             InteractionExists(),
             S2Threshold(),
             InteractionPeaksBiggest(),
@@ -238,11 +238,7 @@ class FiducialCylinder1T(StringLichen):
 
     """
     version = 5
-    string = "(-92.9 < z_3d_nn) & (z_3d_nn < -9) & (sqrt(x_3d_nn*x_3d_nn + y_3d_nn*y_3d_nn) < 36.94)"
-
-    def pre(self, df):
-        df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn'] * df['x_3d_nn'] + df['y_3d_nn'] * df['y_3d_nn'])
-        return df
+    string = "(-92.9 < z_3d_nn) & (z_3d_nn < -9) & (r_3d_nn < 36.94)"
 
 
 class FiducialCylinder1p3T(StringLichen):
@@ -254,11 +250,21 @@ class FiducialCylinder1p3T(StringLichen):
 
     """
     version = 0
-    string = "(-92.9 < z_3d_nn) & (z_3d_nn < -9) & (sqrt(x_3d_nn*x_3d_nn + y_3d_nn*y_3d_nn) < 41.26)"
+    string = "(-92.9 < z_3d_nn) & (z_3d_nn < -9) & (r_3d_nn < 41.26)"
 
-    def pre(self, df):
-        df.loc[:, 'r_3d_nn'] = np.sqrt(df['x_3d_nn'] * df['x_3d_nn'] + df['y_3d_nn'] * df['y_3d_nn'])
-        return df
+
+class FiducialZOptimized(StringLichen):
+    """Z-optimized FV cut based on keeping expected rate variation within 10% threshold within each
+    R slice, i.e. ~uniform in Z accounting for all backgrounds models.
+
+    This first version is a bit rough and may be improved by understanding the underlying BG KDE
+    and errors better.
+
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:summary_fiducial_volume
+    """
+    version = 0
+    string = "(-95 < z_3d_nn) & (z_3d_nn < -7) & \
+              (z_3d_nn < 27.2929 - 0.0276385*r_3d_nn*r_3d_nn)"
 
 
 FV_CONFIGS = [
@@ -931,7 +937,8 @@ class PosDiff(Lichen):
 
     def _process(self, df):
         df.loc[:, self.name()] = (np.sqrt((df['x_observed_nn'] - df['x_observed_tpf'])**2 +
-                                          (df['y_observed_nn'] - df['y_observed_tpf'])**2) < 2429.322*np.exp(-np.log10(df.s2)/0.362) + 1.587)
+                                          (df['y_observed_nn'] - df['y_observed_tpf'])**2) <
+                                  2429.322 * np.exp(-np.log10(df.s2) / 0.362) + 1.587)
         return df
 
 
