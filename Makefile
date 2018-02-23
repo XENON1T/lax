@@ -101,7 +101,7 @@ major: clean #docs
 
 
 minor: clean #docs
-	emacs HISTORY.rst
+	nano HISTORY.rst
 	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion minor
 	git push
