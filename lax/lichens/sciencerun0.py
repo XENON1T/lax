@@ -260,12 +260,12 @@ class FiducialZOptimized(StringLichen):
     This first version is a bit rough and may be improved by understanding the underlying BG KDE
     and errors better.
 
-    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:summary_fiducial_volume
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun1:summary_fiducial_volume_v2
     """
     version = 1
     string = "(-95 < z_3d_nn) & (z_3d_nn < -8) & (r_3d_nn < 42.8387) & \
-              (z_3d_nn < 6.1863 - 0.0154508*r_3d_nn*r_3d_nn) & \
-              (z_3d_nn > -157.727 + 0.0407326*r_3d_nn*r_3d_nn)"
+              (z_3d_nn < 5.71966 - 0.0149755*r_3d_nn*r_3d_nn) & \
+              (z_3d_nn > -157.587 + 0.0405219*r_3d_nn*r_3d_nn)"
 
 
 FV_CONFIGS = [
