@@ -2,6 +2,10 @@
 History
 =======
 
+1.5.1 (2018-02-27)
+------------------
+* Transpose, z-bin, and scaling bug fix, and smoothing of ER template in FV (#145, #146) 
+
 1.5.0 (2018-02-23)
 ------------------
 
