@@ -264,7 +264,7 @@ class FiducialZOptimized(StringLichen):
     """
     version = 4
     string = "(-94 < z_3d_nn) & (z_3d_nn < -8) & (r_3d_nn < 42.8387) & \
-              (z_3d_nn < -4.20851 - 0.00778878*r_3d_nn*r_3d_nn) & \
+              (z_3d_nn < -2.63725 - 0.00946597*r_3d_nn*r_3d_nn) & \
               (z_3d_nn > -158.173 + 0.0456094*r_3d_nn*r_3d_nn)"
 
 
