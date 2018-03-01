@@ -285,12 +285,12 @@ class FiducialInnerEgg(ManyLichen):
     class FiducialInnerEggUpper(StringLichen):
         """Top part of egg
         """
-        string = "z_3d_nn < (1. - (r_3d_nn / 1366.99766348)**2.43474462) ** (1. / 2.43474462) * 36.35006807 - 55.27976889"
+        string = "(z_3d_nn > -49.43) & ( ((z_3d_nn+49.43)/36.35) ** 2.43474462 + (r_3d_nn*r_3d_nn/1367) ** 2.43474462 ) > 1."
 
     class FiducialInnerEggLower(StringLichen):
         """Bottom part of egg
         """
-        string = "z_3d_nn > -(1. - (r_3d_nn / 1365.00009977)**2.00197758) ** (1. / 2.00197758) * 26.24259615 - 49.43081275"
+        string = "(z_3d_nn < -55.28) & ( (-(z_3d_nn+55.28)/26.24) ** 2.00197758 + (r_3d_nn*r_3d_nn/1365) ** 2.00197758 < 1.)"
 
     class FiducialInnerEggEdge(StringLichen):
         """Hard radial cut on currently defined bin edge
