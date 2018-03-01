@@ -291,6 +291,11 @@ class FiducialInnerEgg(ManyLichen):
         """
         string = "z_3d_nn > -(1. - (r_3d_nn / 1365.00009977)**2.00197758) ** (1. / 2.00197758) * 26.24259615 - 49.43081275"
 
+    class FiducialInnerEggEdge(StringLichen):
+        """Hard radial cut on currently defined bin edge
+        """
+        string = "r_3d_nn < 34.5903754"
+
 
 FV_CONFIGS = [
     # Mass (kg), (z0, vz, p, vr2)
