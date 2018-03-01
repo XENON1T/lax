@@ -268,6 +268,30 @@ class FiducialZOptimized(StringLichen):
               (z_3d_nn > -158.173 + 0.0456094*r_3d_nn*r_3d_nn)"
 
 
+class FiducialInnerEgg(ManyLichen):
+    """Inner-most clean yolk volume optimized against radiogenic neutron position distribution
+
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:mcfate:inner_volume_optimization_v2
+
+    Contact: Qing Lin
+    """
+    version = 0
+
+    def __init__(self):
+        self.lichen_list = [self.FiducialInnerEggUpper(),
+                            self.FiducialInnerEggLower()]
+
+    class FiducialInnerEggUpper(StringLichen):
+        """Top part of egg
+        """
+        string = "z_3d_nn < (1. - (r_3d_nn / 1366.99766348)**2.43474462) ** (1. / 2.43474462) * 36.35006807 - 55.27976889"
+
+    class FiducialInnerEggLower(StringLichen):
+        """Bottom part of egg
+        """
+        string = "z_3d_nn > -(1. - (r_3d_nn / 1365.00009977)**2.00197758) ** (1. / 2.00197758) * 26.24259615 - 49.43081275"
+
+
 FV_CONFIGS = [
     # Mass (kg), (z0, vz, p, vr2)
     (1000, (-57.58, 31.25, 4.20, 1932.53)),
