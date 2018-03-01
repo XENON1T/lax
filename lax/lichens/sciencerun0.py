@@ -279,7 +279,8 @@ class FiducialInnerEgg(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [self.FiducialInnerEggUpper(),
-                            self.FiducialInnerEggLower()]
+                            self.FiducialInnerEggLower(),
+                            self.FiducialInnerEggEdge()]
 
     class FiducialInnerEggUpper(StringLichen):
         """Top part of egg
