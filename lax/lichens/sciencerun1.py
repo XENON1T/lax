@@ -135,6 +135,8 @@ FiducialCylinder1p3T = sciencerun0.FiducialCylinder1p3T
 
 FiducialZOptimized = sciencerun0.FiducialZOptimized
 
+FiducialInnerEgg = sciencerun0.FiducialInnerEgg
+
 FV_CONFIGS = [
     # Mass (kg), (z0, vz, p, vr2)
     (1000, (-57.58, 31.25, 4.20, 1932.53)),
