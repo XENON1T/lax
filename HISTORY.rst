@@ -2,6 +2,10 @@
 History
 =======
 
+1.5.2 (2018-05-15)
+------------------
+* Inner volume egg segmentation (#147)
+
 1.5.1 (2018-02-27)
 ------------------
 * Transpose, z-bin, and scaling bug fix, and smoothing of ER template in FV (#145, #146) 
