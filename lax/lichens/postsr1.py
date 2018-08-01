@@ -48,6 +48,7 @@ class CS2AreaFractionTopExtended(StringLichen):
     Events where cxys2 > 1922700 PE are not cut.
 
     Required minitrees: Corrections
+    Defined with pax version: 6.8.0
     Wiki note: xenon:xenon1t:double_beta:cs2_aft_extension
     Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
 
