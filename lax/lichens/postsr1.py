@@ -35,3 +35,23 @@ class ERBandDEC(StringLichen):
     def pre(self, df):
         df.loc[:, 'log_cs_ratio'] = np.log10(df['cs2']/df['cs1'])
         return df
+
+class S2PatternLikelihoodExtended(StringLichen):
+    """
+    Extend S2 PatternLikelihood(S2 PLH) Cut up to 1.5e5 PE S2, which is good for up to around 220 keVee. This cut is a
+    combination of SR1 S2PLH(s2 < 10000 PE) and extension of S2 PLH(1e4 < S2 < 1.5e5 PE), thus can be applied to low
+    energy too. S2 PLH cut aims to remove poorly reconstructed events.
+
+    The details can be found below:
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:jingqiang:darkphoton:s2patternlikelihood_200kev
+
+    Requires Extended minitrees.
+    Contact: Jingqiang Ye <jiy171@ucsd.edu>
+    """
+    version = 0
+    p0 = (0.072, 594)
+    p1_sr1 = (0.0404, 594, 0.0737, -686)
+
+
+    string = ("((s2_pattern_fit < %.3f*s2 + %.3f) & (s2 > 10000))\
+             | ((s2_pattern_fit < %.3f*s2 + %.3f*s2**%.3f + %.3f) & (s2 < 10000))" %(p0 + p1_sr1))
