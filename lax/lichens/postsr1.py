@@ -7,11 +7,13 @@ import inspect
 import numpy as np
 
 import lax
-from lax.lichen import ManyLichen, StringLichen  # pylint: disable=unused-import
+from lax.lichen import Lichen, ManyLichen, StringLichen  # pylint: disable=unused-import
 from lax import __version__ as lax_version
 
 from lax.lichens import sciencerun1 as sr1
 DATA_DIR = sr1.DATA_DIR
+
+from scipy import stats
 
 # Import all lichens from sciencerun1
 for x in dir(sr1):
@@ -34,4 +36,61 @@ class ERBandDEC(StringLichen):
 
     def pre(self, df):
         df.loc[:, 'log_cs_ratio'] = np.log10(df['cs2']/df['cs1'])
+        return df
+
+
+class MisIdS1SingleScatter(Lichen):
+    """
+    Removes events that should be cut by the other single scatter cuts, but are not because of mis-classified S1s.
+    This was tuned specifically for the Kr83m peak at 32 keV, which remains after cuts because the 9 keV S1 was 
+    classfied as an S2. 
+    Required treemakers: Extended, LargestPeakProperties, Corrections
+    """
+
+    version = 1.0
+    # only consider events where the s1 is between the following
+    s1_area_cut = (0, 500)
+    # only consider suspicious s2s above this area
+    area_cut = 60
+    # only consider suspcious s2s with time differences (main_s2_time - this_s2_time) greater than this
+    min_dt = sr1.S2Width.DriftTimeFromGate
+    # only consider events where the suspicious s2 is this close to the main s1 (ns)
+    s1_timediff_cut = 10000
+    # chi2 value to cut on to see if the paired (misID?) S2 and main S2 give a valid width
+    chi2_cut = -25
+
+    def pre(self, df):
+        # time difference between suspicious s2s and main s2
+        df['suspicious_s2_drift_time'] = df.s2_center_time - df.largest_s2_before_main_s2_time
+        df['suspicious_s2_delay_main_s1'] = df.s1_center_time - df.largest_s2_before_main_s2_time
+        return df
+
+    def _process(self, df):
+        df.loc[:, self.name()] = True  # Default is True
+
+        # define an s1 area cut because large s1s produce photoionization
+        # 600 was chosen because it includes all of Kr83m spectrum
+        mask1 = (self.s1_area_cut[0]<df.cs1) & (df.cs1 < self.s1_area_cut[1])
+        # look for s2s before the main s2 (> some value to exclude SEs)
+        mask2 = df.largest_s2_before_main_s2_area > self.area_cut
+        # the time between the suspect s2 and main s2 should be > gate drift time
+        mask3 = df.suspicious_s2_drift_time > self.min_dt
+        # and since we have an S2Width cut, the suspicious S2 should be pretty close to the main S1
+        mask4 = np.absolute(df.suspicious_s2_delay_main_s1 < self.s1_timediff_cut)
+
+        # combine the masks
+        mask = mask1 & mask2 & mask3 & mask4
+
+        # check if the suspect s2 is consistent with s2width model (copy+pasted from S2Width cut)
+        alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / sr1.S2Width.scg
+        alt_rel_width = np.square(df.loc[mask, 's2_range_50p_area'] / sr1.S2Width.SigmaToR50) - \
+                        np.square(sr1.S2Width.scw)
+        compare_widths = alt_rel_width / np.square(sr1.S2Width.s2_width_model(sr1.S2Width,
+                                                                              df.loc[mask, 'suspicious_s2_drift_time']))
+        chi2s = stats.chi2.logpdf(compare_widths * (alt_n_electron - 1), alt_n_electron)
+
+        # now check chi2
+        alt_interaction_passes = chi2s > self.chi2_cut
+        df.loc[mask, self.name()] = True ^ alt_interaction_passes
+
         return df
