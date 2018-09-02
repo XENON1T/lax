@@ -42,8 +42,8 @@ class ERBandDEC(StringLichen):
 class MisIdS1SingleScatter(Lichen):
     """
     Removes events that should be cut by the other single scatter cuts, but are not because of mis-classified S1s.
-    This was tuned specifically for the Kr83m peak at 32 keV, which remains after cuts because the 9 keV S1 was 
-    classfied as an S2. 
+    This was tuned specifically for the Kr83m peak at 32 keV, which remains after cuts because the 9 keV S1 was
+    classfied as an S2.
     Required treemakers: Extended, LargestPeakProperties, Corrections
     """
 
