@@ -2,6 +2,13 @@
 History
 =======
 
+1.6.0 (2018-10-07)
+------------------
+* New postsr1 lichen file (#149)
+* Issue and pull request templates (#151)
+* CS2AreaFractionTopExtended (#152)
+* S2PatternLikelihood extension to high-energies (#152)
+
 1.5.2 (2018-05-15)
 ------------------
 * Inner volume egg segmentation (#147)

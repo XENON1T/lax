@@ -39,73 +39,60 @@ class ERBandDEC(StringLichen):
         return df
 
 
-class MisIdS1SingleScatter(Lichen):
+class S2PatternLikelihood(StringLichen):
     """
-    Removes events that should be cut by the other single scatter cuts, but are not because of mis-classified S1s.
-    This was tuned specifically for the Kr83m peak at 32 keV, which remains after cuts because the 9 keV S1 was
-    classfied as an S2.
-    Required treemakers: Extended, LargestPeakProperties, Corrections
-    """
+    Extend S2 PatternLikelihood(S2 PLH) Cut up to 1.5e5 PE S2, which is good for up to around 220 keVee. This cut is a
+    combination of SR1 S2PLH(s2 < 10000 PE) and extension of S2 PLH(1e4 < S2 < 1.5e5 PE), thus have same performance as 
+    sr1 S2 PLH for low energy and have improved performance for high energy. S2 PLH cut aims to remove poorly 
+    reconstructed events.
 
-    version = 1.0
-    # only consider events where the s1 is between the following
-    s1_area_cut = (0, 500)
-    # only consider suspicious s2s above this area
-    area_cut = 60
-    # only consider suspcious s2s with time differences (main_s2_time - this_s2_time) greater than this
-    min_dt = S2Width.DriftTimeFromGate
-    # only consider events where the suspicious s2 is this close to the main s1 (ns)
-    s1_timediff_cut = 10000
-    # chi2 value to cut on to see if the paired (misID?) S2 and main S2 give a valid width
-    chi2_cut = -25
-    
+    The details can be found below:
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:jingqiang:darkphoton:s2patternlikelihood_200kev
+
+    Requires Extended minitrees.
+    Contact: Jingqiang Ye <jiy171@ucsd.edu>
+    """
+    version = 0
+    p0 = (0.072, 594)
+    p1_sr1 = (0.0404, 594, 0.0737, -686)
+
+
+    string = ("((s2_pattern_fit < %.3f*s2 + %.3f) & (s2 > 10000))\
+             | ((s2_pattern_fit < %.3f*s2 + %.3f*s2**%.3f + %.3f) & (s2 < 10000))" %(p0 + p1_sr1))
+
+
+class CS2AreaFractionTopExtended(StringLichen):
+    """"An extension of CS2AreaFractionTop to the entire S2 range
+    with a designed acceptance of 99%.
+    It is defined in the (cxys2, cs2_aft) space, with:
+
+    cxys2 = (cs2_top + cs2_bottom) / s2_lifetime_correction
+    cs2_aft = cs2_top / (cs2_top + cs2_bottom)
+
+    Events where cxys2 > 1922700 PE are not cut.
+
+    Required minitrees: Corrections
+    Defined with pax version: 6.8.0
+    Wiki note: xenon:xenon1t:double_beta:cs2_aft_extension
+    Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
+
+    version = 0
+
+    top_bound_string = ('(6.480304E-01 + 1.445442E-07 * cxys2 +'
+                        ' -4.443394E-13 * cxys2**2 + 5.440908E-19 * cxys2**3 +'
+                        ' -2.925384E-25 * cxys2**4 + 5.716877E-32 * cxys2**5 +'
+                        ' 1.060000E+00 / sqrt(cxys2) + 5.297425E+00 / cxys2)')
+    bot_bound_string = ('(6.135743E-01 + 3.979536E-08 * cxys2 +'
+                        ' -8.288567E-14 * cxys2**2 + 2.617481E-20 * cxys2**3 +'
+                        ' -5.108758E-27 * cxys2**4 + 2.312916E-33 * cxys2**5 +'
+                        ' -6.921489E-01 / sqrt(cxys2) + -2.507866E+01 / cxys2)')
+
+    string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
+              ' < cs2_aft)) | cxys2 > 1922700')
+
     def pre(self, df):
-        # time difference between suspicious s2s and main s2
-        df['suspicious_s2_1_drift_time'] = df.s2_center_time - df.largest_s2_before_main_s2_time
-        df['suspicious_s2_1_delay_main_s1'] = df.s1_center_time - df.largest_s2_before_main_s2_time
-        df['suspicious_s2_2_drift_time'] = df.s2_center_time - df.secondlargest_s2_before_main_s2_time
-        df['suspicious_s2_2_delay_main_s1'] = df.s1_center_time - df.secondlargest_s2_before_main_s2_time
-        # variable used in width model
-        df['suspicious_s2_drift_time'] = float('nan')
-        return df
-
-    def _process(self, df):
-        df.loc[:, self.name()] = True  # Default is True
-        
-        # define an s1 area cut because large s1s produce photoionization
-        # 600 was chosen because it includes all of Kr83m spectrum
-        mask1 = (self.s1_area_cut[0]<df.cs1) & (df.cs1 < self.s1_area_cut[1])
-        # look for s2s before the main s2 (> some value to exclude SEs)
-        mask2a = df.largest_s2_before_main_s2_area > self.area_cut
-        mask2b = df.secondlargest_s2_before_main_s2_area > self.area_cut
-        # the time between the suspect s2 and main s2 should be > gate drift time
-        mask3a = df.suspicious_s2_1_drift_time > self.min_dt
-        mask3b = df.suspicious_s2_2_drift_time > self.min_dt
-        # and since we have an S2Width cut, the suspicious S2 should be pretty close to the main S1
-        mask4a = np.absolute(df.suspicious_s2_1_delay_main_s1 < self.s1_timediff_cut)
-        mask4b = np.absolute(df.suspicious_s2_2_delay_main_s1 < self.s1_timediff_cut)
-        
-        
-        # combine the masks
-        maska = (mask2a & mask3a & mask4a)
-        maskb = (mask2b & mask3b & mask4b)
-        mask = mask1 & ( maska | maskb)
-        
-        # if the secondlargest s2 looks suspicious, use that drift time in width model
-        df.loc[maskb, 'suspicious_s2_drift_time'] = df['suspicious_s2_2_drift_time']
-        # if largest s2 looks suspicious, use that time. This overrides the previous line so we use biggest
-        df.loc[maska, 'suspicious_s2_drift_time'] = df['suspicious_s2_1_drift_time']
-        
-        
-        # check if the suspect s2 is consistent with s2width model (copy+pasted from S2Width cut)
-        alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / S2Width.scg
-        alt_rel_width = np.square(df.loc[mask, 's2_range_50p_area'] / S2Width.SigmaToR50) - \
-                        np.square(S2Width.scw)
-        compare_widths = alt_rel_width / np.square(S2Width.s2_width_model(S2Width,
-                                                                          df.loc[mask, 'suspicious_s2_drift_time']))
-        chi2s = stats.chi2.logpdf(compare_widths * (alt_n_electron - 1), alt_n_electron)
-        
-        # now check chi2
-        alt_interaction_passes = chi2s > self.chi2_cut
-        df.loc[mask, self.name()] = True ^ alt_interaction_passes
+        df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
+                                df['s2_lifetime_correction'])
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
+                                                df['cs2_bottom'])
         return df
