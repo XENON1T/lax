@@ -67,7 +67,50 @@ class CS2AreaFractionTopExtended(StringLichen):
     cxys2 = (cs2_top + cs2_bottom) / s2_lifetime_correction
     cs2_aft = cs2_top / (cs2_top + cs2_bottom)
 
-    Events where cxys2 > 1922700 PE are not cut.
+    Events where cxys2 > 2012700 PE or cxys2 < 90 PE are not cut.
+
+    This cut should be used with a pax version of at least 6.10.0
+    due to a major update of the S2 desaturation correction.
+
+    Required minitrees: Corrections
+    Defined with pax version: 6.10.1
+    Wiki note: xenon:xenon1t:double_beta:cs2_aft_extension
+    Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
+
+    version = 1
+
+    top_bound_string = ('(6.321778E-01 + 1.921483E-07 * cxys2 +'
+                        ' -5.137170E-13 * cxys2**2 + 5.808641E-19 * cxys2**3 +'
+                        ' -2.892108E-25 * cxys2**4 + 5.265449E-32 * cxys2**5 +'
+                        ' 1.969023E+00 / sqrt(cxys2) + -4.036164E+00 / cxys2)')
+    bot_bound_string = ('(6.190457E-01 + 3.533620E-08 * cxys2 +'
+                        ' -1.692590E-13 * cxys2**2 + 2.106000E-19 * cxys2**3 +'
+                        ' -1.179013E-25 * cxys2**4 + 2.459517E-32 * cxys2**5 +'
+                        ' -1.421495E+00 / sqrt(cxys2) + -5.650175E+00 / cxys2)')
+
+    string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
+              ' < cs2_aft)) | (cxys2 > 2012700) | (cxys2 < 90)')
+
+    def pre(self, df):
+        df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
+                                df['s2_lifetime_correction'])
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
+                                                df['cs2_bottom'])
+        return df
+
+
+class CS2AreaFractionTopExtendedOldDesat(StringLichen):
+    """"An extension of CS2AreaFractionTop to the entire S2 range
+    with a designed acceptance of 99%.
+    It is defined in the (cxys2, cs2_aft) space, with:
+
+    cxys2 = (cs2_top + cs2_bottom) / s2_lifetime_correction
+    cs2_aft = cs2_top / (cs2_top + cs2_bottom)
+
+    Events where cxys2 > 2113500 PE or cxys2 < 90 PE are not cut.
+
+    This is an alternate version of CS2AreaFractionTopExtended
+    for the old S2 desaturation algorithm (pax versions older than 6.10.0 ).
 
     Required minitrees: Corrections
     Defined with pax version: 6.8.0
@@ -76,17 +119,17 @@ class CS2AreaFractionTopExtended(StringLichen):
 
     version = 0
 
-    top_bound_string = ('(6.480304E-01 + 1.445442E-07 * cxys2 +'
-                        ' -4.443394E-13 * cxys2**2 + 5.440908E-19 * cxys2**3 +'
-                        ' -2.925384E-25 * cxys2**4 + 5.716877E-32 * cxys2**5 +'
-                        ' 1.060000E+00 / sqrt(cxys2) + 5.297425E+00 / cxys2)')
-    bot_bound_string = ('(6.135743E-01 + 3.979536E-08 * cxys2 +'
-                        ' -8.288567E-14 * cxys2**2 + 2.617481E-20 * cxys2**3 +'
-                        ' -5.108758E-27 * cxys2**4 + 2.312916E-33 * cxys2**5 +'
-                        ' -6.921489E-01 / sqrt(cxys2) + -2.507866E+01 / cxys2)')
+    top_bound_string = ('(6.505760E-01 + 1.438548E-07 * cxys2 +'
+                        ' -4.171372E-13 * cxys2**2 + 4.795966E-19 * cxys2**3 +'
+                        ' -2.426551E-25 * cxys2**4 + 4.476144E-32 * cxys2**5 +'
+                        ' 9.951226E-01 / sqrt(cxys2) + 5.901222E+00 / cxys2)')
+    bot_bound_string = ('(6.184137E-01 + 3.521772E-09 * cxys2 +'
+                        ' 2.802763E-14 * cxys2**2 + -1.134282E-19 * cxys2**3 +'
+                        ' 7.049310E-26 * cxys2**4 + -1.243501E-32 * cxys2**5 +'
+                        ' -1.388945E+00 / sqrt(cxys2) + -8.564284E+00 / cxys2)')
 
     string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
-              ' < cs2_aft)) | cxys2 > 1922700')
+              ' < cs2_aft)) | (cxys2 > 2113500) | (cxys2 < 90)')
 
     def pre(self, df):
         df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
