@@ -50,6 +50,6 @@ Development lead: Christopher Tunnell
 Maintainers:
 
 * Christopher Tunnell (SR0)
-* Shayne Reichard (SR1)
+* Shayne Reichard (SR1, post-SR1)
 * Patrick Deperio (SR1)
 * Jelle Aalbers (post-SR1)
