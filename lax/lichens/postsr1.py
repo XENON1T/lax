@@ -96,3 +96,26 @@ class CS2AreaFractionTopExtended(StringLichen):
         df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
                                                 df['cs2_bottom'])
         return df
+
+
+class MisIdS1SingleScatter(Lichen):
+    version = 1.1
+    
+    pars = [60, 1.04, 4]  # from a fit to target only mis-Id Kr83m events
+    s1_thresh = 155  # cs1 PE
+    cutval = 125
+    
+    def _cutline(self, x):
+        return self.pars[0] + (self.pars[1] / 1e6) * (x - 220) ** self.pars[2]
+    
+    def cutline(self, x):
+        return np.nan_to_num(self.cutval * (x < self.s1_thresh)) + np.nan_to_num((x >= self.s1_thresh) * self._cutline(x))
+    
+    def pre(self, df):
+        df['temp'] = np.nan_to_num(df.largest_s2_before_main_s2_area)
+        return df
+    
+    def _process(self, df):
+        # df.loc[:, self.name()] = True
+        df.loc[:, self.name()] = df.temp < self.cutline(df.cs1)
+        return df
