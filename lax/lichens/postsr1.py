@@ -110,7 +110,7 @@ class CS2AreaFractionTopExtendedOldDesat(StringLichen):
     Events where cxys2 > 2113500 PE or cxys2 < 90 PE are not cut.
 
     This is an alternate version of CS2AreaFractionTopExtended
-    for the old S2 desaturation algorithm (pax versions older than 6.10.0 ).
+    for the old S2 desaturation algorithm (pax versions older than 6.10.0).
 
     Required minitrees: Corrections
     Defined with pax version: 6.8.0
