@@ -99,11 +99,24 @@ class CS2AreaFractionTopExtended(StringLichen):
 
 
 class MisIdS1SingleScatter(Lichen):
+    """Cut to target the shoulder on Kr83m data due to mis-identified krypton events.
+
+    This cut is defined in the space of cs1 and largest_s2_before_main_s2_area.
+    It's possible for one of the conversion electrons of the Kr83m decay to be mis-classified as an S2, 
+    leading to an S2 that occurs in time before the main S2 that is larger than typical single-electrons. 
+    Requires Extended minitrees.
+
+    Note: xenon:shockley:misids1singlescatter
+    Contact: Evan Shockley <ershockley@uchicago.edu>
+    """
+
     version = 1.1
     
     pars = [60, 1.04, 4]  # from a fit to target only mis-Id Kr83m events
-    s1_thresh = 155  # cs1 PE
-    cutval = 125
+    s1_thresh = 155  # cs1 PE. Up to this value the cut will be a straight line
+    cutval = 125 # straight line part of the cut
+    min_s1 = 25 # smallest S1 to consider cutting
+    
     
     def _cutline(self, x):
         return self.pars[0] + (self.pars[1] / 1e6) * (x - 220) ** self.pars[2]
@@ -111,11 +124,7 @@ class MisIdS1SingleScatter(Lichen):
     def cutline(self, x):
         return np.nan_to_num(self.cutval * (x < self.s1_thresh)) + np.nan_to_num((x >= self.s1_thresh) * self._cutline(x))
     
-    def pre(self, df):
-        df['temp'] = np.nan_to_num(df.largest_s2_before_main_s2_area)
-        return df
-    
     def _process(self, df):
-        # df.loc[:, self.name()] = True
-        df.loc[:, self.name()] = df.temp < self.cutline(df.cs1)
+        df.loc[:, self.name()] = (np.nan_to_num(df.largest_s2_before_main_s2_area) < self.cutline(df.cs1)) | \
+                                 (df.cs1 < self.min_s1)
         return df
