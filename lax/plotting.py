@@ -1,5 +1,5 @@
 # coding=utf-8
-import seaborn.apionly as sns
+import seaborn as sns
 import matplotlib.pyplot as plt
 from lax import variables
 
