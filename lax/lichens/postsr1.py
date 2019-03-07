@@ -74,7 +74,8 @@ class CS2AreaFractionTopExtended(StringLichen):
 
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
-    Wiki note: xenon:xenon1t:double_beta:cs2_aft_extension
+    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
+                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
     Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
 
     version = 2
@@ -114,7 +115,8 @@ class CS2AreaFractionTopExtendedOldDesat(StringLichen):
 
     Required minitrees: Corrections
     Defined with pax version: 6.8.0
-    Wiki note: xenon:xenon1t:double_beta:cs2_aft_extension
+    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
+                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
     Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
 
     version = 1
