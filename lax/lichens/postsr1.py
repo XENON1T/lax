@@ -76,19 +76,20 @@ class CS2AreaFractionTopExtended(StringLichen):
 
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
-    Wiki note: xenon:xenon1t:double_beta:cs2_aft_extension
+    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
+                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
     Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
 
-    version = 1
+    version = 2
 
-    top_bound_string = ('(6.321778E-01 + 1.921483E-07 * cxys2 +'
-                        ' -5.137170E-13 * cxys2**2 + 5.808641E-19 * cxys2**3 +'
-                        ' -2.892108E-25 * cxys2**4 + 5.265449E-32 * cxys2**5 +'
-                        ' 1.969023E+00 / sqrt(cxys2) + -4.036164E+00 / cxys2)')
-    bot_bound_string = ('(6.190457E-01 + 3.533620E-08 * cxys2 +'
-                        ' -1.692590E-13 * cxys2**2 + 2.106000E-19 * cxys2**3 +'
-                        ' -1.179013E-25 * cxys2**4 + 2.459517E-32 * cxys2**5 +'
-                        ' -1.421495E+00 / sqrt(cxys2) + -5.650175E+00 / cxys2)')
+    top_bound_string = ('(6.306642E-01 + 2.032259E-07 * cxys2 +'
+                        ' -5.450833E-13 * cxys2**2 + 6.182750E-19 * cxys2**3 +'
+                        ' -3.087908E-25 * cxys2**4 + 5.637659E-32 * cxys2**5 +'
+                        ' 2.123849E+00 / sqrt(cxys2) + -4.258579E+00 / cxys2)')
+    bot_bound_string = ('(6.190286E-01 + 3.546500E-08 * cxys2 +'
+                        ' -1.696261E-13 * cxys2**2 + 2.110380E-19 * cxys2**3 +'
+                        ' -1.181304E-25 * cxys2**4 + 2.463864E-32 * cxys2**5 +'
+                        ' -1.419829E+00 / sqrt(cxys2) + -5.642919E+00 / cxys2)')
 
     string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
               ' < cs2_aft)) | (cxys2 > 2012700) | (cxys2 < 90)')
@@ -116,19 +117,20 @@ class CS2AreaFractionTopExtendedOldDesat(StringLichen):
 
     Required minitrees: Corrections
     Defined with pax version: 6.8.0
-    Wiki note: xenon:xenon1t:double_beta:cs2_aft_extension
+    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
+                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
     Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
 
-    version = 0
+    version = 1
 
-    top_bound_string = ('(6.505760E-01 + 1.438548E-07 * cxys2 +'
-                        ' -4.171372E-13 * cxys2**2 + 4.795966E-19 * cxys2**3 +'
-                        ' -2.426551E-25 * cxys2**4 + 4.476144E-32 * cxys2**5 +'
-                        ' 9.951226E-01 / sqrt(cxys2) + 5.901222E+00 / cxys2)')
-    bot_bound_string = ('(6.184137E-01 + 3.521772E-09 * cxys2 +'
-                        ' 2.802763E-14 * cxys2**2 + -1.134282E-19 * cxys2**3 +'
-                        ' 7.049310E-26 * cxys2**4 + -1.243501E-32 * cxys2**5 +'
-                        ' -1.388945E+00 / sqrt(cxys2) + -8.564284E+00 / cxys2)')
+    top_bound_string = ('(6.499452E-01 + 1.473286E-07 * cxys2 +'
+                        ' -4.273597E-13 * cxys2**2 + 4.922129E-19 * cxys2**3 +'
+                        ' -2.493411E-25 * cxys2**4 + 4.603164E-32 * cxys2**5 +'
+                        ' 1.065584E+00 / sqrt(cxys2) + 5.840339E+00 / cxys2)')
+    bot_bound_string = ('(6.184080E-01 + 3.561342E-09 * cxys2 +'
+                        ' 2.792023E-14 * cxys2**2 + -1.133069E-19 * cxys2**3 +'
+                        ' 7.043299E-26 * cxys2**4 + -1.242414E-32 * cxys2**5 +'
+                        ' -1.388373E+00 / sqrt(cxys2) + -8.562613E+00 / cxys2)')
 
     string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
               ' < cs2_aft)) | (cxys2 > 2113500) | (cxys2 < 90)')
