@@ -2,6 +2,15 @@
 History
 =======
 
+1.7.0 (2019-03-28)
+------------------
+* Start SR2 lichen file (#157)
+
+* SR1 (post-main paper):
+
+  - CS2AreaFractiontopExtended updates (#156, #159)
+  - MisIdSingleScatter (#154)
+
 1.6.0 (2018-10-07)
 ------------------
 * New postsr1 lichen file (#149)
@@ -15,7 +24,7 @@ History
 
 1.5.1 (2018-02-27)
 ------------------
-* Transpose, z-bin, and scaling bug fix, and smoothing of ER template in FV (#145, #146) 
+* Transpose, z-bin, and scaling bug fix, and smoothing of ER template in FV (#145, #146)
 
 1.5.0 (2018-02-23)
 ------------------
@@ -28,8 +37,8 @@ History
 * Fix MV cut; was not applied before (#129, #130)
 * Small fix S1AreaUpperInjectionFraction line (#132)
 * Tighten S1 width cut (#131)
-* Use drift time instead of Z for S2 width cut (#134) 
-* Ignore dead PMTs and split top/bottom for S1PatternLikelihood (#137) 
+* Use drift time instead of Z for S2 width cut (#134)
+* Ignore dead PMTs and split top/bottom for S1PatternLikelihood (#137)
 * New SingleElectronS2 cut (#139, #143)
 * Use signal quantile of distance distribution only for PosDiff (#138)
 * Switch to tighter corrected S2 AFT variable and use fitted quantile (#142)
@@ -79,7 +88,7 @@ History
 Interim	release	for tracking data used in preliminary fits
 (https://github.com/XENON1T/bbf/pull/35)
 (https://github.com/XENON1T/SR1Results/pull/2)
- 
+
 * S1 area fraction top update and relegate to LowE (#56, #83)
 * Update S2WidthCut and parameters for SR1 (#62, #75, #77)
 * Fix LowEnergyRn220 accidentally removing DAQVeto cut (#66)
