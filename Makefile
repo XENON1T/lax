@@ -88,8 +88,6 @@ install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
 major: clean #docs
-	emacs HISTORY.rst
-	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion major
 	git push
 	git push --tags
@@ -99,10 +97,7 @@ major: clean #docs
 	git push origin stable
 	git checkout master
 
-
 minor: clean #docs
-	nano HISTORY.rst
-	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion minor
 	git push
 	git push --tags
@@ -113,8 +108,6 @@ minor: clean #docs
 	git checkout master
 
 patch: clean #docs
-	emacs HISTORY.rst
-	git commit -m "Update HISTORY for the release" HISTORY.rst
 	bumpversion patch --allow-dirty
 	git push
 	git push --tags
