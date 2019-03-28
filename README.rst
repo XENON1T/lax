@@ -16,15 +16,15 @@ Documentation
 Code organization
 ==================
 
-Lax stores event selections in classes called "Lichens". These are organized in three different files:
+Lax stores event selections in classes called "Lichens". These are organized in four different files:
 
-* `sciencerun0`: selections for XENON1T's first (short) science run (SR0);
-* `sciencerun1`: selections for XENON1T's main science run (SR1);
-* `postsr1`: improved versions of cuts applicable to the main science run (SR1) and/or later datasets.
+* `sciencerun0`: selections for XENON1T's first (short) science run (SR0), using pax v.6.8.0 (NOT v6.4.2!);
+* `sciencerun1`: selections for XENON1T's main science run (SR1), using pax v6.8.0;
+* `postsr1`: improved versions of cuts applicable to the main science run (SR1). Applies to pax v6.8.0 OR pax v6.10.1; see the documentation of each cut for details.
+* `sciencerun2`: selections for XENON1T's final science run (SR2), using pax v6.10.1.
 
-The selections in the `sciencerunX` files are exactly as they were used in analyses supporting XENON1T's main science paper (`Phys. Rev. Lett. 121, 111302 <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.121.111302>`_ / `arXiv 1805.12562  <https://arxiv.org/abs/1805.12562>`_)
+The selections in the `sciencerun0` and `sciencerun1` files are exactly as they were used in analyses supporting XENON1T's main science paper (`Phys. Rev. Lett. 121, 111302 <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.121.111302>`_ / `arXiv 1805.12562  <https://arxiv.org/abs/1805.12562>`_)
 
-Some lichens in these files are 'summary lichens', containing
 
 
 Applying selections
