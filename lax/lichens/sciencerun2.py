@@ -206,12 +206,12 @@ class S2SingleScatter(Lichen):
     * This is still preliminary.
     * To avoid cutting alpha events largest other s2 within 0 to 10e3 ns after s1 is exempt from the cut
     * Rely on InteractionPeaksBiggest to remove pile up event
+    * Valid in S2 range 0-inf
     https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:s2singlescattersr2
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
 
     version = 5
-    allowed_range = (0, np.inf)
 
     def _process(self, df):
         df.loc[:, self.name()] = True
