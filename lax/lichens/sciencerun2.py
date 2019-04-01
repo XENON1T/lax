@@ -199,8 +199,33 @@ S1AreaLowerInjectionFraction = sr0.S1AreaLowerInjectionFraction
 
 # S2 single scatter
 # Contact: Tianyu, Yun
-S2SingleScatter = sr0.S2SingleScatter
-S2SingleScatterSimple = sr0.S2SingleScatterSimple
+class S2SingleScatter(Lichen):
+    """
+    The single scatter is to cut an event if its largest other s2 have pattern goodness of fit better then
+    normal electron pile up.
+    * This is still preliminary.
+    * To avoid cutting alpha events largest other s2 within 0 to 10e3 ns after s1 is exempt from the cut
+    * Rely on InteractionPeaksBiggest to remove pile up event
+    * Valid in S2 range 0-inf
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:sim:notes:tzhu:s2singlescattersr2
+    Contact: Tianyu Zhu <tz2263@columbia.edu>
+    """
+
+    version = 5
+
+    def _process(self, df):
+        df.loc[:, self.name()] = True
+
+        mask = df.eval('(largest_other_s2>0) \
+            & (largest_other_s2_pattern_fit>0) \
+            & ((largest_other_s2_delay_main_s1<0) \
+            | (largest_other_s2_delay_main_s1>10e3))')
+
+        df.loc[mask, self.name()] = df.loc[mask, 'largest_other_s2_pattern_fit'] > 0.856 * \
+            df.loc[mask, 'largest_other_s2'] - 47.8 * \
+            np.exp(- df.loc[mask, 'largest_other_s2'] / 32.93)
+
+        return df
 
 # S1 single scatter
 # Contact: Joran
