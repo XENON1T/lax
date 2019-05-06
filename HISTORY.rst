@@ -2,6 +2,14 @@
 History
 =======
 
+
+1.7.1 (2019-05-06)
+------------------
+* S2SingleScatter for SR2 (#160, #163)
+* S1SingleScatter for SR2 (#161)
+* Fix __init__.py for SR2 (#162)
+
+
 1.7.0 (2019-03-28)
 ------------------
 * Start SR2 lichen file (#157)
