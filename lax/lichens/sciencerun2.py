@@ -250,7 +250,7 @@ class S1SingleScatter(Lichen):
     """
     
     version = 5
-    s2width = sciencerun1.S2Width
+    s2width = S2Width
     alt_s1_coincidence_threshold = 3
     
     def _process(self, df):
