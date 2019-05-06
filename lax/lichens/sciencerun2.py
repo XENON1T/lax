@@ -57,10 +57,6 @@ class LowEnergyRn220(AllEnergy):
             if lichen.name() == "CutInteractionExists":
                 self.lichen_list[idx] = S1LowEnergyRange()
 
-            # Use a simpler single scatter cut for LowE
-            if lichen.name() == "CutS2SingleScatter":
-                self.lichen_list[idx] = S2SingleScatterSimple()
-
         # Add additional LowE cuts (that may not be tuned at HighE yet)
         self.lichen_list += [
             S1PatternLikelihood(),
