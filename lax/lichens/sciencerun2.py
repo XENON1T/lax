@@ -148,7 +148,52 @@ PosDiff = sr0.PosDiff
 
 # S2 AFT
 # Contact: Giovanni, Dominick
-CS2AreaFractionTopExtended = postsr1.CS2AreaFractionTopExtended
+class CS2AreaFractionTopExtended(StringLichen):
+    """"An extension of CS2AreaFractionTop to the entire S2 range
+    with a designed acceptance of 99%.
+    It is defined in the (cxys2, cs2_aft) space, with:
+
+    cxys2 = (cs2_top + cs2_bottom) / s2_lifetime_correction
+    cs2_aft = cs2_top / (cs2_top + cs2_bottom)
+
+    Events where cxys2 > 2163000 PE or cxys2 < 60 PE are not cut.
+
+    This cut should be used with a pax version of at least 6.10.0
+    due to a major update of the S2 desaturation correction.
+
+    This is a preliminary version for SR2 analysis and should be used
+    for runs after 18836, as only for them the SR2 S2 XY correction maps are
+    valid. It is left to the discretion of the analyst whether they want to
+    apply the cut also to other runs or not.
+
+    Required minitrees: Corrections
+    Defined with pax version: 6.10.1
+    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
+                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
+                xenon:xenon1t:analysis:sciencerun2:cs2_aft
+    Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>
+             Giovanni Volta  <gvolta@physik.uzh.ch>"""
+
+    version = 3
+
+    top_bound_string = ('(6.533946E-01 + 2.238536E-07 * cxys2 +'
+                        ' -5.791706E-13 * cxys2**2 + 6.021542E-19 * cxys2**3 +'
+                        ' -2.786815E-25 * cxys2**4 + 4.763021E-32 * cxys2**5 +'
+                        ' 2.021210E+00 / sqrt(cxys2) + -6.431296E+00 / cxys2)')
+    bot_bound_string = ('(6.228859E-01 + 1.533585E-08 * cxys2 +'
+                        ' -2.468763E-13 * cxys2**2 + 3.554834E-19 * cxys2**3 +'
+                        ' -1.932773E-25 * cxys2**4 + 3.686730E-32 * cxys2**5 +'
+                        ' -1.675048E+00 / sqrt(cxys2) + -1.291028E-01 / cxys2)')
+
+    string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
+              ' < cs2_aft)) | (cxys2 > 2163000) | (cxys2 < 60)')
+
+    def pre(self, df):
+        df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
+                                df['s2_lifetime_correction'])
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
+                                                df['cs2_bottom'])
+        return df
 
 # S2PatternLikelihood
 # Contact: Jingqiang
