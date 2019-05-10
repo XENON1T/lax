@@ -3,6 +3,12 @@ History
 =======
 
 
+1.7.2 (2019-05-10)
+------------------
+* S1PMT3fold cut for SR2 (#165)
+* Preliminary S1AreaFractionTop cut (#164)
+
+
 1.7.1 (2019-05-06)
 ------------------
 * S2SingleScatter for SR2 (#160, #163)
