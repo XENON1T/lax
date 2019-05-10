@@ -22,6 +22,7 @@ class AllEnergy(ManyLichen):
 
     def __init__(self):
         self.lichen_list = [
+            S1PMT3fold(),
             FiducialZOptimized(),
             InteractionExists(),
             S2Threshold(),
@@ -203,6 +204,26 @@ S2PatternLikelihood = postsr1.S2PatternLikelihood
 ##
 # S1 quality cuts
 ##
+
+# 3-fold coincidence PMT required for every S1
+# Contact: Diego
+class S1PMT3fold(Lichen):
+    """
+    The S1 PMT 3-fold cut rejects events in which, for the main S1, the number of PMTs
+    with a hit close (window defined in pax) to the peak's sum waveform maximum
+    is lower than 3.
+    * Requires the 'Extended' minitrees (relies on 's1_tight_coincidence').
+    * Retrieves the SR1/SR0 tight coincidence conditions.
+    * Needs to be applied for all SR2 analyses (pax version newer than 6.8.0).
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun2:3foldcut
+    Contact: Diego Ramirez <diego.ramirez@physik.uni-freiburg.de>
+    """
+
+    version = 1
+
+    def _process(self, df):
+        df.loc[:, self.name()] = (df['s1_tight_coincidence'] > 2)
+        return df
 
 # Maximum contribution of each PMT to the S1 hitpattern
 # Contact: UNKNOWN!!
