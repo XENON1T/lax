@@ -8,6 +8,7 @@ from lax.lichens import sciencerun1 as sr1
 from lax.lichens import postsr1
 DATA_DIR = sr1.DATA_DIR
 
+from scipy.stats import chi2
 
 ##
 # Combination cut packages
