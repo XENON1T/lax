@@ -145,9 +145,20 @@ S2Tails = sr0.S2Tails
 S2Width = sr1.S2Width
 
 # Position reconstruction discrepancy cut
-# Contact: UNKNOWN!!
-PosDiff = sr0.PosDiff
+# Contact: Ricardo
+"""
+Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:peres:analysis:sr2:cutposdiff_tf
+Thihs is an updated version of the PosDiff cut tuned for Science Run 2. 
+It removes weirdly reconstructed events based on the difference between NN_tf and tpf algorithm reconstruction.
+Contact: Ricardo Peres <rperes@physik.uzh.ch>
+version = 5
 
+def _process(self,df):
+    df.loc[:,self.name()] = (np.sqrt((df['x_observed_nn_tf'] - df['x_observed_tpf'])**2 +
+                                     (df['y_observed_nn_tf'] - df['y_observed_tpf'])**2)) < 
+                             (90555.9100 * np.exp(-np.log10(df.s2)/0.221584) + 3.435491)
+    return df
+    
 # S2 AFT
 # Contact: Giovanni, Dominick
 class CS2AreaFractionTopExtended(StringLichen):
