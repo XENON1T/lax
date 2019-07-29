@@ -283,8 +283,6 @@ S1AreaFractionTop = sciencerun0.S1AreaFractionTop
 
 PreS2Junk = sciencerun0.PreS2Junk
 
-KryptonMisIdS1 = sciencerun0.KryptonMisIdS1
-
 Flash = sciencerun0.Flash
 
 PosDiff = sciencerun0.PosDiff
@@ -296,3 +294,5 @@ S1AreaLowerInjectionFraction = sciencerun0.S1AreaLowerInjectionFraction
 SingleElectronS2s = sciencerun0.SingleElectronS2s
 
 MisIdS1SingleScatter = sciencerun0.MisIdS1SingleScatter
+
+KryptonMisIdS1 = MisIdS1SingleScatter
