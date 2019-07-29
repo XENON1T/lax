@@ -240,7 +240,8 @@ S1Width = sr0.S1Width
 
 # KryptonMisIdS1
 # Contact: Evan
-KryptonMisIdS1 = sr0.KryptonMisIdS1
+MisIdS1SingleScatter = sr0.MisIdS1SingleScatter
+KryptonMisIdS1 = MisIdS1SingleScatter
 
 # Remove S1s that are actually misidentified single electrons
 # Contact: Fei

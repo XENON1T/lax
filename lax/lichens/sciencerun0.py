@@ -924,6 +924,47 @@ class MuonVeto(ManyLichen):
         string = "nearest_muon_veto_trigger > -2e10 & nearest_muon_veto_trigger < 2e10"
 
 
+class MisIdS1SingleScatter(Lichen):
+    """Cut to target the shoulder on Kr83m data due to mis-identified krypton events.
+    This cut is defined in the space of cs1 and largest_s2_before_main_s2_area*s1_correction.
+    It's possible for one of the conversion electrons of the Kr83m decay to be mis-classified as an S2, 
+    leading to an S2 that occurs in time before the main S2 that is larger than typical single-electrons. 
+    Requires Extended and Corrections minitrees.
+    Note: xenon:shockley:lower:misids1singlescatter:sr2_misid
+    Contact: Evan Shockley <ershockley@uchicago.edu>
+    """
+
+    version = 2.0
+
+    pars = [87.30,  # peak of the 9 keV gaussian in correction*largest_s2_before_main_s2_area space
+            3.65,  # standard deviations to remove --> defines the half-ellipse to remove the shoulder
+            11.50,  # sigma_y
+            249.20,  # mu_x
+            21.49,  # sigma_x
+            ]
+    s1_thresh = 170.7  # cs1 PE. Up to this value the cut will be a straight line
+    cutval = 125  # straight line part of the cut
+    s1_range = (0, 327.7)  # range of cs1 to apply the cut
+
+    def pre(self, df):
+        df['temp'] = df.largest_s2_before_main_s2_area * df.s1_xyz_correction_fdc_3d_nn_tf
+        return df
+
+    def _cutline(self, x):
+        pars = self.pars
+        return pars[0] - pars[1] * pars[2] * np.sqrt(1 - ((x - pars[3]) / (pars[1] * pars[4])) ** 2)
+
+    def cutline(self, x):
+        return np.nan_to_num(self.cutval * (x < self.s1_thresh)) + np.nan_to_num(
+            (x >= self.s1_thresh) * self._cutline(x))
+
+    def _process(self, df):
+        df.loc[:, self.name()] = (np.nan_to_num(df.temp) < self.cutline(df.cs1)) | \
+                                 (df.cs1 < self.s1_range[0]) | \
+                                 (df.cs1 > self.s1_range[1])
+        return df
+
+
 class KryptonMisIdS1(StringLichen):
     """Remove events where the 32 keV S1 of Kr83m decay is identified as an S2.
     These events appear above the ER band since the S1 is from the 9 keV decay
