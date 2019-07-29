@@ -294,3 +294,5 @@ S1AreaUpperInjectionFraction = sciencerun0.S1AreaUpperInjectionFraction
 S1AreaLowerInjectionFraction = sciencerun0.S1AreaLowerInjectionFraction
 
 SingleElectronS2s = sciencerun0.SingleElectronS2s
+
+MisIdS1SingleScatter = sciencerun0.MisIdS1SingleScatter
