@@ -173,3 +173,33 @@ class MisIdS1SingleScatter(Lichen):
         df.loc[:, self.name()] = (np.nan_to_num(df.largest_s2_before_main_s2_area) < self.cutline(df.cs1)) | \
                                  (df.cs1 < self.min_s1)
         return df
+
+
+class S1AreaFractionTop_he(Lichen):
+    """Cut between  [0.1 - 99.9] percentile of the population in the parameter space Z vs S1AFT
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:arianna:s1_aft_highenergy
+       Contact: arianna.rocchetti@physik.uni-freiburg.de 
+       Cut defined above cs1>200. 
+       Requires: PatternReconstruction Minitree.
+    """
+    version = 0
+
+    def _classify(df):
+        print("Warning: Cut defined above cs1>200. ")
+        def f1(x):
+            f1 = -315.6*x**2 + 445.6 * x - 153.7
+            return f1
+        def f2(x):
+            f2 = 188.7*x**3 - 1172*x**2 + 719.7* x - 119.2
+            return f2
+        
+        df['f1_s1aft_bool'] = 0
+        df['f1_s1aft'] = f1(df.s1_area_fraction_top)
+        df['f2_s1aft'] = f2(df.s1_area_fraction_top)
+        
+        df.loc[:, 'f1_s1aft_bool'] = np.array(df.f1_s1aft_bool, bool)
+        
+        df.f1_s1aft_bool[(df.z_3d_nn_tf > df.f1_s1aft) & (df.z_3d_nn_tf < df.f2_s1aft )] = True
+        df.f1_s1aft_bool[(df.z_3d_nn_tf < df.f1_s1aft) & (df.z_3d_nn_tf > df.f2_s1aft )] = False
+        df = df[(df.z_3d_nn_tf > df.f1_s1aft) & (df.z_3d_nn_tf < df.f2_s1aft )]
+        return df
