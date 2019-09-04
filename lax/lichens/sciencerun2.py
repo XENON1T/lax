@@ -8,8 +8,6 @@ from lax.lichens import sciencerun1 as sr1
 from lax.lichens import postsr1
 DATA_DIR = sr1.DATA_DIR
 
-from scipy.stats import chi2
-
 ##
 # Combination cut packages
 ##
@@ -291,50 +289,8 @@ class S2SingleScatter(Lichen):
         return df
 
 # S1 single scatter
-# Contact: Joran
-class S1SingleScatter(Lichen):
-    """Requires only one valid interaction between the largest S2, and any S1 recorded before it.
-
-    The S1 cut checks that any possible secondary S1s recorded in a waveform, could not have also
-    produced a valid interaction with the primary S2. To check whether an interaction between the
-    second largest S1 and the largest S2 is valid, we use the S2Width cut. If the event would pass
-    the S2Width cut, a valid second interaction exists, and we may have mis-identified which S1 to
-    pair with the primary S2. Therefore we cut this event. If it fails the S2Width cut the event is
-    not removed.
-    
-    Requires Extended minitrees. 
-
-    The cut is investigated for SR2 here:
-    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:analysis:sciencerun2:s1singlescattercut
-
-    It should be applicable to data regardless whether it is ER or NR.
-    Contacts: Jacques Pienaar, <jpienaar@uchicago.edu>
-    (for SR2) Joran Angevaare, <j.angevaare@nikhef.nl>  
-    """
-    
-    version = 5
-    s2width = S2Width
-    alt_s1_coincidence_threshold = 3
-    
-    def _process(self, df):
-        df.loc[:, self.name()] = True  # Default is True
-        mask = (df.alt_s1_interaction_drift_time > self.s2width.DriftTimeFromGate) & (
-                df.alt_s1_tight_coincidence >= self.alt_s1_coincidence_threshold)      
-    
-        # S2 width cut for alternate S1 - main S2 interaction
-        alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / self.s2width.scg
-        
-        alt_rel_width = np.square(df.loc[mask,
-                's2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)
-        alt_rel_width /= np.square(self.s2width.s2_width_model(self.s2width,
-                df.loc[mask, 'alt_s1_interaction_drift_time']))
-
-        alt_interaction_passes = chi2.logpdf(
-                alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
-
-        df.loc[mask, (self.name())] = True ^ alt_interaction_passes
-
-        return df
+# Contact: Joran, Jingqiang
+S1SingleScatter = postsr1.S1SingleScatter
 
 
 ##

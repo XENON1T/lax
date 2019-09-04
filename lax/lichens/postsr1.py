@@ -173,3 +173,57 @@ class MisIdS1SingleScatter(Lichen):
         df.loc[:, self.name()] = (np.nan_to_num(df.largest_s2_before_main_s2_area) < self.cutline(df.cs1)) | \
                                  (df.cs1 < self.min_s1)
         return df
+
+
+class S1SingleScatter(Lichen):
+    """
+    Added more requirement for largest_other_s1 to be identified as problematic. We found many largest_other_s1 are
+    from AP after S1, thus we required the largest hit area in one PMT shouldn't not exceed certain amount of the
+    largest_other_s1. The function is a bit different from S1 MAX PMT, as the current one seems not strict at
+    very low energy (~5 PE S1).
+
+    Requires Extended minitrees.
+
+    The cut is investigated for both SR1 and SR2 here:
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:low_energy_er:s1singlescattercut
+
+    It should be applicable to data regardless whether it is ER or NR.
+    Contacts:
+    Jacques Pienaar, <jpienaar@uchicago.edu>
+    Joran Angevaare, <j.angevaare@nikhef.nl>
+    Jingqiang Ye, <jiy171@ucsd.edu>
+    """
+
+    version = 6
+    s2width = S2Width
+    alt_s1_coincidence_threshold = 3
+
+    @staticmethod
+    def largest_area_threshold(s1):
+        """
+        threshold of largest hit area in a single PMT for largest_other_s1, similar to S1 MAX PMT cut.
+        """
+        return np.minimum(0.052 * s1 + 4.15, 0.6 * s1 - 0.5)
+
+    def _process(self, df):
+        df.loc[:, self.name()] = True  # Default is True
+        mask = (df.alt_s1_interaction_drift_time > self.s2width.DriftTimeFromGate) & (
+                df.alt_s1_tight_coincidence >= self.alt_s1_coincidence_threshold)
+
+        # S2 width cut for alternate S1 - main S2 interaction
+        alt_n_electron = np.clip(df.loc[mask, 's2'], 0, 5000) / self.s2width.scg
+
+        alt_rel_width = np.square(df.loc[mask,
+                                         's2_range_50p_area'] / self.s2width.SigmaToR50) - np.square(self.s2width.scw)
+        alt_rel_width /= np.square(self.s2width.s2_width_model(self.s2width,
+                                                               df.loc[mask, 'alt_s1_interaction_drift_time']))
+
+        alt_interaction_passes = stats.chi2.logpdf(
+            alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
+
+        alt_pmt_passes = df.loc[mask, 'alt_s1_largest_hit_area'] < \
+                         self.largest_area_threshold(df.loc[mask, 'largest_other_s1'])
+
+        df.loc[mask, (self.name())] = True ^ (alt_interaction_passes & alt_pmt_passes)
+
+        return df
