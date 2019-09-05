@@ -152,7 +152,7 @@ PosDiff = sr0.PosDiff
 # Contact: Giovanni, Dominick
 class CS2AreaFractionTopExtended(StringLichen):
     """"An extension of CS2AreaFractionTop to the entire S2 range
-    with a designed acceptance of 99%.
+    with a designed acceptance of 98%.
     It is defined in the (cxys2, cs2_aft) space, with:
 
     cxys2 = (cs2_top + cs2_bottom) / s2_lifetime_correction
@@ -184,14 +184,14 @@ class CS2AreaFractionTopExtended(StringLichen):
 
     version = 4
 
-    top_bound_string = ('(6.517850E-01 + 1.551142E-07 * cxys2 +'
-                        ' -4.972580E-13 * cxys2**2 + 6.755268E-19 * cxys2**3 +'
-                        ' -4.066834E-25 * cxys2**4 + 8.918364E-32 * cxys2**5 +'
-                        ' 1.597980E+00 / sqrt(cxys2) + -3.619142E+00 / cxys2)')
-    bot_bound_string = ('(6.246945E-01 + -2.966154E-08 * cxys2 +'
-                        ' 5.945939E-14 * cxys2**2 + -1.079485E-19 * cxys2**3 +'
-                        ' 9.051805E-26 * cxys2**4 + -2.528701E-32 * cxys2**5 +'
-                        ' -1.719722E+00 / sqrt(cxys2) + -5.912173E-01 / cxys2)')
+    top_bound_string = ('(6.499153E-01 + 1.353661E-07 * cxys2 +'
+                        ' -4.220391E-13 * cxys2**2 + 5.603375E-19 * cxys2**3 +'
+                        ' -3.304600E-25 * cxys2**4 + 7.116408E-32 * cxys2**5 +'
+                        ' 1.436820E+00 / sqrt(cxys2) + -3.257773E+00 / cxys2)')
+    bot_bound_string = ('(6.260385E-01 + -1.414116E-08 * cxys2 +'
+                        ' 8.910802E-15 * cxys2**2 + -4.089157E-20 * cxys2**3 +'
+                        ' 5.016441E-26 * cxys2**4 + -1.615647E-32 * cxys2**5 +'
+                        ' -1.612496E+00 / sqrt(cxys2) + 6.806076E-01 / cxys2)')
 
     string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
               ' < cs2_aft)) | (cxys2 > 1752600) | (cxys2 < 60)')
@@ -204,9 +204,9 @@ class CS2AreaFractionTopExtended(StringLichen):
         return df
 
 
-class CS2AreaFractionTopExtended98Percent(StringLichen):
+class CS2AreaFractionTopExtended99Percent(StringLichen):
     """"A version of CS2AreaFractionTopExtended with a target acceptance of
-    98%. See the docstring of CS2AreaFractionTopExtended for more details.
+    99%. See the docstring of CS2AreaFractionTopExtended for more details.
 
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
@@ -219,14 +219,14 @@ class CS2AreaFractionTopExtended98Percent(StringLichen):
 
     version = 1
 
-    top_bound_string = ('(6.499153E-01 + 1.353661E-07 * cxys2 +'
-                        ' -4.220391E-13 * cxys2**2 + 5.603375E-19 * cxys2**3 +'
-                        ' -3.304600E-25 * cxys2**4 + 7.116408E-32 * cxys2**5 +'
-                        ' 1.436820E+00 / sqrt(cxys2) + -3.257773E+00 / cxys2)')
-    bot_bound_string = ('(6.260385E-01 + -1.414116E-08 * cxys2 +'
-                        ' 8.910802E-15 * cxys2**2 + -4.089157E-20 * cxys2**3 +'
-                        ' 5.016441E-26 * cxys2**4 + -1.615647E-32 * cxys2**5 +'
-                        ' -1.612496E+00 / sqrt(cxys2) + 6.806076E-01 / cxys2)')
+    top_bound_string = ('(6.517850E-01 + 1.551142E-07 * cxys2 +'
+                        ' -4.972580E-13 * cxys2**2 + 6.755268E-19 * cxys2**3 +'
+                        ' -4.066834E-25 * cxys2**4 + 8.918364E-32 * cxys2**5 +'
+                        ' 1.597980E+00 / sqrt(cxys2) + -3.619142E+00 / cxys2)')
+    bot_bound_string = ('(6.246945E-01 + -2.966154E-08 * cxys2 +'
+                        ' 5.945939E-14 * cxys2**2 + -1.079485E-19 * cxys2**3 +'
+                        ' 9.051805E-26 * cxys2**4 + -2.528701E-32 * cxys2**5 +'
+                        ' -1.719722E+00 / sqrt(cxys2) + -5.912173E-01 / cxys2)')
 
     string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
               ' < cs2_aft)) | (cxys2 > 1752600) | (cxys2 < 60)')
