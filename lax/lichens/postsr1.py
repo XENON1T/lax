@@ -221,8 +221,9 @@ class S1SingleScatter(Lichen):
         alt_interaction_passes = stats.chi2.logpdf(
             alt_rel_width * (alt_n_electron - 1), alt_n_electron) > - 20
 
-        alt_pmt_passes = df.loc[mask, 'alt_s1_largest_hit_area'] < \
-                         self.largest_area_threshold(df.loc[mask, 'largest_other_s1'])
+        alt_pmt_passes = (df.loc[mask, 'alt_s1_largest_hit_area'] <
+                         self.largest_area_threshold(df.loc[mask, 'largest_other_s1'])) \
+                         | (df.loc[mask, 'largest_other_s1'] > 50)
 
         df.loc[mask, (self.name())] = True ^ (alt_interaction_passes & alt_pmt_passes)
 
