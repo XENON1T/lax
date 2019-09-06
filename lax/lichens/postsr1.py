@@ -198,8 +198,8 @@ class S1SingleScatter(Lichen):
     s2width = S2Width
     alt_s1_coincidence_threshold = 3
 
-    @staticmethod
-    def largest_area_threshold(s1):
+    @classmethod
+    def largest_area_threshold(cls, s1):
         """
         threshold of largest hit area in a single PMT for largest_other_s1, similar to S1 MAX PMT cut.
         """
