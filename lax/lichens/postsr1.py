@@ -182,24 +182,20 @@ class S1AreaFractionTop_he(Lichen):
        Cut defined above cs1>200. 
        Requires: PatternReconstruction Minitree.
     """
-    version = 0
 
-    def _classify(df):
-        print("Warning: Cut defined above cs1>200. ")
-        def f1(x):
-            f1 = -315.6*x**2 + 445.6 * x - 153.7
-            return f1
-        def f2(x):
-            f2 = 188.7*x**3 - 1172*x**2 + 719.7* x - 119.2
-            return f2
-        
-        df['f1_s1aft_bool'] = 0
-        df['f1_s1aft'] = f1(df.s1_area_fraction_top)
-        df['f2_s1aft'] = f2(df.s1_area_fraction_top)
-        
-        df.loc[:, 'f1_s1aft_bool'] = np.array(df.f1_s1aft_bool, bool)
-        
-        df.f1_s1aft_bool[(df.z_3d_nn_tf > df.f1_s1aft) & (df.z_3d_nn_tf < df.f2_s1aft )] = True
-        df.f1_s1aft_bool[(df.z_3d_nn_tf < df.f1_s1aft) & (df.z_3d_nn_tf > df.f2_s1aft )] = False
-        df = df[(df.z_3d_nn_tf > df.f1_s1aft) & (df.z_3d_nn_tf < df.f2_s1aft )]
+    version = 1
+    pars1 = [-315.6, 445.6, -153.7]  
+    pars2 = [188.7,-1172,719.7, -119.2]
+
+    def cutline1(self, x):
+        return self.pars1[0]*(x**2) + self.pars1[1]  *x + self.pars1[2]  
+
+    def cutline2(self, x):
+        return self.pars2[0]*(x**3) + self.pars2[1]  *(x**2) + self.pars2[2] * x + self.pars2[3]
+
+
+    def _process(self, df):
+	print("cut defined for cs1>200")
+        df.loc[:, self.name()] = ( (df.z_3d_nn_tf>self.cutline1(df.s1_area_fraction_top) ) & 
+                                (df.z_3d_nn_tf<self.cutline2(df.s1_area_fraction_top)  ) )
         return df
