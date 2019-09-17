@@ -179,7 +179,7 @@ class S1AreaFractionTop_he(Lichen):
     """Cut between  [0.1 - 99.9] percentile of the population in the parameter space Z vs S1AFT
     Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:arianna:s1_aft_highenergy
        Contact: arianna.rocchetti@physik.uni-freiburg.de 
-       Cut defined above cs1>200. 
+       Cut defined above cs1>200 for the SingleScatter population. Valid also for Multiple scatter. 
        Requires: PatternReconstruction Minitree.
     """
 
