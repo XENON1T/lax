@@ -5,7 +5,7 @@ The SR1 cuts are copied, unless they are overriden below.
 import inspect
 
 import numpy as np
-
+import pandas as pd
 import lax
 from lax.lichen import Lichen, ManyLichen, StringLichen  # pylint: disable=unused-import
 from lax import __version__ as lax_version
@@ -25,6 +25,7 @@ for x in dir(sr1):
 # Put new lichens here
 ##
 
+
 class ERBandDEC(StringLichen):
     """A cut used in the double electron capture analysis to preselect the ER band
     Copied from xenon:xenon1t:analysis:backgrounds:ambe:fieguth:dec1t_final_analysis:cuts_overview
@@ -38,28 +39,74 @@ class ERBandDEC(StringLichen):
         df.loc[:, 'log_cs_ratio'] = np.log10(df['cs2']/df['cs1'])
         return df
 
-
 class S2PatternLikelihood(StringLichen):
     """
-    Extend S2 PatternLikelihood(S2 PLH) Cut up to 1.5e5 PE S2, which is good for up to around 220 keVee. This cut is a
-    combination of SR1 S2PLH(s2 < 10000 PE) and extension of S2 PLH(1e4 < S2 < 1.5e5 PE), thus have same performance as 
-    sr1 S2 PLH for low energy and have improved performance for high energy. S2 PLH cut aims to remove poorly 
-    reconstructed events.
-
-    The details can be found below:
-    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:jingqiang:darkphoton:s2patternlikelihood_200kev
-
-    Requires Extended minitrees.
-    Contact: Jingqiang Ye <jiy171@ucsd.edu>
+    Extend S2PatternLikelihood cut at High Energy (from 0 to 3000 keVee). 
+    This cut is a combinaison of the low energy (s2 < 1e4 PE - develop for SR1) and the one extended at high energy.
+    
+    Details can be found in this note:
+    https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:chloetherreau:0vbb_s2_likelihood_cut_he_update
+    
+    Long to process, applied it after all other cuts
+    Requires S2PatternReducedAP minitrees (hax PR:https://github.com/XENON1T/hax/pull/259)
+    Contact: Chloe Therreau <chloe.therreau@subatech.in2p3.fr>
     """
-    version = 0
+    def pre(self, df):
+        def powerlaw(x,amp0,power0,amp1,power1,cte):
+            return amp0*x**power0+amp1*x**power1+cte   
+
+        phi1=4
+        phi2=10
+        phi3=16
+        phi4=22
+
+        # Load parameters
+        params_load = np.loadtxt('/dali/lgrandi/ctherreau/cuts/S2PatternHE/s2patternlikelihoodcut_he_r_phi_params_v2.txt')
+        # Reshape parameters
+        params=[params_load[:phi1], params_load[phi1:phi1+phi2],
+                params_load[phi1+phi2:phi1+phi2+phi3],params_load[phi1+phi2+phi3:phi1+phi2+phi3+phi4]]
+        
+        r_here = 'r_3d_nn_tf'
+        phi_here = 'phi_3d_nn_tf'
+        df.loc[:,phi_here] = np.arccos(df.x_3d_nn_tf/df.r_3d_nn_tf)*np.sign(df.y_3d_nn_tf)
+        df_list=[]
+        R = np.linspace(0, 47, 5) 
+        for i in range(len(R)-1):
+            n = [phi1,phi2,phi3,phi4][i]
+            td = 2*np.pi/n
+            for j in range(n):
+                tmin, tmax, rmin, rmax = j*td-np.pi, j*td-np.pi+td, R[i], R[i+1]
+                df_box_cut = df.copy()
+                box_cut = ((df_box_cut[r_here]>rmin)&(df_box_cut[r_here]<rmax)
+                         &(df_box_cut[phi_here]>tmin)&(df_box_cut[phi_here]<tmax))
+                df_box_cut = df_box_cut[box_cut]
+                a_here = params[i][j][0]*np.ones(len(df[box_cut]))
+                b_here = params[i][j][1]*np.ones(len(df[box_cut]))
+                c_here = params[i][j][2]*np.ones(len(df[box_cut]))
+                d_here = params[i][j][3]*np.ones(len(df[box_cut]))
+                e_here = params[i][j][4]*np.ones(len(df[box_cut]))
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_a'] = a_here
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_b'] = b_here
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_c'] = c_here
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_d'] = d_here
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_e'] = e_here
+
+                df_list.append(df_box_cut)
+                del df_box_cut
+        del df
+        df=pd.concat(df_list)
+        df.loc[:,'log10_s2_pattern_fit_top_reduced_ap']=np.log10(df['s2_pattern_fit_top_reduced_ap'])
+        df.loc[:,'log10_s2']=np.log10(df['s2'])
+
+        return df
     p0 = (0.072, 594)
     p1_sr1 = (0.0404, 594, 0.0737, -686)
-
-
-    string = ("((s2_pattern_fit < %.3f*s2 + %.3f) & (s2 > 10000))\
-             | ((s2_pattern_fit < %.3f*s2 + %.3f*s2**%.3f + %.3f) & (s2 < 10000))" %(p0 + p1_sr1))
-
+    
+    string = (" ((log10_s2_pattern_fit_top_reduced_ap<\
+                    CutS2PatternLikelihoodHE_a*log10_s2**CutS2PatternLikelihoodHE_b+\
+                    CutS2PatternLikelihoodHE_c*log10_s2**CutS2PatternLikelihoodHE_d+\
+                    CutS2PatternLikelihoodHE_e) & (s2 > 1e4))  \
+              | ((s2_pattern_fit < %.3f*s2 + %.3f*s2**%.3f + %.3f) & (s2 < 10000) )"%(p1_sr1))
 
 class CS2AreaFractionTopExtended(StringLichen):
     """"An extension of CS2AreaFractionTop to the entire S2 range
