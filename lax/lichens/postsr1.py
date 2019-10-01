@@ -257,6 +257,5 @@ class PosDiff_HE(Lichen):
     
     def _process(self, df):
         df.loc[:, self.name()] = np.sqrt((df['x_observed_nn_tf']-df['x_observed_tpf'])**2+
-                                         (df['y_observed_nn_tf']-df['y_observed_tpf'])**2)<
-        (3569.674 * np.exp(-np.log10(df.s2)/0.369) + 1.582)
+                                         (df['y_observed_nn_tf']-df['y_observed_tpf'])**2)<(3569.674 * np.exp(-np.log10(df.s2)/0.369) + 1.582)
         return df
