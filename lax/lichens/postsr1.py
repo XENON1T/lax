@@ -244,3 +244,19 @@ class S1AreaFractionTop_he(Lichen):
         df.loc[:, self.name()] = ((df.z_3d_nn_tf>self.cutline1(df.s1_area_fraction_top)) &
                                   (df.z_3d_nn_tf<self.cutline2(df.s1_area_fraction_top)))
         return df
+    
+    
+class PosDiff_HE(Lichen):
+    """
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:chiara:posdiffcut_update
+    This cut is defined for removing the events with large position difference between NN_TF and TPF algorithm.
+    Defined for high energy analysis and whole background matching up to 3 MeV.
+    Contact: Chiara Capelli <chiara@physik.uzh.ch>
+    """
+    version = 0.1
+    
+    def _process(self, df):
+        df.loc[:, self.name()] = np.sqrt((df['x_observed_nn_tf']-df['x_observed_tpf'])**2+
+                                         (df['y_observed_nn_tf']-df['y_observed_tpf'])**2)<
+        (3569.674 * np.exp(-np.log10(df.s2)/0.369) + 1.582)
+        return df
