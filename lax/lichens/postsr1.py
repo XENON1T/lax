@@ -259,3 +259,18 @@ class PosDiff_HE(Lichen):
         df.loc[:, self.name()] = np.sqrt((df['x_observed_nn_tf']-df['x_observed_tpf'])**2+
                                          (df['y_observed_nn_tf']-df['y_observed_tpf'])**2)<(3569.674 * np.exp(-np.log10(df.s2)/0.369) + 1.582)
         return df
+
+
+class S2SingleScatter_HE(Lichen):
+    """This cut is for cutting multiple s2 events for high energy er events
+    See note xenon:xenon1t:sim:notes:tzhu:s2singlescatterpostsr1
+    """
+    version = 0.1
+    gmix=pickle.load(open('/project2/lgrandi/zhut/s2_single_classifier_gmix_v6.10.0.pkl', 'rb'))
+
+    def _process(self, df):
+        df[self.name()] = True
+        mask = np.logical_and(df['largest_other_s2_pattern_fit']>0, df['s2']>0)
+        Y = np.log10(df.loc[mask, ['largest_other_s2', 'largest_other_s2_pattern_fit', 's2']])
+        df.loc[mask, self.name()] = self.gmix.predict(Y).astype(bool)
+        return df
