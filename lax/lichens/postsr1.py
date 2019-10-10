@@ -6,6 +6,7 @@ import inspect
 
 import numpy as np
 import pandas as pd
+import pickle
 import lax
 from lax.lichen import Lichen, ManyLichen, StringLichen  # pylint: disable=unused-import
 from lax import __version__ as lax_version
