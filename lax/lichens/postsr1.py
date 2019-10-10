@@ -262,8 +262,9 @@ class PosDiff_HE(Lichen):
 
 
 class S2SingleScatter_HE(Lichen):
-    """This cut is for cutting multiple s2 events for high energy er events
+    """This cut is for cutting multiple s2 events for high energy er events, s2>1e3
     See note xenon:xenon1t:sim:notes:tzhu:s2singlescatterpostsr1
+    Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
     version = 0.1
     gmix=pickle.load(open('/project2/lgrandi/zhut/s2_single_classifier_gmix_v6.10.0.pkl', 'rb'))
