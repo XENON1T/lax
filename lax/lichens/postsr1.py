@@ -268,7 +268,8 @@ class S2SingleScatter_HE(Lichen):
     Contact: Tianyu Zhu <tz2263@columbia.edu>
     """
     version = 0.1
-    gmix=pickle.load(open('/project2/lgrandi/zhut/s2_single_classifier_gmix_v6.10.0.pkl', 'rb'))
+    gmix_filename = os.path.join(DATA_DIR, 's2_single_classifier_gmix_v6.10.0.pkl')
+    gmix = pickle.load(open(gmix_filename, 'rb'))
 
     def _process(self, df):
         df[self.name()] = True
