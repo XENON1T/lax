@@ -335,7 +335,7 @@ class S2Width_HE(Lichen):
 
         # stiching the cuts together
         df.loc[:, self.name()] = True # default is True
-        df.loc[:, self.name()] = np.where(df_test['CES'] < 200, df['CutS2Width'], df_test[self.name()])
+        df.loc[:, self.name()] = np.where(df_test['CES'] < 250, df['CutS2Width'], df_test[self.name()])
         return df
 
     def g1_sr1_he_ap(self, z):
