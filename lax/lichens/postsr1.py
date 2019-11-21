@@ -311,7 +311,7 @@ class S2Width_HE(Lichen):
         found_bin = np.digitize(df["drift_time"], drift_time_edges)
 
         # apply standard S2 width cut
-        S2WidthLichen = lax.lichens.sciencerun1.S2Width()¬
+        S2WidthLichen = sr1.S2Width()
         df = S2WidthLichen.process(df)
 
         mybins = []
