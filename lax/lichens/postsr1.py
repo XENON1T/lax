@@ -237,7 +237,7 @@ class CS2AreaFractionTopExtendedLowEr(StringLichen):
         return df
 
 
-class CS2AreaFractionTopExtendedLowER99Percent(StringLichen):
+class CS2AreaFractionTopExtendedLowEr99Percent(StringLichen):
     """"A version of CS2AreaFractionTopExtendedLowER with a target acceptance of
     99%. See the docstring of CS2AreaFractionTopExtendedLowER for more details.
     Required minitrees: Corrections
