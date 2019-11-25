@@ -310,9 +310,9 @@ class S1PatternLikelihood_HE(Lichen):
     S1_thr = 600
     
     def _process(self, df):
-        S1PL = data_gamma['s1_pattern_fit_bottom_hax']
-        z = data_gamma['z_3d_nn_tf']
-        S1 = data_gamma['s1']
+        S1PL = df['s1_pattern_fit_bottom_hax']
+        z = df['z_3d_nn_tf']
+        S1 = df['s1']
         
         cut_z = (S1PL < cutline_z_1(z, *popt_z_1))&(s1PL > cutline_z_2(z, *popt_z_2))
         cut_S1 = (((S1PL < cutline_S1_1(s1, *popt_S1_1))*(s1<S1_thr))|((S1PL < cutline_S1_2(s1, *popt_S1_2))*(s1>=S1_thr)))
