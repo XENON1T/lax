@@ -279,3 +279,43 @@ class S2SingleScatter_HE(Lichen):
         Y = np.log10(df.loc[mask, ['largest_other_s2', 'largest_other_s2_pattern_fit', 's2']])
         df.loc[mask, self.name()] = self.gmix.predict(Y).astype(bool)
         return df
+
+class S1PatternLikelihood_HE(Lichen):
+    """
+    This cut is meant to cut Gamma-X events and to help the rejection of multiple scatter evens. Moreover it is sensitive 
+    also othe anomalies: unexpected S1 pattern, S1 and S2 not corresponding to the same interactio, ...
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:giovo:sr2_cs1pl
+    Contact: gvolta@physik.uzh.ch
+    """
+    version = 0.1
+    
+    # Function for cut definition in z
+    def cutline_z_1(x, p0, p1, p3):
+        return p0 + p1 *np.exp(-p3*x)
+    # Function for cut definition in z
+    def cutline_z_2(x, p0, p1):
+        return p0 + p1*x
+    # Function for cut definition below 600 PE
+    def cutline_S1_1(x, p0, p1, p2, p3):
+        return p0 + p1*pow(x, 0.5) + p2*x + p3*pow(x, 1.5)
+    # Function for cut definition above 600 PE
+    def cutline_S1_2(x, p0, p1, p2):
+        return p0 + p1*np.arctan(p2*x)
+    
+    popt_z_1 = [2.38811218e+02, 2.55991432e-05, 1.89468970e-01] #exp
+    popt_z_2 = [1.05256551e+02, 7.72450878e-02] #poly1
+    popt_S1_1 = [1.49406369e+01,  2.62994597e+01, -1.01825116e+00,  1.27941177e-02] #cutline_S1_1
+    popt_S2_2 = [2.18914476e+02, 1.19392164e+02, 5.32460349e-05] #cutline_S1_2
+    
+    S1_thr = 600
+    
+    def _process(self, df):
+        S1PL = data_gamma['s1_pattern_fit_bottom_hax']
+        z = data_gamma['z_3d_nn_tf']
+        S1 = data_gamma['s1']
+        
+        cut_z = (S1PL < cutline_z_1(z, *popt_z_1))&(s1PL > cutline_z_2(z, *popt_z_2))
+        cut_S1 = (((S1PL < cutline_S1_1(s1, *popt_S!_1))*(s1<S1_thr))|((S1PL < cutline_S1_2(s1, *popt_S1_2))*(s1>=S1_thr)))
+        cut = cut_z&cut_S1
+        return cut
+    
