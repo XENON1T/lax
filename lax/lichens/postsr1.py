@@ -193,6 +193,84 @@ class CS2AreaFractionTopExtendedOldDesat(StringLichen):
         return df
 
 
+class CS2AreaFractionTopExtendedLowEr(StringLichen):
+    """"An extension of CS2AreaFractionTop to the entire S2 range
+    with a designed acceptance of 98% (low ER analysis version).
+    It is defined in the (cxys2, cs2_aft) space, with:
+    cxys2 = (cs2_top + cs2_bottom) / s2_lifetime_correction
+    cs2_aft = cs2_top / (cs2_top + cs2_bottom)
+    Events where cxys2 > 1713000 PE or cxys2 < 60 PE are not cut.
+    This cut should be used with a pax version of at least 6.10.0
+    due to a major update of the S2 desaturation correction.
+    This version has been designed for SR1 analysis
+    SR1 S2Width and post-SR1 S2PatternLikelihood have been included in
+    the preselection for defining the cut, which needs to be taken into
+    account for data outside their respective regions of validity.
+    Required minitrees: Corrections
+    Defined with pax version: 6.10.1
+    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
+                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
+                xenon:xenon1t:analysis:sciencerun2:cs2_aft
+                xenon:xenon1t:analysis:sciencerun2:cs2_aft_presel_update
+                xenon:xenon1t:analysis:sciencerun1:cs2_aft_presel_update_for_lower
+    Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
+
+    version = 1
+
+    top_bound_string = ('(6.233004E-01 + 1.961573E-07 * cxys2 +'
+                        ' -5.556886E-13 * cxys2**2 + 7.106575E-19 * cxys2**3 +'
+                        ' -4.078553E-25 * cxys2**4 + 8.629125E-32 * cxys2**5 +'
+                        ' 2.238235E+00 / sqrt(cxys2) + -7.652169E+00 / cxys2)')
+    bot_bound_string = ('(6.240076E-01 + -1.454419E-08 * cxys2 +'
+                        ' 4.270098E-14 * cxys2**2 + -8.150741E-20 * cxys2**3 +'
+                        ' 5.550419E-26 * cxys2**4 + -1.231424E-32 * cxys2**5 +'
+                        ' -1.767875E+00 / sqrt(cxys2) + 1.246680E+00 / cxys2)')
+
+    string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
+              ' < cs2_aft)) | (cxys2 > 1713000) | (cxys2 < 60)')
+
+    def pre(self, df):
+        df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
+                                df['s2_lifetime_correction'])
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
+                                                df['cs2_bottom'])
+        return df
+
+
+class CS2AreaFractionTopExtendedLowER99Percent(StringLichen):
+    """"A version of CS2AreaFractionTopExtendedLowER with a target acceptance of
+    99%. See the docstring of CS2AreaFractionTopExtendedLowER for more details.
+    Required minitrees: Corrections
+    Defined with pax version: 6.10.1
+    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
+                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
+                xenon:xenon1t:analysis:sciencerun2:cs2_aft
+                xenon:xenon1t:analysis:sciencerun2:cs2_aft_presel_update
+                xenon:xenon1t:analysis:sciencerun1:cs2_aft_presel_update_for_lower
+    Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
+
+    version = 1
+
+    top_bound_string = ('(6.226176E-01 + 2.333159E-07 * cxys2 +'
+                        ' -6.895548E-13 * cxys2**2 + 9.006261E-19 * cxys2**3 +'
+                        ' -5.242889E-25 * cxys2**4 + 1.121020E-31 * cxys2**5 +'
+                        ' 2.490721E+00 / sqrt(cxys2) + -8.389662E+00 / cxys2)')
+    bot_bound_string = ('(6.241466E-01 + -2.600373E-08 * cxys2 +'
+                        ' 6.945772E-14 * cxys2**2 + -1.312317E-19 * cxys2**3 +'
+                        ' 9.570400E-26 * cxys2**4 + -2.312927E-32 * cxys2**5 +'
+                        ' -2.012173E+00 / sqrt(cxys2) + 1.082919E+00 / cxys2)')
+
+    string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
+              ' < cs2_aft)) | (cxys2 > 1713000) | (cxys2 < 60)')
+
+    def pre(self, df):
+        df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
+                                df['s2_lifetime_correction'])
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
+                                                df['cs2_bottom'])
+        return df
+
+    
 class MisIdS1SingleScatter(Lichen):
     """Cut to target the shoulder on Kr83m data due to mis-identified krypton events.
 
