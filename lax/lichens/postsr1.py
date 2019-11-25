@@ -315,7 +315,7 @@ class S1PatternLikelihood_HE(Lichen):
         S1 = data_gamma['s1']
         
         cut_z = (S1PL < cutline_z_1(z, *popt_z_1))&(s1PL > cutline_z_2(z, *popt_z_2))
-        cut_S1 = (((S1PL < cutline_S1_1(s1, *popt_S!_1))*(s1<S1_thr))|((S1PL < cutline_S1_2(s1, *popt_S1_2))*(s1>=S1_thr)))
+        cut_S1 = (((S1PL < cutline_S1_1(s1, *popt_S1_1))*(s1<S1_thr))|((S1PL < cutline_S1_2(s1, *popt_S1_2))*(s1>=S1_thr)))
         cut = cut_z&cut_S1
         return cut
     
