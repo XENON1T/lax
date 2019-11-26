@@ -279,3 +279,67 @@ class S2SingleScatter_HE(Lichen):
         Y = np.log10(df.loc[mask, ['largest_other_s2', 'largest_other_s2_pattern_fit', 's2']])
         df.loc[mask, self.name()] = self.gmix.predict(Y).astype(bool)
         return df
+
+
+class S2Width_HE(Lichen):
+    """
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:wolf:s2width_dbd_151119
+
+    This cut is defined for removing the events with an unphysical S2Width at high energies.
+    Defined for high energy analysis and MC matching covering the whole background starting
+    from 0 keV up to 3 MeV.
+    At low energies (CES < 250keV) the standard S2Width cut is used. Above 250keV the cut based on
+    a background sample and quantiles at 1% and 99% is derived. The cut space in which the quantiles
+    are derived is s2_range_50p_area vs drift_time. The cut values are derived in a sample with
+    CES > 200keV and CES < 3000keV.
+
+    Required minitrees: Corrections
+    Defined with pax version: 6.10.1
+
+    Contact: Chiara Capelli (chiara@physik.uzh.ch)
+    Tim Michael Heinz Wolf (tim.wolf@mpi-hd.mpg.de)
+    """
+    version = 0.1
+
+    def _process(self, df):
+        # load cut values
+        cut_array = np.loadtxt("/project2/lgrandi/twolf/S2WidthCutFiles/cut_values.txt")
+        drift_time_bin_centers = (cut_array[:, 0])
+        drift_time_edges = drift_time_bin_centers + 5 # total bin width is 10
+
+        # find bin in cutspace for drift_time
+        found_bin = np.digitize(df["drift_time"], drift_time_edges)
+
+        # apply standard S2 width cut
+        S2WidthLichen = sr1.S2Width()
+        df = S2WidthLichen.process(df)
+
+        mybins = []
+        for bin in found_bin:
+            if bin == len(drift_time_edges):
+                mybins.append(bin - 1)
+            else:
+                mybins.append(bin)
+        found_bin = np.asarray(mybins)
+
+        # get corresponding cut values
+        cut_down = cut_array[found_bin][:, 1]
+        cut_up = cut_array[found_bin][:, 2]
+
+        # derivation of combined energy to stich the two cuts together
+        w=13.7e-3
+        df_test = pd.DataFrame()
+        df_test.loc[:, 'CES'] = w*(df.cs1_nn_tf/self.g1_sr1_he_ap(df.z_3d_nn_tf) +
+                                  df.cs2_bottom_nn_tf/self.g2_sr1_he_ap(df.z_3d_nn_tf))
+        df_test.loc[:, self.name()] = ((df["s2_range_50p_area"] > cut_down) & (df["s2_range_50p_area"] < cut_up))
+
+        # stiching the cuts together
+        df.loc[:, self.name()] = True # default is True
+        df.loc[:, self.name()] = np.where(df_test['CES'] < 250, df['CutS2Width'], df_test[self.name()])
+        return df
+
+    def g1_sr1_he_ap(self, z):
+        return 0.14798+(0.00007*z)
+
+    def g2_sr1_he_ap(self, z):
+        return 10.504-(0.015*z)
