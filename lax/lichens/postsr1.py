@@ -288,34 +288,33 @@ class S1PatternLikelihood_HE(Lichen):
     Contact: gvolta@physik.uzh.ch
     """
     version = 0.1
-    
-    # Function for cut definition in z
-    def cutline_z_1(x, p0, p1, p3):
-        return p0 + p1 *np.exp(-p3*x)
-    # Function for cut definition in z
-    def cutline_z_2(x, p0, p1):
-        return p0 + p1*x
-    # Function for cut definition below 600 PE
-    def cutline_S1_1(x, p0, p1, p2, p3):
-        return p0 + p1*pow(x, 0.5) + p2*x + p3*pow(x, 1.5)
-    # Function for cut definition above 600 PE
-    def cutline_S1_2(x, p0, p1, p2):
-        return p0 + p1*np.arctan(p2*x)
-    
-    popt_z_1 = [2.38811218e+02, 2.55991432e-05, 1.89468970e-01] #exp
-    popt_z_2 = [1.05256551e+02, 7.72450878e-02] #poly1
+    popt_z_1 =  [2.38811218e+02, 2.55991432e-05, 1.89468970e-01] #exp
+    popt_z_2 =  [1.05256551e+02, 7.72450878e-02] #poly1
     popt_S1_1 = [1.49406369e+01,  2.62994597e+01, -1.01825116e+00,  1.27941177e-02] #cutline_S1_1
-    popt_S2_2 = [2.18914476e+02, 1.19392164e+02, 5.32460349e-05] #cutline_S1_2
-    
+    popt_S1_2 = [2.18914476e+02, 1.19392164e+02, 5.32460349e-05] #cutline_S1_2
     S1_thr = 600
+    # Function for cut definition in z
+    def cutline_z_1(self, x):
+        return self.popt_z_1[0] + self.popt_z_1[0] *np.exp(-self.popt_z_1[0]*x)
+    # Function for cut definition in z
+    def cutline_z_2(self, x):
+        return self.popt_z_2[0] + self.popt_z_2[0]*x
+    # Function for cut definition below 600 PE
+    def cutline_S1_1(self, x):
+        return self.popt_S1_1[0] + self.popt_S1_1[1]*pow(x, 0.5) + self.popt_S1_1[2]*x + self.popt_S1_1[3]*pow(x, 1.5)
+    # Function for cut definition above 600 PE
+    def cutline_S1_2(self, x):
+        return self.popt_S1_2[0] + self.popt_S1_2[1]*np.arctan(self.popt_S1_2[2]*x)
     
     def _process(self, df):
         S1PL = df['s1_pattern_fit_bottom_hax']
         z = df['z_3d_nn_tf']
         S1 = df['s1']
         
-        cut_z = (S1PL < cutline_z_1(z, *popt_z_1))&(s1PL > cutline_z_2(z, *popt_z_2))
-        cut_S1 = (((S1PL < cutline_S1_1(s1, *popt_S1_1))*(s1<S1_thr))|((S1PL < cutline_S1_2(s1, *popt_S1_2))*(s1>=S1_thr)))
-        cut = cut_z&cut_S1
-        return cut
+        cut_z1 = (df['s1_pattern_fit_bottom_hax'] < self.cutline_z_1(df['z_3d_nn_tf']))
+        cut_z2 = (df['s1_pattern_fit_bottom_hax'] > self.cutline_z_2(df['z_3d_nn_tf']))
+        cut_S1 = (((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_1(df['s1']))&(df['s1']<self.S1_thr))|((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_2(df['s1']))&(df['s1']>=self.S1_thr)))
+        cut = (cut_z1&cut_z2)|cut_S1
+        df.loc[:, self.name()] = cut
+        return df
     
