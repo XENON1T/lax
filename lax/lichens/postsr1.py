@@ -314,7 +314,7 @@ class S1PatternLikelihood_HE(Lichen):
         cut_z1 = (df['s1_pattern_fit_bottom_hax'] < self.cutline_z_1(df['z_3d_nn_tf']))
         cut_z2 = (df['s1_pattern_fit_bottom_hax'] > self.cutline_z_2(df['z_3d_nn_tf']))
         cut_S1 = (((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_1(df['s1']))&(df['s1']<self.S1_thr))|((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_2(df['s1']))&(df['s1']>=self.S1_thr)))
-        cut = (cut_z1&cut_z2)|cut_S1
+        cut = (cut_z1&cut_z2)&cut_S1
         df.loc[:, self.name()] = cut
         return df
     
