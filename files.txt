@@ -36,6 +36,6 @@
 /home/gvolta/.local/lib/python3.4/site-packages/lax-1.7.2-py3.4.egg/EGG-INFO/scripts/laxer
 /home/gvolta/.local/bin/laxer
 /home/gvolta/.local/bin/lax
-/home/gvolta/.local/bin/f2py3
 /home/gvolta/.local/bin/f2py3.4
+/home/gvolta/.local/bin/f2py3
 /home/gvolta/.local/bin/f2py
