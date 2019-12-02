@@ -17,6 +17,7 @@ from lax.lichens import sciencerun1 as sr1
 DATA_DIR = sr1.DATA_DIR
 
 from scipy import stats
+from scipy import special
 
 # Import all lichens from sciencerun1
 for x in dir(sr1):
@@ -295,7 +296,7 @@ class S1PatternLikelihood_HE(Lichen):
     S1_thr = 600
     # Function for cut definition in z
     def cutline_z_1(self, x):
-        return self.popt_z_1[0] + self.popt_z_1[0] *np.exp(-self.popt_z_1[0]*x)
+        return special.expit(self.popt_z_1[0] + self.popt_z_1[0] *np.exp(-self.popt_z_1[0]*x))
     # Function for cut definition in z
     def cutline_z_2(self, x):
         return self.popt_z_2[0] + self.popt_z_2[0]*x
