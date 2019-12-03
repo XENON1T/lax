@@ -343,3 +343,18 @@ class S2Width_HE(Lichen):
 
     def g2_sr1_he_ap(self, z):
         return 10.504-(0.015*z)
+   
+
+
+class S1SingleScatter_HE(Lichen):
+    """
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:chloetherreau:he_s1_single_scatter_cut
+    This cut is defined for selecting events with only one S1 in the waveform
+    Contact: Chloe Therreau (chloe.therreau@subatech.in2p3.fr)
+             Tim Michael Heinz Wolf (tim.wolf@mpi-hd.mpg.de)
+    """
+    version = 0.1
+    
+    def _process(self, df):
+        df.loc[:, self.name()] = df['largest_other_s1']<45
+        return df
