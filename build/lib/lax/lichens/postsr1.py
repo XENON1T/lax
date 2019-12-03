@@ -295,10 +295,10 @@ class S1PatternLikelihood_HE(Lichen):
     S1_thr = 600
     # Function for cut definition in z
     def cutline_z_1(self, x):
-        return self.popt_z_1[0] + self.popt_z_1[0] + np.exp(-self.popt_z_1[0]*x)
+        return self.popt_z_1[0] + self.popt_z_1[1]*np.exp(-self.popt_z_1[2]*x)
     # Function for cut definition in z
     def cutline_z_2(self, x):
-        return self.popt_z_2[0] + self.popt_z_2[0]*x
+        return self.popt_z_2[0] + self.popt_z_2[1]*x
     # Function for cut definition below 600 PE
     def cutline_S1_1(self, x):
         return self.popt_S1_1[0] + self.popt_S1_1[1]*pow(x, 0.5) + self.popt_S1_1[2]*x + self.popt_S1_1[3]*pow(x, 1.5)

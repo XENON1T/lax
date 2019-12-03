@@ -313,12 +313,9 @@ class S1PatternLikelihood_HE(Lichen):
         
         cut_z_1   = (df['s1_pattern_fit_bottom_hax'] < self.cutline_z_1(df['z_3d_nn_tf']))
         cut_z_2   = (df['s1_pattern_fit_bottom_hax'] > self.cutline_z_2(df['z_3d_nn_tf']))
-        #cut_z_1 =  np.log(df['s1_pattern_fit_bottom_hax']) < 300
-        #cut_z_2 =  np.log(df['s1_pattern_fit_bottom_hax']) > 250
-        #cut_S1_1 = ((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_1(df['s1']))&(df['s1']<self.S1_thr))
-        #cut_S1_2 = ((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_2(df['s1']))&(df['s1']>=self.S1_thr))
-        #cut = (cut_z_1&cut_z_2)&(cut_S1_1|cut_S1_2)
-        cut = cut_z_1&cut_z_2
+        cut_S1_1 = ((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_1(df['s1']))&(df['s1']<self.S1_thr))
+        cut_S1_2 = ((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_2(df['s1']))&(df['s1']>=self.S1_thr))
+        cut = (cut_z_1&cut_z_2)&(cut_S1_1|cut_S1_2)
         df.loc[:, self.name()] = cut
         return df
     
