@@ -284,7 +284,7 @@ class S1PatternLikelihood_HE(Lichen):
     """
     This cut is meant to cut Gamma-X events and to help the rejection of multiple scatter evens. Moreover it is sensitive 
     also othe anomalies: unexpected S1 pattern, S1 and S2 not corresponding to the same interaction, ...
-    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:giovo:sr2_cs1pl
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:giovo:s1patternlikelihood_he
     Contact: gvolta@physik.uzh.ch
     """
     version = 0.1
