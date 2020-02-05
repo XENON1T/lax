@@ -381,4 +381,65 @@ class S1PatternLikelihood_HE(Lichen):
         cut_S1_2 = ((df['s1_pattern_fit_bottom_hax'] < self.cutline_S1_2(df['s1']))&(df['s1']>=self.S1_thr))
         cut = (cut_z_1&cut_z_2)&(cut_S1_1|cut_S1_2)
         df.loc[:, self.name()] = cut
-        return df    
+        return df
+    
+class S1PatternLikelihood_HE_2(Lichen):
+    """
+    It has been observed that the S1 Pattern Likelihood cut for high energy rejects stimatic almost all events below ~ 80 cm. 
+    This behaviour is not in agreement with the acceptance and rejection power defined in the previous analysis.
+    Motivated by the previous study I have defined the cut in onther way such that the rejection criteria is less tight. 
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:giovo:s1patternlikelihood_he_photopeak_study#onother_cut_definition
+    Contact: gvolta@physik.uzh.ch
+    """
+    
+    with open('/dali/lgrandi/giovo/XENON1T/S1pl_cutline/cut_line/interpolator_s1.pkl', 'rb') as f:
+        spl_S1_sr = pickle.load(f)
+
+    with open('/dali/lgrandi/giovo/XENON1T/S1pl_cutline/cut_line/interpolator_z.pkl', 'rb') as f:
+        spl_z_sr = pickle.load(f)
+    
+    def first_line(self, x):
+        return x*(-3.16e(-3)) + 93.
+    def second_line(self):
+        return 55.
+    def z_high_fr(self, x):
+        retunr 2.36985250e+02 + 1.80524357e-03 *np.exp(-1.19723275e-01*x)
+    def z_low_fr(self, x):
+        return 1.03477720e+02 + 3.53078631e-02 * x
+    def S1_low_fr(self, x):
+        return 4.05463507e+01 + 2.07882668e+01*pow(x, 0.5) + -5.84895708e-01*x + 3.33313977e-03*pow(x, 1.5)
+    def S1_high_fr(self, x):
+        return 2.35389331e+02 + 2.43058291e-03 * x
+    def z_low_sr(self, x):
+        retunr 1.10549131e+02 + 3.64364369e-02 * x
+    
+    def _process(self, df):
+        S1PL = df['s1_pattern_fit_bottom_hax']
+        z = df['z_3d_nn_tf']
+        S1 = df['s1']
+        S1_thr = 772
+        
+        ### First region  ###
+        first_line_down = (S1<=1.2e4)&(-z<self.first_line(z))
+        second_line_down = (S1>1.2e4)&(-z<self.second_line(z))
+        cut_region_fr = first_line_down|second_line_down
+        cl_z_high_fr = S1PL < self.z_high_fr(z)
+        cl_z_low_fr = S1PL > self.z_low_fr(z)
+        cl_S1_low_fr = (S1PL < self.S1_low_fr(S1))&(S1 < S1_thr)
+        cl_S1_high_fr = (S1PL < self.S1_high_fr(S1))&(S1 > S1_thr)
+  
+        cl_fr = cl_region_fr&(cl_z_high_fr&cl_z_low_fr)&(cl_S1_low_fr|cl_S1_high_fr)
+        
+        ### Second region  ###
+        first_line_up = (S1<=1.2e4)&(-z>self.first_line(z))
+        second_line_up = (S1>1.2e4)&(-z>self.second_line(z))
+        cl_region_sr = first_line_up|second_line_up
+        cl_z_high_sr = S1PL < self.spl_z_sr(z)
+        cl_z_low_sr = S1PL > self.z_low_sr(z)
+        cl_S1_sr = S1PL < self.spl_S1_sr(S1)
+    
+        cl_sr = cl_region_sr&(cl_z_high_sr&cl_z_low_sr)&(cl_S1_sr)
+
+        cut = cl_fr|cl_sr
+        df.loc[:, self.name()] = cut
+        return df
