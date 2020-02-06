@@ -400,7 +400,7 @@ class S1PatternLikelihood_HE_2(Lichen):
     
     def first_line(self, x):
         return x*(-3.16e-3) + 93.
-    def second_line(self):
+    def second_line(self, x):
         return 55.
     def z_high_fr(self, x):
         return 2.36985250e+02 + 1.80524357e-03 *np.exp(-1.19723275e-01*x)
