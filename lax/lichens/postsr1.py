@@ -392,10 +392,10 @@ class S1PatternLikelihood_HE_2(Lichen):
     Contact: gvolta@physik.uzh.ch
     """
     
-    with open('/dali/lgrandi/giovo/XENON1T/S1pl_cutline/cut_line/interpolator_s1.pkl', 'rb') as f:
+    with open('/dali/lgrandi/giovo/XENON1T/S1pl_cutline/interpolator_s1.pkl', 'rb') as f:
         spl_S1_sr = pickle.load(f)
 
-    with open('/dali/lgrandi/giovo/XENON1T/S1pl_cutline/cut_line/interpolator_z.pkl', 'rb') as f:
+    with open('/dali/lgrandi/giovo/XENON1T/S1pl_cutline/interpolator_z.pkl', 'rb') as f:
         spl_z_sr = pickle.load(f)
     
     def first_line(self, x):
