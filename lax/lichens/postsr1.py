@@ -422,7 +422,7 @@ class S1PatternLikelihood_HE_2(Lichen):
         ### First region  ###
         first_line_down = (S1<=1.2e4)&(-z<self.first_line(z))
         second_line_down = (S1>1.2e4)&(-z<self.second_line(z))
-        cut_region_fr = first_line_down|second_line_down
+        cl_region_fr = first_line_down|second_line_down
         cl_z_high_fr = S1PL < self.z_high_fr(z)
         cl_z_low_fr = S1PL > self.z_low_fr(z)
         cl_S1_low_fr = (S1PL < self.S1_low_fr(S1))&(S1 < S1_thr)
