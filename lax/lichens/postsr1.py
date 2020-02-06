@@ -403,7 +403,7 @@ class S1PatternLikelihood_HE_2(Lichen):
     def second_line(self):
         return 55.
     def z_high_fr(self, x):
-        retunr 2.36985250e+02 + 1.80524357e-03 *np.exp(-1.19723275e-01*x)
+        return 2.36985250e+02 + 1.80524357e-03 *np.exp(-1.19723275e-01*x)
     def z_low_fr(self, x):
         return 1.03477720e+02 + 3.53078631e-02 * x
     def S1_low_fr(self, x):
@@ -411,7 +411,7 @@ class S1PatternLikelihood_HE_2(Lichen):
     def S1_high_fr(self, x):
         return 2.35389331e+02 + 2.43058291e-03 * x
     def z_low_sr(self, x):
-        retunr 1.10549131e+02 + 3.64364369e-02 * x
+        return 1.10549131e+02 + 3.64364369e-02 * x
     
     def _process(self, df):
         S1PL = df['s1_pattern_fit_bottom_hax']
