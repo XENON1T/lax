@@ -399,7 +399,7 @@ class S1PatternLikelihood_HE_2(Lichen):
         spl_z_sr = pickle.load(f)
     
     def first_line(self, x):
-        return x*(-3.16e(-3)) + 93.
+        return x*(-3.16e-3) + 93.
     def second_line(self):
         return 55.
     def z_high_fr(self, x):
