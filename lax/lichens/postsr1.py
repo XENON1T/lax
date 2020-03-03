@@ -344,7 +344,7 @@ class S2Width_HE(Lichen):
     def g2_sr1_he_ap(self, z):
         return 10.504-(0.015*z)
 
-class S1PatternLikelihood_HE(Lichen):
+class S1PatternLikelihood_HE_hard(Lichen):
     """
     This cut is meant to cut Gamma-X events and to help the rejection of multiple scatter evens. Moreover it is sensitive
     also othe anomalies: unexpected S1 pattern, S1 and S2 not corresponding to the same interaction, ...
@@ -383,7 +383,7 @@ class S1PatternLikelihood_HE(Lichen):
         df.loc[:, self.name()] = cut
         return df
     
-class S1PatternLikelihood_HE_2(Lichen):
+class S1PatternLikelihood_HE_light(Lichen):
     """
     It has been observed that the S1 Pattern Likelihood cut for high energy rejects stimatic almost all events below ~ 80 cm. 
     This behaviour is not in agreement with the acceptance and rejection power defined in the previous analysis.
@@ -420,8 +420,8 @@ class S1PatternLikelihood_HE_2(Lichen):
         S1_thr = 772
         
         ### First region  ###
-        first_line_down = (S1<=1.2e4)&(-z<self.first_line(z))
-        second_line_down = (S1>1.2e4)&(-z<self.second_line(z))
+        first_line_down = (S1<=1.2e4)&(-z<self.first_line(S1))
+        second_line_down = (S1>1.2e4)&(-z<self.second_line(S1))
         cl_region_fr = first_line_down|second_line_down
         cl_z_high_fr = S1PL < self.z_high_fr(z)
         cl_z_low_fr = S1PL > self.z_low_fr(z)
@@ -431,8 +431,8 @@ class S1PatternLikelihood_HE_2(Lichen):
         cl_fr = cl_region_fr&(cl_z_high_fr&cl_z_low_fr)&(cl_S1_low_fr|cl_S1_high_fr)
         
         ### Second region  ###
-        first_line_up = (S1<=1.2e4)&(-z>self.first_line(z))
-        second_line_up = (S1>1.2e4)&(-z>self.second_line(z))
+        first_line_up = (S1<=1.2e4)&(-z>self.first_line(S1))
+        second_line_up = (S1>1.2e4)&(-z>self.second_line(S1))
         cl_region_sr = first_line_up|second_line_up
         cl_z_high_sr = S1PL < self.spl_z_sr(z)
         cl_z_low_sr = S1PL > self.z_low_sr(z)
