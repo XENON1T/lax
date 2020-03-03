@@ -28,6 +28,66 @@ for x in dir(sr1):
 # Put new lichens here
 ##
 
+class ERband_HE(StringLichen):
+    """"ERband cut at +/-3 sigma, tuned on SR1 background data. 
+    It is defined in the (Log10(cs2bottom/cs1) vs ces) space between 50—2000 keV, with:
+
+    ces = cs1/g1[z]) + cs2_bottom/g2[z]*w
+    z = z_3d_nn_tf
+    g1(z) = 0.14798+(0.00007*z)
+    g2(z) = 10.504-(0.015*z)
+    w=13.7e-3
+ 
+    It returns the df after the ERband_HE cut, including a new variable called 'ces_ERband_HE'
+    Required minitrees: Corrections
+    Defined with pax version: 6.10.1
+    Wiki notes: 
+    Contact: Laura Manenti <laura.manenti@nyu.edu>"""
+
+    version = 1  
+
+    def _process(self, df):
+        
+        #load mean, sigma values
+        ERband = np.genfromtxt('/home/lmanenti/XENON1T_Laura/lax/lax/data/ERband_mean_sigma.txt',skip_header=1)
+        mean = ERband[:,1]
+        sigma = ERband[:,2]
+        three_sigma = 3*ERband[:,2]
+        plus_three_sigma = mean+three_sigma
+        minus_three_sigma = mean-three_sigma
+        
+        #array bins
+        ces_bin = ERband[:,0]
+        
+        #define ces
+        w=13.7e-3
+        df_temp = pd.DataFrame()
+        df_temp.loc[:, 'ces_ERband_HE'] = w*(df.cs1_nn_tf/self.g1_sr1_he_ap(df.z_3d_nn_tf) +
+                                  df.cs2_bottom_nn_tf/self.g2_sr1_he_ap(df.z_3d_nn_tf))
+       
+        print('ERband_HE only applied between 50 and 2000 keV')    
+        
+        #if( (df_temp['ces_ERband_HE'][:] < ces_bin[0]) | (df_temp['ces_ERband_HE'][:] > ces_bin[-1]) ):
+        #    return df_temp
+        #else:
+        x = df_temp['ces_ERband_HE'] 
+        inds = np.digitize(x, ces_bin) #indices of the bins to which each value in x belongs. 
+        
+        #get corresponding cut values
+        cut_top = [plus_three_sigma[i-1] for i in inds]
+        cut_bottom = [minus_three_sigma[i-1] for i in inds]
+        
+        df_temp.loc[:, self.name()] = True # default is True 
+        df_temp.loc[:, self.name()] = ( ( np.log10(df['cs2_bottom']/df['cs1']) < cut_top ) \
+                                       & ( np.log10(df['cs2_bottom']/df['cs1']) > cut_bottom ) )       
+        return df_temp
+
+    def g1_sr1_he_ap(self, z):
+        return 0.14798+(0.00007*z)
+
+    def g2_sr1_he_ap(self, z):
+        return 10.504-(0.015*z)
+
 
 class ERBandDEC(StringLichen):
     """A cut used in the double electron capture analysis to preselect the ER band
