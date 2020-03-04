@@ -49,7 +49,7 @@ class ERband_HE(StringLichen):
     def _process(self, df):
         
         #load mean, sigma values
-        ERband = np.genfromtxt('/home/lmanenti/XENON1T_Laura/lax/lax/data/ERband_mean_sigma.txt',skip_header=1)
+        ERband = np.genfromtxt('../data/ERband_mean_sigma.txt',skip_header=1)
         mean = ERband[:,1]
         sigma = ERband[:,2]
         three_sigma = 3*ERband[:,2]
