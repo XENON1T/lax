@@ -49,7 +49,7 @@ class ERband_HE(StringLichen):
     def _process(self, df):
         
         #load mean, sigma values
-        ERband = np.genfromtxt('../data/ERband_mean_sigma.txt',skip_header=1)
+        ERband = np.genfromtxt('/dali/lgrandi/manenti/cuts/ERband_HEc/ERband_mean_sigma.txt',skip_header=1)
         mean = ERband[:,1]
         sigma = ERband[:,2]
         three_sigma = 3*ERband[:,2]
@@ -65,7 +65,7 @@ class ERband_HE(StringLichen):
         df_temp.loc[:, 'ces_ERband_HE'] = w*(df.cs1_nn_tf/self.g1_sr1_he_ap(df.z_3d_nn_tf) +
                                   df.cs2_bottom_nn_tf/self.g2_sr1_he_ap(df.z_3d_nn_tf))
        
-        print('ERband_HE only applied between 50 and 2000 keV')    
+        #print('ERband_HE only applied between 50 and 2000 keV')    
         
         #if( (df_temp['ces_ERband_HE'][:] < ces_bin[0]) | (df_temp['ces_ERband_HE'][:] > ces_bin[-1]) ):
         #    return df_temp
