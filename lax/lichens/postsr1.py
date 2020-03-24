@@ -61,27 +61,25 @@ class ERband_HE(StringLichen):
         
         #define ces
         w=13.7e-3
-        #df_temp = pd.DataFrame()
-        df_temp = df
-        df_temp.loc[:, 'ces_ERband_HE'] = w*(df.cs1_nn_tf/self.g1_sr1_he_ap(df.z_3d_nn_tf) +
+        df.loc[:, 'ces_ERband_HE'] = w*(df.cs1_nn_tf/self.g1_sr1_he_ap(df.z_3d_nn_tf) +
                                   df.cs2_bottom_nn_tf/self.g2_sr1_he_ap(df.z_3d_nn_tf))
        
         #print('ERband_HE only applied between 50 and 2000 keV')    
         
-        #if( (df_temp['ces_ERband_HE'][:] < ces_bin[0]) | (df_temp['ces_ERband_HE'][:] > ces_bin[-1]) ):
+        #if( (['ces_ERband_HE'][:] < ces_bin[0]) | (df_temp['ces_ERband_HE'][:] > ces_bin[-1]) ):
         #    return df_temp
         #else:
-        x = df_temp['ces_ERband_HE'] 
+        x = df['ces_ERband_HE'] 
         inds = np.digitize(x, ces_bin) #indices of the bins to which each value in x belongs. 
         
         #get corresponding cut values
         cut_top = [plus_three_sigma[i-1] for i in inds]
         cut_bottom = [minus_three_sigma[i-1] for i in inds]
         
-        df_temp.loc[:, self.name()] = True # default is True 
-        df_temp.loc[:, self.name()] = ( ( np.log10(df['cs2_bottom']/df['cs1']) < cut_top ) \
+        df.loc[:, self.name()] = True # default is True 
+        df.loc[:, self.name()] = ( ( np.log10(df['cs2_bottom']/df['cs1']) < cut_top ) \
                                        & ( np.log10(df['cs2_bottom']/df['cs1']) > cut_bottom ) )       
-        return df_temp
+        return df
 
     def g1_sr1_he_ap(self, z):
         return 0.14798+(0.00007*z)
