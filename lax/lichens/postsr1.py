@@ -61,7 +61,8 @@ class ERband_HE(StringLichen):
         
         #define ces
         w=13.7e-3
-        df_temp = pd.DataFrame()
+        #df_temp = pd.DataFrame()
+        df_temp = df
         df_temp.loc[:, 'ces_ERband_HE'] = w*(df.cs1_nn_tf/self.g1_sr1_he_ap(df.z_3d_nn_tf) +
                                   df.cs2_bottom_nn_tf/self.g2_sr1_he_ap(df.z_3d_nn_tf))
        
