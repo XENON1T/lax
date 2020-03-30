@@ -39,7 +39,8 @@ class ERband_HE(StringLichen):
     w=13.7e-3
  
     It returns the df after the ERband_HE cut, including a new variable called 'ces_ERband_HE'.
-    The ERband definition uses data between 50—2330 keV. Below 50 keV ALL events will pass. Above 2330 keV the mean and sigma remain constant (equal to the last mean- and sigma-values of bin 2300-2330 keV) 
+    The ERband definition uses data between 50—3020 keV. 
+    Below 50 keV and above 3020 keV ALL events will pass the cut. In the blind region all events pass the cut.  
     
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
@@ -51,7 +52,7 @@ class ERband_HE(StringLichen):
     def _process(self, df):
         
         #load mean, sigma values
-        ERband = np.genfromtxt('/dali/lgrandi/manenti/cuts/ERband_HE/ERband_mean_sigma_50to2330_76bins.txt',skip_header=1)
+        ERband = np.genfromtxt('/dali/lgrandi/manenti/cuts/ERband_HE/ERband_mean_sigma_50to3020_99bins.txt',skip_header=1)
         mean = ERband[:,1]
         sigma = ERband[:,2]
         three_sigma = 3*ERband[:,2]
