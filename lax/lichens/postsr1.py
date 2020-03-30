@@ -30,7 +30,7 @@ for x in dir(sr1):
 
 class ERband_HE(StringLichen):
     """"ERband cut at +/-3 sigma, tuned on SR1 background data. 
-    It is defined in the (Log10(cs2bottom/cs1) vs ces) space between 50—2000 keV, with:
+    It is defined in the (Log10(cs2bottom/cs1) vs ces) space, with:
 
     ces = cs1/g1[z]) + cs2_bottom/g2[z]*w
     z = z_3d_nn_tf
@@ -38,7 +38,9 @@ class ERband_HE(StringLichen):
     g2(z) = 10.504-(0.015*z)
     w=13.7e-3
  
-    It returns the df after the ERband_HE cut, including a new variable called 'ces_ERband_HE'
+    It returns the df after the ERband_HE cut, including a new variable called 'ces_ERband_HE'.
+    The ERband definition uses data between 50—2330 keV. Below 50 keV ALL events will pass. Above 2330 keV the mean and sigma remain constant (equal to the last mean- and sigma-values of bin 2300-2330 keV) 
+    
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
     Wiki notes: 
@@ -49,7 +51,7 @@ class ERband_HE(StringLichen):
     def _process(self, df):
         
         #load mean, sigma values
-        ERband = np.genfromtxt('/dali/lgrandi/manenti/cuts/ERband_HE/ERband_mean_sigma.txt',skip_header=1)
+        ERband = np.genfromtxt('/dali/lgrandi/manenti/cuts/ERband_HE/ERband_mean_sigma_50to2330_76bins.txt',skip_header=1)
         mean = ERband[:,1]
         sigma = ERband[:,2]
         three_sigma = 3*ERband[:,2]
@@ -61,10 +63,9 @@ class ERband_HE(StringLichen):
         
         #define ces
         w=13.7e-3
+        #df_temp = pd.DataFrame()
         df.loc[:, 'ces_ERband_HE'] = w*(df.cs1_nn_tf/self.g1_sr1_he_ap(df.z_3d_nn_tf) +
                                   df.cs2_bottom_nn_tf/self.g2_sr1_he_ap(df.z_3d_nn_tf))
-       
-        #print('ERband_HE only applied between 50 and 2000 keV')    
         
         #if( (['ces_ERband_HE'][:] < ces_bin[0]) | (df_temp['ces_ERband_HE'][:] > ces_bin[-1]) ):
         #    return df_temp
