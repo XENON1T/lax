@@ -40,7 +40,9 @@ class ERband_HE(StringLichen):
  
     It returns the df after the ERband_HE cut, including a new variable called 'ces_ERband_HE'.
     The ERband definition uses data between 50—3020 keV. 
-    Below 50 keV and above 3020 keV ALL events will pass the cut. In the blind region all events pass the cut.  
+    Below 50 keV and above 3020 keV all events will pass the cut. In the blind region all events pass the cut.  
+    The text file with the cut (ces value, mean, sigma) can be found in /dali/lgrandi/manenti/cuts/ERband_HE/
+    and in ../data/. 
     
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
@@ -64,13 +66,8 @@ class ERband_HE(StringLichen):
         
         #define ces
         w=13.7e-3
-        #df_temp = pd.DataFrame()
         df.loc[:, 'ces_ERband_HE'] = w*(df.cs1_nn_tf/self.g1_sr1_he_ap(df.z_3d_nn_tf) +
                                   df.cs2_bottom_nn_tf/self.g2_sr1_he_ap(df.z_3d_nn_tf))
-        
-        #if( (['ces_ERband_HE'][:] < ces_bin[0]) | (df_temp['ces_ERband_HE'][:] > ces_bin[-1]) ):
-        #    return df_temp
-        #else:
         x = df['ces_ERband_HE'] 
         inds = np.digitize(x, ces_bin) #indices of the bins to which each value in x belongs. 
         
