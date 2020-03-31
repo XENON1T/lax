@@ -248,7 +248,6 @@ class S1AreaFractionTop_he(Lichen):
 
 
     def _process(self, df):
-        print("testing")
         df.loc[:, self.name()] = ( (df.z_3d_nn_tf>self.cutline1(df.s1_area_fraction_top) ) & 
                                 (df.z_3d_nn_tf<self.cutline2(df.s1_area_fraction_top)  ) )
         return df
