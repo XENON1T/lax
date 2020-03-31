@@ -284,29 +284,32 @@ class MisIdS1SingleScatter(Lichen):
 
 
 class S1AreaFractionTop_he(Lichen):
-    """Cut between  [0.1 - 99.9] percentile of the population in the parameter space Z vs S1AFT
+    """
+    Cut between  [0.05 - 99.9] percentile of the population in the parameter space Z vs S1AFT
+
     Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:arianna:s1_aft_highenergy
        Contact: arianna.rocchetti@physik.uni-freiburg.de 
        Cut defined above cs1>200 for the SingleScatter population. Valid also for Multiple scatter. 
        Requires: PatternReconstruction Minitree.
     """
 
-    version = 1
-    pars1 = [-315.6, 445.6, -153.7]  
-    pars2 = [188.7,-1172,719.7, -119.2]
+
+    version = 2
+    pars1 = [654.9, -754, 522.9, -151-8]  
+    pars2 = [2548, -2182,  848.3, - 122]
 
     def cutline1(self, x):
-        return self.pars1[0]*(x**2) + self.pars1[1]*x + self.pars1[2]
+        return self.pars1[0]*(x**3) + self.pars1[1] *(x**2) + self.pars1[2] * x + self.pars1[3]  
 
     def cutline2(self, x):
-        return self.pars2[0]*(x**3) + self.pars2[1]*(x**2) + self.pars2[2]*x + self.pars2[3]
+        return self.pars2[0]*(x**3) + self.pars2[1]  *(x**2) + self.pars2[2] * x + self.pars2[3]
+
 
     def _process(self, df):
-        df.loc[:, self.name()] = ((df.z_3d_nn_tf>self.cutline1(df.s1_area_fraction_top)) &
-                                  (df.z_3d_nn_tf<self.cutline2(df.s1_area_fraction_top)))
+        df.loc[:, self.name()] = ( (df.z_3d_nn_tf>self.cutline1(df.s1_area_fraction_top) ) & 
+                                (df.z_3d_nn_tf<self.cutline2(df.s1_area_fraction_top)  ) )
         return df
-    
-    
+   
 class PosDiff_HE(Lichen):
     """
     Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:chiara:posdiffcut_update
@@ -415,5 +418,3 @@ class S1SingleScatter_HE(Lichen):
     def _process(self, df):
         df.loc[:, self.name()] = df['largest_other_s1']<45
         return df
-
-
