@@ -200,15 +200,15 @@ class CS2AreaFractionTopExtended(Lichen):
                   -2.557269E-25, 4.323291E-19, -3.599242E-13, 2.158422E-07,
                   6.312527E-01]
 
-    def inv_sqrt(x, p0, p1):
-	return p0 / (1 + p1 * x**(1/2.))
+    def inv_sqrt(self, x, p0, p1):
+        return p0 / (1 + p1 * x**(1/2.))
 
-    def aft_cut_line(x, *args):
-	return inv_sqrt(x, args[0], args[1]) + args[2] * np.sqrt(x) + np.polyval(args[3:], x)
+    def aft_cut_line(self, x, *args):
+        return self.inv_sqrt(x, args[0], args[1]) + args[2] * np.sqrt(x) + np.polyval(args[3:], x)
 
     def _process(self, df):
-        df.loc[:, self.name()] = (((df.cs2_aft_no_ap_pmts < aft_cut_line(df.s2_no_ap_pmts, *top_params)) &
-                                   (df.cs2_aft_no_ap_pmts > aft_cut_line(df.s2_no_ap_pmts, *bot_params))) |
+        df.loc[:, self.name()] = (((df.cs2_aft_no_ap_pmts < self.aft_cut_line(df.s2_no_ap_pmts, *self.top_params)) &
+                                   (df.cs2_aft_no_ap_pmts > self.aft_cut_line(df.s2_no_ap_pmts, *self.bot_params))) |
                                   (df.s2_no_ap_pmts > 1427769.230769) |
                                   (df.s2_no_ap_pmts < 71.428571))
 
