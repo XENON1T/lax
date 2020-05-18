@@ -39,14 +39,14 @@ class ERband_HE(StringLichen):
     w=13.7e-3
  
     It returns the df after the ERband_HE cut, including a new variable called 'ces_ERband_HE'.
-    The ERband definition uses data between 50—3020 keV. 
+    The ERband definition uses data between 50—3020 keV with a precut z>-50.
     Below 50 keV events will pass the cut. From 2 MeV to infinity (including the the blind region) the ERband is defined as the  average 1st and 99th percentile between 2-2.4 MeV.  
     The text file with the cut (ces value, Q50, Q99, Q1) can be found in /dali/lgrandi/manenti/cuts/ERband_HE/
     and in ../data/. 
     
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
-    Wiki notes: 
+    Wiki notes: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:manenti:sr1_erband_v0bb
     Contact: Laura Manenti <laura.manenti@nyu.edu>"""
 
     version = 1  
