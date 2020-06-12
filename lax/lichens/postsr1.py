@@ -166,44 +166,49 @@ class S2PatternLikelihood(StringLichen):
                     CutS2PatternLikelihoodHE_e) & (s2 > 1e4))  \
               | ((s2_pattern_fit < %.3f*s2 + %.3f*s2**%.3f + %.3f) & (s2 < 10000) )"%(p1_sr1))
 
-class CS2AreaFractionTopExtended(StringLichen):
+class CS2AreaFractionTopExtended(Lichen):
     """"An extension of CS2AreaFractionTop to the entire S2 range
     with a designed acceptance of 99%.
-    It is defined in the (cxys2, cs2_aft) space, with:
+    It is defined in the (s2_no_ap_pmts, cs2_aft_no_ap_pmts) space
+    and valid for events with r_3d_nn < 36.94.
+    Both cut space parameters are from the S2WithoutAfterpulsePMTs
+    minitree.
 
-    cxys2 = (cs2_top + cs2_bottom) / s2_lifetime_correction
-    cs2_aft = cs2_top / (cs2_top + cs2_bottom)
-
-    Events where cxys2 > 2012700 PE or cxys2 < 90 PE are not cut.
+    Events with s2_no_ap_pmts > 1427769.230769 PE or
+    s2_no_ap_pmts < 71.428571 PE are not cut.
 
     This cut should be used with a pax version of at least 6.10.0
-    due to a major update of the S2 desaturation correction.
+    due to a major update of the S2 desaturation correction compared
+    to previous versions. Acceptance is most homogenous in XY for
+    events with z_3d_nn < -25 or s2 < 2e5.
 
-    Required minitrees: Corrections
+    Required minitrees: S2WithoutAfterpulsePMTs
     Defined with pax version: 6.10.1
-    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
-                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
+    Wiki note: xenon:xenon1t:double_beta:cs2_aft_no_ap_pmts
     Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>"""
 
-    version = 2
+    version = 3
 
-    top_bound_string = ('(6.306642E-01 + 2.032259E-07 * cxys2 +'
-                        ' -5.450833E-13 * cxys2**2 + 6.182750E-19 * cxys2**3 +'
-                        ' -3.087908E-25 * cxys2**4 + 5.637659E-32 * cxys2**5 +'
-                        ' 2.123849E+00 / sqrt(cxys2) + -4.258579E+00 / cxys2)')
-    bot_bound_string = ('(6.190286E-01 + 3.546500E-08 * cxys2 +'
-                        ' -1.696261E-13 * cxys2**2 + 2.110380E-19 * cxys2**3 +'
-                        ' -1.181304E-25 * cxys2**4 + 2.463864E-32 * cxys2**5 +'
-                        ' -1.419829E+00 / sqrt(cxys2) + -5.642919E+00 / cxys2)')
+    # define cut line function
+    top_params = [-2.754897E+06, -1.579777E+06, 1.475401E-05, 4.299098E-32,
+                  -1.622189E-25, 2.303079E-19, -1.584616E-13, 5.977093E-08,
+                  6.275617E-01]
+    bot_params = [3.172141E+00, -1.776482E+00, -9.837439E-05, 5.693593E-32,
+                  -2.557269E-25, 4.323291E-19, -3.599242E-13, 2.158422E-07,
+                  6.312527E-01]
 
-    string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
-              ' < cs2_aft)) | (cxys2 > 2012700) | (cxys2 < 90)')
+    def inv_sqrt(self, x, p0, p1):
+        return p0 / (1 + p1 * x**(1/2.))
 
-    def pre(self, df):
-        df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
-                                df['s2_lifetime_correction'])
-        df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
-                                                df['cs2_bottom'])
+    def aft_cut_line(self, x, *args):
+        return self.inv_sqrt(x, args[0], args[1]) + args[2] * np.sqrt(x) + np.polyval(args[3:], x)
+
+    def _process(self, df):
+        df.loc[:, self.name()] = (((df.cs2_aft_no_ap_pmts < self.aft_cut_line(df.s2_no_ap_pmts, *self.top_params)) &
+                                   (df.cs2_aft_no_ap_pmts > self.aft_cut_line(df.s2_no_ap_pmts, *self.bot_params))) |
+                                  (df.s2_no_ap_pmts > 1427769.230769) |
+                                  (df.s2_no_ap_pmts < 71.428571))
+
         return df
 
 
@@ -281,29 +286,32 @@ class MisIdS1SingleScatter(Lichen):
 
 
 class S1AreaFractionTop_he(Lichen):
-    """Cut between  [0.1 - 99.9] percentile of the population in the parameter space Z vs S1AFT
+    """
+    Cut between  [0.05 - 99.9] percentile of the population in the parameter space Z vs S1AFT
+
     Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:arianna:s1_aft_highenergy
        Contact: arianna.rocchetti@physik.uni-freiburg.de 
        Cut defined above cs1>200 for the SingleScatter population. Valid also for Multiple scatter. 
        Requires: PatternReconstruction Minitree.
     """
 
-    version = 1
-    pars1 = [-315.6, 445.6, -153.7]  
-    pars2 = [188.7,-1172,719.7, -119.2]
+
+    version = 2
+    pars1 = [654.9, -754, 522.9, -151-8]  
+    pars2 = [2548, -2182,  848.3, - 122]
 
     def cutline1(self, x):
-        return self.pars1[0]*(x**2) + self.pars1[1]*x + self.pars1[2]
+        return self.pars1[0]*(x**3) + self.pars1[1] *(x**2) + self.pars1[2] * x + self.pars1[3]  
 
     def cutline2(self, x):
-        return self.pars2[0]*(x**3) + self.pars2[1]*(x**2) + self.pars2[2]*x + self.pars2[3]
+        return self.pars2[0]*(x**3) + self.pars2[1]  *(x**2) + self.pars2[2] * x + self.pars2[3]
+
 
     def _process(self, df):
-        df.loc[:, self.name()] = ((df.z_3d_nn_tf>self.cutline1(df.s1_area_fraction_top)) &
-                                  (df.z_3d_nn_tf<self.cutline2(df.s1_area_fraction_top)))
+        df.loc[:, self.name()] = ( (df.z_3d_nn_tf>self.cutline1(df.s1_area_fraction_top) ) & 
+                                (df.z_3d_nn_tf<self.cutline2(df.s1_area_fraction_top)  ) )
         return df
-    
-    
+   
 class PosDiff_HE(Lichen):
     """
     Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:chiara:posdiffcut_update
@@ -412,5 +420,3 @@ class S1SingleScatter_HE(Lichen):
     def _process(self, df):
         df.loc[:, self.name()] = df['largest_other_s1']<45
         return df
-
-
