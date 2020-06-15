@@ -29,7 +29,7 @@ for x in dir(sr1):
 ##
 
 class ERband_HE(StringLichen):
-    """"ERband cut at +/-3 sigma, tuned on SR1 background data. 
+    """"ERband cut at 1-99 percentiles, tuned on SR1 background data. 
     It is defined in the (Log10(cs2bottom/cs1) vs ces) space, with:
 
     ces = cs1/g1[z]) + cs2_bottom/g2[z]*w
@@ -39,14 +39,14 @@ class ERband_HE(StringLichen):
     w=13.7e-3
  
     It returns the df after the ERband_HE cut, including a new variable called 'ces_ERband_HE'.
-    The ERband definition uses data between 50—3020 keV. 
-    Below 50 keV and above 3020 keV all events will pass the cut. In the blind region all events pass the cut.  
-    The text file with the cut (ces value, mean, sigma) can be found in /dali/lgrandi/manenti/cuts/ERband_HE/
+    The ERband definition uses data between 50—3020 keV with a precut z>-50.
+    Below 50 keV events will pass the cut. From 2 MeV to infinity (excluding the the blind region) the ERband is defined as the  average 1st and 99th percentile between 2-2.4 MeV. In the bling region the ER band is the average of the band defined between 1.190-1.220 MeV.  
+    The text file with the cut (ces value, Q50, Q99, Q1) can be found in /dali/lgrandi/manenti/cuts/ERband_HE/
     and in ../data/. 
     
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
-    Wiki notes: 
+    Wiki notes: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:manenti:sr1_erband_v0bb
     Contact: Laura Manenti <laura.manenti@nyu.edu>"""
 
     version = 1  
@@ -54,12 +54,9 @@ class ERband_HE(StringLichen):
     def _process(self, df):
         
         #load mean, sigma values
-        ERband = np.genfromtxt('/dali/lgrandi/manenti/cuts/ERband_HE/ERband_mean_sigma_50to3020_99bins.txt',skip_header=1)
-        mean = ERband[:,1]
-        sigma = ERband[:,2]
-        three_sigma = 3*ERband[:,2]
-        plus_three_sigma = mean+three_sigma
-        minus_three_sigma = mean-three_sigma
+        ERband = np.genfromtxt('/dali/lgrandi/manenti/cuts/ERband_HE/ERband_Q50_Q99_Q1_50toInf_gapAs1.2MeV.txt',skip_header=1)
+        Q99 = ERband[:,2]
+        Q1 = ERband[:,3]
         
         #array bins
         ces_bin = ERband[:,0]
@@ -72,8 +69,8 @@ class ERband_HE(StringLichen):
         inds = np.digitize(x, ces_bin) #indices of the bins to which each value in x belongs. 
         
         #get corresponding cut values
-        cut_top = [plus_three_sigma[i-1] for i in inds]
-        cut_bottom = [minus_three_sigma[i-1] for i in inds]
+        cut_top = [Q99[i-1] for i in inds]
+        cut_bottom = [Q1[i-1] for i in inds]
         
         df.loc[:, self.name()] = True # default is True 
         df.loc[:, self.name()] = ( ( np.log10(df['cs2_bottom']/df['cs1']) < cut_top ) \
