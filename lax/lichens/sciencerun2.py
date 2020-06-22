@@ -214,6 +214,79 @@ class CS2AreaFractionTopExtended(StringLichen):
 # Contact: Jingqiang
 S2PatternLikelihood = postsr1.S2PatternLikelihood
 
+# Contact: Alexander
+class S2PatternLikelihoodSR2DEC(StringLichen):
+    """
+    Extended S2PatternLikelihood cut for SR2 DEC analysis (from 0 to 500 keVee).
+    Wiki note: xenon:xenon1t:dec:s2patternlikelihoodsr2dec
+    Contact: Alexander Bismark <alexander.bismark@physik.uzh.ch>
+    """ 
+    version = 1
+    
+    def pre(self, df):
+        def lin(s2, *par):
+            a, b = par
+            return a * s2 + b   
+
+        phi1=4
+        phi2=10
+        phi3=16
+        phi4=22
+        phi5=22
+
+        # Load parameters
+        params_load_a = np.load('/dali/lgrandi/abismark/XENON1T/DEC_SR2/s2patternlikelihoodcut_he_r_phi_params_after18836_v2.npy')
+        params_load_b = np.load('/dali/lgrandi/abismark/XENON1T/DEC_SR2/s2patternlikelihoodcut_he_r_phi_params_before18836_v2.npy')
+        # Reshape parameters
+        params_a=[params_load_a[:phi1], params_load_a[phi1:phi1+phi2],
+                params_load_a[phi1+phi2:phi1+phi2+phi3], params_load_a[phi1+phi2+phi3:phi1+phi2+phi3+phi4],
+                params_load_a[phi1+phi2+phi3:phi1+phi2+phi3+phi4+phi5]]
+        params_b=[params_load_b[:phi1], params_load_b[phi1:phi1+phi2],
+                params_load_b[phi1+phi2:phi1+phi2+phi3], params_load_b[phi1+phi2+phi3:phi1+phi2+phi3+phi4],
+                params_load_b[phi1+phi2+phi3:phi1+phi2+phi3+phi4+phi5]]
+        
+        r_here = 'r_3d_nn_tf'
+        phi_here = 'phi_3d_nn_tf'
+        df.loc[:,phi_here] = np.arccos(df.x_3d_nn_tf/df.r_3d_nn_tf)*np.sign(df.y_3d_nn_tf)
+        df.loc[:,'s2_top'] = df.s2 * df.s2_area_fraction_top
+        df_list=[]
+        R = np.linspace(0, 47+(47/4), 5+1) 
+        for i in range(len(R)-1):
+            n = [phi1,phi2,phi3,phi4,phi5][i]
+            td = 2*np.pi/n
+            for j in range(n):
+                tmin, tmax, rmin, rmax = j*td-np.pi, j*td-np.pi+td, R[i], R[i+1]
+                box_cut = ((df[r_here]>rmin)&(df[r_here]<rmax)
+                         &(df[phi_here]>tmin)&(df[phi_here]<tmax))
+                df_box_cut = df[box_cut]
+                a_here_after18836 = params_a[i][j][0]*np.ones(len(df[box_cut]))
+                b_here_after18836 = params_a[i][j][1]*np.ones(len(df[box_cut]))
+                a_here_before18836 = params_b[i][j][0]*np.ones(len(df[box_cut]))
+                b_here_before18836 = params_b[i][j][1]*np.ones(len(df[box_cut]))
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_a_after18836'] = a_here_after18836
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_b_after18836'] = b_here_after18836
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_a_before18836'] = a_here_before18836
+                df_box_cut.loc[:,'CutS2PatternLikelihoodHE_b_before18836'] = b_here_before18836
+
+                df_list.append(df_box_cut)
+                del df_box_cut; del box_cut
+        del df
+        df=pd.concat(df_list)
+
+        return df
+    
+    params_low_after18836 = (-387.119859, 388.32614412, 0.99968193, 145.56507149)
+    params_low_before18836 = (-368.31852913, 369.74654415, 0.99959666, 136.19160986)
+    
+    string = (" ((run_number >= 18836)&\
+              (((s2_pattern_fit<\
+                    CutS2PatternLikelihoodHE_a_after18836*s2_top+CutS2PatternLikelihoodHE_b_after18836) & (s2_top >5000))  \
+              | ((s2_pattern_fit < %.8f*s2_top + %.8f*s2_top**%.8f + %.8f) & (s2_top <= 5000) )))"%(params_low_after18836)+" | \
+              ((run_number < 18836)&\
+              (((s2_pattern_fit<\
+                    CutS2PatternLikelihoodHE_a_before18836*s2_top+CutS2PatternLikelihoodHE_b_before18836) & (s2_top >5000))  \
+              | ((s2_pattern_fit < %.8f*s2_top + %.8f*s2_top**%.8f + %.8f) & (s2_top <= 5000) )))"%(params_low_before18836))
+
 
 ##
 # S1 quality cuts
