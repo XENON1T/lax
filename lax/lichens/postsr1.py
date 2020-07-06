@@ -68,8 +68,8 @@ class Volume_DBD(StringLichen):
     par_low = [-7.955115883403868, 86.62520910736373, 1317.2991340021406, 8.338709398342486]
         
     def _process(self, df):
-        df.loc[:, self.name()] = (df.z_3d_nn_tf > self.SuperEllipseLowerZs(df.r_3d_nn_tf**2, *self.par_low) 
-                                  & df.z_3d_nn_tf < self.SuperEllipseUpperZs(df.r_3d_nn_tf**2, *self.par_up))
+        df.loc[:, self.name()] = ( (df.z_3d_nn_tf > self.SuperEllipseLowerZs(df.r_3d_nn_tf**2, *self.par_low)) 
+                                  & df.z_3d_nn_tf < self.SuperEllipseUpperZs(df.r_3d_nn_tf**2, *self.par_up)) )
             
         return df
 
