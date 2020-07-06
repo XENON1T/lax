@@ -28,6 +28,55 @@ for x in dir(sr1):
 # Put new lichens here
 ##
 
+
+class volume_DBD(StringLichen):
+    """
+    Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:chiara:fv:binned#update_july_6_2020
+    
+    Fiducial volume defined for 0vbb decay search: data outside the blinded region, from the Bi214 peak at 2.2 MeV and the Tl208 at 2.6 MeV are used.
+    The TPC volume is binned and a figure of merit, from the counts of the background, is computed in each bin. In this way we get a volume distribution of the sensitivity in the volume.
+    From here it's possible to define a fiducial volume whose shape is not symmetric in the TPC.
+    The contours of the figure of merit in the volume are fit with two semiellipsiod functions, for the upper and lower boundaries.
+    The lower limit is set to not go below -94 cm. 
+    The figure of merit is recalculated in the volumes and the maximum is found for a fiducial mass of ~741 kg.
+    
+    Contact: Chiara Capelli <chiara@physik.uzh.ch>
+    """
+    
+    bottom_tpc = -94
+
+    def SuperEllipseUpperZs(x, zloc, zscale, r2scale, power_const):
+        Zs = np.power(
+            1. - np.power(
+                x/r2scale,
+                power_const
+            ),
+            1./power_const
+        )*zscale+zloc           
+        return Zs
+
+    def SuperEllipseLowerZs(x, zloc, zscale, r2scale, power_const):
+        Zs = -np.power(
+            1. - np.power(
+                x/r2scale,
+                power_const
+            ),
+            1./power_const
+        )*zscale+zloc
+        Zs = np.array(Zs)    
+        return np.where((Zs<bottom_tpc),bottom_tpc,Zs)
+    
+    par_up = [-213.6148297920783, 188.07255694010047, 1347.1771882218404, 6.491616457942884]
+    par_low = [-7.955115883403868, 86.62520910736373, 1317.2991340021406, 8.338709398342486]
+        
+    def _process(self, df):
+        df.loc[:, self.name()] = df.z_3d_nn_tf > SuperEllipseLowerZs(df.r_3d_nn_tf**2,par_low[0],par_low[1],par_low[2],par_low[3])
+                                    & df.z_3d_nn_tf < SuperEllipseUpperZs(df.r_3d_nn_tf**2,par_up[0],par_up[1],par_up[2],par_up[3])
+            
+        return df
+
+    
+    return df
 class ERband_HE(StringLichen):
     """"ERband cut at 1-99 percentiles, tuned on SR1 background data. 
     It is defined in the (Log10(cs2bottom/cs1) vs ces) space, with:
