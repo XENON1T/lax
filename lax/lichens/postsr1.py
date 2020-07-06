@@ -42,8 +42,6 @@ class Volume_DBD(StringLichen):
     
     Contact: Chiara Capelli <chiara@physik.uzh.ch>
     """
-    
-    bottom_tpc = -94
 
     def SuperEllipseUpperZs(self, x, zloc, zscale, r2scale, power_const):
         Zs = np.power(
@@ -64,7 +62,7 @@ class Volume_DBD(StringLichen):
             1./power_const
         )*zscale+zloc
         Zs = np.array(Zs)    
-        return np.where((Zs<bottom_tpc),bottom_tpc,Zs)
+        return np.where((Zs<-94),-94,Zs)
     
     par_up = [-213.6148297920783, 188.07255694010047, 1347.1771882218404, 6.491616457942884]
     par_low = [-7.955115883403868, 86.62520910736373, 1317.2991340021406, 8.338709398342486]
