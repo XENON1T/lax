@@ -75,8 +75,7 @@ class Volume_DBD(StringLichen):
             
         return df
 
-    
-    return df
+
 class ERband_HE(StringLichen):
     """"ERband cut at 1-99 percentiles, tuned on SR1 background data. 
     It is defined in the (Log10(cs2bottom/cs1) vs ces) space, with:
