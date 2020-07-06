@@ -29,7 +29,7 @@ for x in dir(sr1):
 ##
 
 
-class volume_DBD(StringLichen):
+class Volume_DBD(StringLichen):
     """
     Note: https://xe1t-wiki.lngs.infn.it/doku.php?id=xenon:xenon1t:chiara:fv:binned#update_july_6_2020
     
