@@ -157,8 +157,7 @@ class PosDiff(Lichen):
     """
     def _process(self,df):
         df.loc[:,self.name()] = (np.sqrt((df['x_observed_nn_tf'] - df['x_observed_tpf'])**2 +
-                                         (df['y_observed_nn_tf'] - df['y_observed_tpf'])**2)) < 
-                                 (3574.38766518 * np.exp(-np.log10(df.s2)/0.342140864302) + 1.43838876151)
+                                         (df['y_observed_nn_tf'] - df['y_observed_tpf'])**2)) < (3574.38766518 * np.exp(-np.log10(df.s2)/0.342140864302) + 1.43838876151)
         return df
     
 # S2 AFT
