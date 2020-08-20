@@ -397,7 +397,7 @@ class S2Width_HE(Lichen):
     This cut is defined for removing the events with an unphysical S2Width at high energies.
     Defined for high energy analysis and MC matching covering the whole background starting
     from 0 keV up to 3 MeV.
-    At low energies (CES < 250keV) the standard S2Width cut is used. Above 250keV the cut based on
+    At low energies (CES < 200keV) the standard S2Width cut is used. Above 200keV the cut based on
     a background sample and quantiles at 1% and 99% is derived. The cut space in which the quantiles
     are derived is s2_range_50p_area vs drift_time. The cut values are derived in a sample with
     CES > 200keV and CES < 3000keV.
@@ -444,7 +444,7 @@ class S2Width_HE(Lichen):
 
         # stiching the cuts together
         df.loc[:, self.name()] = True # default is True
-        df.loc[:, self.name()] = np.where(df_test['CES'] < 250, df['CutS2Width'], df_test[self.name()])
+        df.loc[:, self.name()] = np.where(df_test['CES'] < 200, df['CutS2Width'], df_test[self.name()])
         return df
 
     def g1_sr1_he_ap(self, z):
