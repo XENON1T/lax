@@ -164,43 +164,49 @@ class PosDiff(Lichen):
 # Contact: Giovanni, Dominick
 class CS2AreaFractionTopExtended(StringLichen):
     """"An extension of CS2AreaFractionTop to the entire S2 range
-    with a designed acceptance of 99%.
+    with a designed acceptance of 98%.
     It is defined in the (cxys2, cs2_aft) space, with:
 
     cxys2 = (cs2_top + cs2_bottom) / s2_lifetime_correction
     cs2_aft = cs2_top / (cs2_top + cs2_bottom)
 
-    Events where cxys2 > 2163000 PE or cxys2 < 60 PE are not cut.
+    Events where cxys2 > 1752600 PE or cxys2 < 60 PE are not cut.
 
     This cut should be used with a pax version of at least 6.10.0
     due to a major update of the S2 desaturation correction.
 
-    This is a preliminary version for SR2 analysis and should be used
+    This version has been designed for SR2 analysis and should be used
     for runs after 18836, as only for them the SR2 S2 XY correction maps are
     valid. It is left to the discretion of the analyst whether they want to
-    apply the cut also to other runs or not.
+    apply the cut also to other runs or not. Also, SR1 S2Width as well as a
+    preliminary version of S2PatternLikelihood
+    (see: https://github.com/XENON1T/LowER/blob/master/LowER/lowerlichen.py)
+    have been included in the preselection for defining the cut, which needs
+    to be taken into account for data outside their respective regions of
+    validity.
 
     Required minitrees: Corrections
     Defined with pax version: 6.10.1
     Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
                 xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
                 xenon:xenon1t:analysis:sciencerun2:cs2_aft
+                xenon:xenon1t:analysis:sciencerun2:cs2_aft_presel_update
     Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>
              Giovanni Volta  <gvolta@physik.uzh.ch>"""
 
-    version = 3
+    version = 4
 
-    top_bound_string = ('(6.533946E-01 + 2.238536E-07 * cxys2 +'
-                        ' -5.791706E-13 * cxys2**2 + 6.021542E-19 * cxys2**3 +'
-                        ' -2.786815E-25 * cxys2**4 + 4.763021E-32 * cxys2**5 +'
-                        ' 2.021210E+00 / sqrt(cxys2) + -6.431296E+00 / cxys2)')
-    bot_bound_string = ('(6.228859E-01 + 1.533585E-08 * cxys2 +'
-                        ' -2.468763E-13 * cxys2**2 + 3.554834E-19 * cxys2**3 +'
-                        ' -1.932773E-25 * cxys2**4 + 3.686730E-32 * cxys2**5 +'
-                        ' -1.675048E+00 / sqrt(cxys2) + -1.291028E-01 / cxys2)')
+    top_bound_string = ('(6.499153E-01 + 1.353661E-07 * cxys2 +'
+                        ' -4.220391E-13 * cxys2**2 + 5.603375E-19 * cxys2**3 +'
+                        ' -3.304600E-25 * cxys2**4 + 7.116408E-32 * cxys2**5 +'
+                        ' 1.436820E+00 / sqrt(cxys2) + -3.257773E+00 / cxys2)')
+    bot_bound_string = ('(6.260385E-01 + -1.414116E-08 * cxys2 +'
+                        ' 8.910802E-15 * cxys2**2 + -4.089157E-20 * cxys2**3 +'
+                        ' 5.016441E-26 * cxys2**4 + -1.615647E-32 * cxys2**5 +'
+                        ' -1.612496E+00 / sqrt(cxys2) + 6.806076E-01 / cxys2)')
 
     string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
-              ' < cs2_aft)) | (cxys2 > 2163000) | (cxys2 < 60)')
+              ' < cs2_aft)) | (cxys2 > 1752600) | (cxys2 < 60)')
 
     def pre(self, df):
         df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
@@ -209,6 +215,41 @@ class CS2AreaFractionTopExtended(StringLichen):
                                                 df['cs2_bottom'])
         return df
 
+
+class CS2AreaFractionTopExtended99Percent(StringLichen):
+    """"A version of CS2AreaFractionTopExtended with a target acceptance of
+    99%. See the docstring of CS2AreaFractionTopExtended for more details.
+
+    Required minitrees: Corrections
+    Defined with pax version: 6.10.1
+    Wiki notes: xenon:xenon1t:double_beta:cs2_aft_extension
+                xenon:xenon1t:double_beta:cs2_aft_extension_rejection_estimate
+                xenon:xenon1t:analysis:sciencerun2:cs2_aft
+                xenon:xenon1t:analysis:sciencerun2:cs2_aft_presel_update
+    Contact: Dominick Cichon <dominick.cichon@mpi-hd.mpg.de>
+             Giovanni Volta  <gvolta@physik.uzh.ch>"""
+
+    version = 1
+
+    top_bound_string = ('(6.517850E-01 + 1.551142E-07 * cxys2 +'
+                        ' -4.972580E-13 * cxys2**2 + 6.755268E-19 * cxys2**3 +'
+                        ' -4.066834E-25 * cxys2**4 + 8.918364E-32 * cxys2**5 +'
+                        ' 1.597980E+00 / sqrt(cxys2) + -3.619142E+00 / cxys2)')
+    bot_bound_string = ('(6.246945E-01 + -2.966154E-08 * cxys2 +'
+                        ' 5.945939E-14 * cxys2**2 + -1.079485E-19 * cxys2**3 +'
+                        ' 9.051805E-26 * cxys2**4 + -2.528701E-32 * cxys2**5 +'
+                        ' -1.719722E+00 / sqrt(cxys2) + -5.912173E-01 / cxys2)')
+
+    string = ('((' + top_bound_string + ' > cs2_aft) & (' + bot_bound_string +
+              ' < cs2_aft)) | (cxys2 > 1752600) | (cxys2 < 60)')
+
+    def pre(self, df):
+        df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
+                                df['s2_lifetime_correction'])
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
+                                                df['cs2_bottom'])
+        return df
+    
 # S2PatternLikelihood
 # Contact: Jingqiang
 S2PatternLikelihood = postsr1.S2PatternLikelihood
