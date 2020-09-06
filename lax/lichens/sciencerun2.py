@@ -209,6 +209,69 @@ class CS2AreaFractionTopExtended(StringLichen):
                                                 df['cs2_bottom'])
         return df
 
+# S2 AFT cut for SR2 DEC analysis
+# Contact: Alex
+class CS2AreaFractionTopExtended98PercentSR2DEC(StringLichen):
+    """
+    CS2AreaFractionTopExtended98Percent cut for SR2 DEC analysis
+    Wiki note: xenon:xenon1t:dec:cs2areafractiontopextended98percentsr2dec
+    Contact: Alexander Bismark <alexander.bismark@physik.uzh.ch>
+    """ 
+    version = 1
+
+    def pre(self, df):
+        df.loc[:, 'phi_3d_nn_tf']=np.arccos(df.x_3d_nn_tf/df.r_3d_nn_tf)*np.sign(df.y_3d_nn_tf)
+        df.loc[:, 'cxys2'] = ((df['cs2_top'] + df['cs2_bottom']) /
+                              df['s2_lifetime_correction'])
+        df.loc[:, 'cs2_aft'] = df['cs2_top'] / (df['cs2_top'] +
+                                                df['cs2_bottom'])
+                                                
+        sel1=[24,55,0.18,0.85]
+        sel2=[28.5,55,2.3,2.9]
+
+        top_bound = (0.648994665 + 1.52300931e-07 * df.cxys2 + -5.2647479e-13 * df.cxys2**2 + 8.03568987e-19 * df.cxys2**3 + -5.57506181e-25 * df.cxys2**4 + 1.43685312e-31 * df.cxys2**5 + 1.56990461 / np.sqrt(df.cxys2) + -4.07228467 / df.cxys2)
+        bot_bound = (0.625340081 + -3.98287273e-08 * df.cxys2 + 2.35998476e-13 * df.cxys2**2 + -6.28529432e-19 * df.cxys2**3 + 6.34553716e-25 * df.cxys2**4 + -2.13412861e-31 * df.cxys2**5 + -1.58076848 / np.sqrt(df.cxys2) + -0.188795581 / df.cxys2)
+        top_bound_sel1 = (0.614152119 + 2.02515815e-07 * df.cxys2 + -7.08321e-13 * df.cxys2**2 + 1.0052712e-18 * df.cxys2**3 + -3.21842323e-25 * df.cxys2**4 + -1.85841891e-31 * df.cxys2**5 + 2.22730555 / np.sqrt(df.cxys2) + -8.2040897 / df.cxys2)
+        bot_bound_sel1 = (0.594656959 + -2.69355922e-07 * df.cxys2 + 2.52189944e-12 * df.cxys2**2 + -9.42801294e-18 * df.cxys2**3 + 1.52439199e-23 * df.cxys2**4 + -8.87478224e-30 * df.cxys2**5 + -1.56542759 / np.sqrt(df.cxys2) + 2.55577526 / df.cxys2)
+        top_bound_sel2 = (0.622277296 + -3.68293654e-08 * df.cxys2 + 1.27599576e-12 * df.cxys2**2 + -5.6877691e-18 * df.cxys2**3 + 9.37834312e-24 * df.cxys2**4 + -5.27123147e-30 * df.cxys2**5 + 1.90261854 / np.sqrt(df.cxys2) + -5.64666308 / df.cxys2)
+        bot_bound_sel2 = (0.569358238 + -2.48258216e-07 * df.cxys2 + 1.95452201e-12 * df.cxys2**2 + -5.96514761e-18 * df.cxys2**3 + 7.53101645e-24 * df.cxys2**4 + -3.3715658e-30 * df.cxys2**5 + -1.54181588 / np.sqrt(df.cxys2) + -0.299435546 / df.cxys2)
+
+        a = (df.cxys2 > 1752600.0)
+        b = (df.cxys2  < 60)
+        c = ((df.run_number >= 18836) 
+               & (df.cs2_aft < top_bound)
+               & (df.cs2_aft > bot_bound))
+        d = ((df.run_number < 18836)
+         & ((((df['r_3d_nn_tf']>sel1[0])&(df['r_3d_nn_tf']<sel1[1])&(df['phi_3d_nn_tf']>sel1[2])&(df['phi_3d_nn_tf']<sel1[3])) 
+             & (df.cs2_aft < top_bound_sel1) 
+             & (df.cs2_aft > bot_bound_sel1))
+            |(((df['r_3d_nn_tf']>sel2[0])&(df['r_3d_nn_tf']<sel2[1])&(df['phi_3d_nn_tf']>sel2[2])&(df['phi_3d_nn_tf']<sel2[3])) 
+              & (df.cs2_aft < top_bound_sel2) 
+              & (df.cs2_aft > bot_bound_sel2))
+            |((~(((df['r_3d_nn_tf']>sel1[0])&(df['r_3d_nn_tf']<sel1[1])&(df['phi_3d_nn_tf']>sel1[2])&(df['phi_3d_nn_tf']<sel1[3]))
+                 |((df['r_3d_nn_tf']>sel2[0])&(df['r_3d_nn_tf']<sel2[1]) &(df['phi_3d_nn_tf']>sel2[2])&(df['phi_3d_nn_tf']<sel2[3])))) 
+              & (df.cs2_aft < top_bound) 
+              & (df.cs2_aft > bot_bound))))
+        df.loc[:,'CS2AreaFractionTopExtended98PercentSR2DEC_a'] = a
+        df.loc[:,'CS2AreaFractionTopExtended98PercentSR2DEC_b'] = b
+        df.loc[:,'CS2AreaFractionTopExtended98PercentSR2DEC_c'] = c
+        df.loc[:,'CS2AreaFractionTopExtended98PercentSR2DEC_d'] = d 
+        
+        try:
+            del top_bound; del bot_bound; 
+            del top_bound_sel1; del bot_bound_sel1; 
+            del top_bound_sel2; del bot_bound_sel2;
+            del a; del b; del c; del d
+        except:
+            pass
+                                                        
+        return df
+        
+    string = ('(CS2AreaFractionTopExtended98PercentSR2DEC_a | '
+              'CS2AreaFractionTopExtended98PercentSR2DEC_b | '
+              'CS2AreaFractionTopExtended98PercentSR2DEC_c |'
+              ' CS2AreaFractionTopExtended98PercentSR2DEC_d)')
+
 # S2PatternLikelihood
 # Contact: Jingqiang
 S2PatternLikelihood = postsr1.S2PatternLikelihood
